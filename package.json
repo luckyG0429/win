@@ -19,7 +19,6 @@
     "test:all": "node ./tests/run-tests.js"
   },
   "dependencies": {
-    "antd": "^3.0.0",
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.9.2",
     "classnames": "^2.2.5",
@@ -42,6 +41,7 @@
     "react-fittext": "^1.0.0"
   },
   "devDependencies": {
+    "antd": "^3.1.0",
     "babel-eslint": "^8.0.1",
     "babel-jest": "^21.0.0",
     "babel-plugin-dva-hmr": "^0.3.2",

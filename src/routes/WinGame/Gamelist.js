@@ -33,12 +33,13 @@ export default class TableList extends PureComponent {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    // dispatch({
-    //   type: 'wingame/listfetch',
-    //   payload: {
-    //     //TODO:参数待定
-    //   }
-    // });
+    dispatch({
+      type: 'wingame/listfetch',
+      payload: {
+        pageSequence: 1,
+        pageSize: 10,
+      },
+    });
   }
 
   handleStandardTableChange = (pagination) => {

@@ -22,13 +22,13 @@
   "theme": "./src/theme.js",
   "hash": true,
   "proxy": {
-                "/manage": {
-                    "target": "http://192.168.5.53:8080",
+                "/guessing": {
+                    "target": "http://www.nannan.kim",
                     "secure": false
                 },
-                "/system": {
-                     "target": "http://192.168.5.53:8080",
-                     "secure": false
+                "/index": {
+                    "target": "http://www.nannan.kim",
+                    "secure": false
                 }
             }
 }

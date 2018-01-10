@@ -160,7 +160,7 @@ export const getNavData = app => [
           {
             name: '赛事列表',
             path: 'gamelist',
-            component: dynamicWrapper(app, [], () => import('../routes/WinGame/Gamelist')),
+            component: dynamicWrapper(app, ['win_game'], () => import('../routes/WinGame/Gamelist')),
           },
           {
             name: '比赛列表',
@@ -228,7 +228,7 @@ export const getNavData = app => [
           {
             name: '注册',
             path: 'register',
-            component: dynamicWrapper(app, ['register'], () => import('../routes/User/Register')),
+            component: dynamicWrapper(app, ['login'], () => import('../routes/User/Register')),
           },
           {
             name: '注册结果',

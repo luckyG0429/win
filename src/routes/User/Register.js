@@ -147,14 +147,12 @@ export default class Register extends Component {
         <h3>注册</h3>
         <Form onSubmit={this.handleSubmit}>
           <FormItem>
-            {getFieldDecorator('mail', {
+            {getFieldDecorator('username', {
               rules: [{
-                required: true, message: '请输入邮箱地址！',
-              }, {
-                type: 'email', message: '邮箱地址格式错误！',
+                required: true, message: '请输入用户名！',
               }],
             })(
-              <Input size="large" placeholder="邮箱" />
+              <Input size="large" placeholder="用户名" />
             )}
           </FormItem>
           <FormItem help={this.state.help}>
@@ -198,57 +196,32 @@ export default class Register extends Component {
               />
             )}
           </FormItem>
-          <FormItem>
-            <InputGroup size="large" className={styles.mobileGroup} compact>
-              <FormItem style={{ width: '20%' }}>
-                {getFieldDecorator('prefix', {
-                  initialValue: '86',
-                })(
-                  <Select size="large">
-                    <Option value="86">+86</Option>
-                    <Option value="87">+87</Option>
-                  </Select>
-                )}
-              </FormItem>
-              <FormItem style={{ width: '80%' }}>
-                {getFieldDecorator('mobile', {
-                  rules: [{
-                    required: true, message: '请输入手机号！',
-                  }, {
-                    pattern: /^1\d{10}$/, message: '手机号格式错误！',
-                  }],
-                })(
-                  <Input placeholder="11位手机号" />
-                )}
-              </FormItem>
-            </InputGroup>
-          </FormItem>
-          <FormItem>
-            <Row gutter={8}>
-              <Col span={16}>
-                {getFieldDecorator('captcha', {
-                  rules: [{
-                    required: true, message: '请输入验证码！',
-                  }],
-                })(
-                  <Input
-                    size="large"
-                    placeholder="验证码"
-                  />
-                )}
-              </Col>
-              <Col span={8}>
-                <Button
-                  size="large"
-                  disabled={count}
-                  className={styles.getCaptcha}
-                  onClick={this.onGetCaptcha}
-                >
-                  {count ? `${count} s` : '获取验证码'}
-                </Button>
-              </Col>
-            </Row>
-          </FormItem>
+          {/*<FormItem>*/}
+            {/*<Row gutter={8}>*/}
+              {/*<Col span={16}>*/}
+                {/*{getFieldDecorator('captcha', {*/}
+                  {/*rules: [{*/}
+                    {/*required: true, message: '请输入验证码！',*/}
+                  {/*}],*/}
+                {/*})(*/}
+                  {/*<Input*/}
+                    {/*size="large"*/}
+                    {/*placeholder="验证码"*/}
+                  {/*/>*/}
+                {/*)}*/}
+              {/*</Col>*/}
+              {/*<Col span={8}>*/}
+                {/*<Button*/}
+                  {/*size="large"*/}
+                  {/*disabled={count}*/}
+                  {/*className={styles.getCaptcha}*/}
+                  {/*onClick={this.onGetCaptcha}*/}
+                {/*>*/}
+                  {/*{count ? `${count} s` : '获取验证码'}*/}
+                {/*</Button>*/}
+              {/*</Col>*/}
+            {/*</Row>*/}
+          {/*</FormItem>*/}
           <FormItem>
             <Button size="large" loading={register.submitting} className={styles.submit} type="primary" htmlType="submit">
               注册

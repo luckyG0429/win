@@ -6,16 +6,25 @@
 import request from '../utils/request';
 
 export async function setLoginIn(params) {
-  var { username, password, imgcode} = params;
-  var paramsStr = `username=${username}&password=${password}&imgcode=${imgcode}`;
-  return request('/system/user/login.htm',{
+  const { username, password } = params;
+  const paramsStr = `username=${username}&password=${password}&loginType=0&rememberMe=true`;
+  return request('index/login', {
+    method: 'POST',
+    body: paramsStr,
+  });
+}
+
+export async function setRegister(params) {
+  const { username, password } = params;
+  const paramsStr = `username=${username}&password=${password}&registerType=0`;
+  return request('index/register', {
     method: 'POST',
     body: paramsStr,
   });
 }
 
 export async function setLoginOut() {
-  return request('/system/user/logout.htm',{
+  return request('/system/user/logout.htm', {
     method: 'POST',
     body: {},
   });
