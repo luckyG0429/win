@@ -158,14 +158,21 @@ export const getNavData = app => [
         icon: 'check-circle-o',
         children: [
           {
-            name: '赛事列表',
-            path: 'gamelist',
-            component: dynamicWrapper(app, ['win_game'], () => import('../routes/WinGame/Gamelist')),
-          },
-          {
             name: '比赛列表',
-            path: 'gamedatalist',
-            component: dynamicWrapper(app, [], () => import('../routes/WinGame/GameDatalist')),
+            path: 'gamelist',
+            component: dynamicWrapper(app, ['gamelist'], () => import('../routes/GameManage/list')),
+          },
+        ],
+      },
+      {
+        name: '竞猜管理',
+        path: 'quiz',
+        icon: 'check-circle-o',
+        children: [
+          {
+            name: '竞猜列表',
+            path: 'quizlist',
+            component: dynamicWrapper(app, ['quizlist'], () => import('../routes/QuizManage/list')),
           },
         ],
       },
