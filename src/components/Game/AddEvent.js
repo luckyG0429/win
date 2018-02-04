@@ -1,5 +1,5 @@
 /**
- *  添加比赛
+ *  添加赛事
  */
 import React from 'react';
 import moment from 'moment';
@@ -9,31 +9,29 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 
 
-var Gamedetail =(props) =>{
+var Eventdetail =(props) =>{
   const { getFieldDecorator } = props.form
 
-  const { modalType, form, handleOk, handleCancel, data, parentData, menu, btnloading} = props;
+  const { modalType, form, handleOk, handleCancel, data , menu, btnloading} = props;
   //赛事分类列表
   const optionListClass = menu.length ==0 ?[]:menu.map((item)=><Option key={item} value={item.id}>{item.name}</Option>);
   const canEdit = modalType === 1;
 
   const optionListTeam=[];
-  const eventName=parentData.eventName;
 
-  if(modalType ===11 && data != undefined){
+  if(modalType ===1 && data != undefined){
     var {
-      gameName,
-      gameTeamA,
-      gameTeamB,
-      gameTimeStart,
-      gameTimeEnd,
+      eventName,
+      eventclass,
+      eventTimeStart,
+      eventTimeEnd,
+      eventclass,
     } = data
   }else{
-    var gameName='',
-    gameTeamA='',
-    gameTeamB='',
-    gameTimeStart='2018-01-01',
-   gameTimeEnd='2018-01-01';
+    var eventName='',
+      eventclass='',
+      eventTimeStart='2018-01-01',
+      eventTimeEnd='2018-01-01';
   }
 
   const formItemLayout = {
@@ -68,12 +66,11 @@ var Gamedetail =(props) =>{
         ...fieldsValue
       };
       var jsonParams = {
-        gameName:values.gameName|| undefined,
-        gameTeamA:values.gameTeamA|| undefined,
-        gameTeamB:values.gameTeamB|| undefined,
-        gameTimeStart:values.gameTimeStart|| undefined,
-        gameTimeEnd:values.gameTimeEnd|| undefined,
-        };
+        eventName:values.eventName|| undefined,
+        eventclass:values.eventclass|| undefined,
+        eventTimeStart:values.eventTimeStart|| undefined,
+        eventTimeEnd:values.eventTimeEnd|| undefined,
+      };
       if(modalType === 'change'){
         jsonParams.id = data.id;
       }
@@ -89,55 +86,43 @@ var Gamedetail =(props) =>{
     handleCancel();
   }
   return  (<Form layout="horizontal"  style={{width:'80%',marginLeft:'10%',marginTop:'20px'}}>
-    <FormItem label="比赛名称" {...formItemLayout}>
-      {getFieldDecorator('gameName',{
-        initialValue:gameName
-      })(<Input/>)
-      }
-    </FormItem>
-    <FormItem label="赛事名" {...formItemLayout}>
-      <span>{eventName}</span>
-    </FormItem>
-    <FormItem label="战队-A队" {...formItemLayout}>
-      {getFieldDecorator('gameTeamA',{
+    <FormItem label="赛事分类" {...formItemLayout}>
+      {getFieldDecorator('eventclass',{
         rules: [{
-          required: true , message: '请选择战队！',
+          required: true , message: '请选择赛事分类！',
         }],
-        initialValue:gameTeamA
+        initialValue:eventclass
       })(<Select>
-        { optionListTeam }
+        { optionListClass }
       </Select>)}
     </FormItem>
-    <FormItem label="战队-B队"  {...formItemLayout}>
-      {getFieldDecorator('gameTeamB',{
+    <FormItem label="赛事名称" {...formItemLayout}>
+      {getFieldDecorator('eventName',{
         rules: [{
-          required: true , message: '请设置赔率'
+          required: true , message: '请选择赛事名称！',
         }],
-        initialValue:gameTeamB
-      })(<Select>
-        { optionListTeam }
-      </Select>)}
+        initialValue:eventName
+      })(<Input/>)}
     </FormItem>
     <FormItem label="比赛开始时间"  {...formItemLayout}>
-      {getFieldDecorator('gameTimeStart',{
+      {getFieldDecorator('eventTimeStart',{
         rules: [{
-          required: true , message: '请输入竞猜开始时间！',
+          required: true , message: '请输入比赛开始时间！',
         }],
-        initialValue:moment(gameTimeStart)
+        initialValue:moment(eventTimeStart)
       })(<DatePicker
         showTime
-        disabledDate={disabledDate}
         format="YYYY-MM-DD HH:mm:ss"
         placeholder="Select Time"
         style={{width:'80%'}}/>
-        )}
+      )}
     </FormItem>
     <FormItem label="比赛结束时间"  {...formItemLayout}>
-      {getFieldDecorator('gameTimeEnd',{
+      {getFieldDecorator('eventTimeEnd',{
         rules: [{
-          required: false , message: '请输入竞猜结束时间！',
+          required: false , message: '请输入比赛结束时间！',
         }],
-        initialValue:moment(gameTimeEnd)
+        initialValue:moment(eventTimeEnd)
       })(<DatePicker
         showTime
         disabledDate={disabledDate}
@@ -153,9 +138,9 @@ var Gamedetail =(props) =>{
     </FormItem>
   </Form>)
 }
-Gamedetail = Form.create()(Gamedetail);
+Eventdetail = Form.create()(Eventdetail);
 
-export default  Gamedetail
+export default  Eventdetail
 
 
 

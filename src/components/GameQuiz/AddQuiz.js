@@ -2,6 +2,7 @@
  * 比赛 -- 添加竞猜
  */
 import React from 'react';
+import moment from 'moment';
 import { Form, Input, Select, Button, DatePicker, Divider } from 'antd';
 
 const FormItem = Form.Item;
@@ -13,7 +14,8 @@ var Quizdetail =(props) =>{
 
   const { modalType, form, handleOk, handleCancel, data , gameName, gameId, menu, btnloading} = props;
   //竞猜规则列表
-  const optionList = menu.length ==0 ?[]:menu.map((item)=><Option key={item} value={item.id}>{item.name}</Option>);
+ // const optionList = menu.length ==0 ?[]:menu.map((item)=><Option key={item} value={item.id}>{item.name}</Option>);
+  const optionList =[];
   const canEdit = modalType === 'change';
 
   if(data && data != undefined){
@@ -90,11 +92,12 @@ var Quizdetail =(props) =>{
     form.resetFields();
     handleCancel();
   }
-  return <Form layout="vertical" style={{width:'80%',marginLeft:'10%',marginTop:'20px'}}>
-    <FormItem label="赛事名" {...formItemLayout}>
-      {getFieldDecorator('gameName',{
-         initialValue:gameName
-      })(<Input disabled={true}/>)}
+  return <Form layout="horizontal" style={{width:'80%',marginLeft:'10%',marginTop:'20px'}}>
+    <FormItem
+      {...formItemLayout}
+      label="赛事名"
+    >
+      <span className="ant-form-text">China</span>
     </FormItem>
     <FormItem label="竞猜规则" {...formItemLayout}>
       {getFieldDecorator('quizRules',{
@@ -137,7 +140,7 @@ var Quizdetail =(props) =>{
         rules: [{
           required: true , message: '请输入竞猜开始时间！',
         }],
-        initialValue:quizTimeStart
+        initialValue:moment(quizTimeStart)
       })(<DatePicker
           showTime
           disabledDate={disabledDate}
@@ -151,7 +154,7 @@ var Quizdetail =(props) =>{
         rules: [{
           required: false , message: '请输入竞猜结束时间！',
         }],
-        initialValue:quizTimeEnd
+        initialValue:moment(quizTimeEnd)
       })(<DatePicker
         showTime
         disabledDate={disabledDate}
@@ -160,7 +163,7 @@ var Quizdetail =(props) =>{
         placeholder="Select Time"
       />)}
     </FormItem>
-    <FormItem>
+    <FormItem style={{textAlign:'center'}}>
       <Button type="primary"  loading={ btnloading } style={{ marginRight: 16 }} onClick={(e)=>handleSubmit(e)}>确定</Button>
       <Button onClick={()=>handleReset()} style={{marginLeft:'15px'}}>取消</Button>
     </FormItem>

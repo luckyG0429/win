@@ -1,10 +1,11 @@
 /**
  * model  比赛管理
  */
+import { enumEventtype, queryEventlist} from '../services/win_event';
 import { queryGamelist, queryBorrowOrderDetail} from '../services/win_game';
 
 export default {
-  namespace:'gamelist',
+  namespace:'eventlist',
   state:{
     data:{
       list:[],
@@ -14,12 +15,19 @@ export default {
     eventtype:[],
   },
   effects:{
+    *typefetch({},{call,put}){
+      const result = yield call(enumEventtype);
+      yield put({
+        type:'setEventtype',
+        payload:result
+      })
+    },
     *fetch({payload},{call, put}){
       yield put({
         type: 'changeLoading',
         payload: true,
       });
-      const result = yield call(queryGamelist,payload);
+      const result = yield call(queryEventlist,payload);
       console.log(result);
       yield put({
         type: 'setListdata',
@@ -30,23 +38,9 @@ export default {
         payload: false
       })
     },
-    *modalrecordfetch({payload},{call,put}){
-      yield put({
-        type:'changeModal',
-        payload:true,
-      })
-      const resultmodalrecord = yield  call(queryBorrowOrderDetail,payload);
-      yield  put({
-        type: 'setModalRecord',
-        payload: resultmodalrecord
-      })
-    },
-    *modallistfetch({payload},{call,put}){
-      const resultmodallist = yield  call(queryBorrowOrderDetail,payload);
-      yield  put({
-        type: 'setModalList',
-        payload: resultmodallist
-      })
+    *gamefetch({payload, callback},{call, put}){
+      const result = yield call(queryGamelist,payload);
+      if(callback) callback(result);
     }
   },
   reducers:{
@@ -66,22 +60,10 @@ export default {
         }
       }
     },
-    changeModal(state,action) {
+    setEventtype(state,action) {
       return {
         ...state,
-        modal:action.payload
-      }
-    },
-    setModalRecord(state, action){
-      return {
-        ...state,
-        modalrecord:action.payload
-      }
-    },
-    setModalList(state, action){
-      return {
-        ...state,
-        modallist:action.payload
+        eventtype:action.payload
       }
     },
   }

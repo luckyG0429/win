@@ -4,15 +4,21 @@
   "description": "An out-of-box UI solution for enterprise applications",
   "private": true,
   "scripts": {
-
     "start": "set PORT=3000 && roadhog server",
     "start:no-proxy": "cross-env NO_PROXY=true roadhog server",
     "build": "roadhog build",
     "site": "roadhog-api-doc static && gh-pages -d dist",
     "analyze": "roadhog build --analyze",
-
+    "lint:style": "stylelint \"src/**/*.less\" --syntax less",
+    "lint": "eslint --ext .js src mock tests && npm run lint:style",
+    "lint:fix": "eslint --fix --ext .js src mock tests && npm run lint:style",
+    "lint-staged": "lint-staged",
+    "lint-staged:js": "eslint --ext .js",
+    "test": "jest",
+    "test:all": "node ./tests/run-tests.js"
   },
   "dependencies": {
+    "antd": "^3.0.3",
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.9.2",
     "classnames": "^2.2.5",
@@ -35,7 +41,6 @@
     "react-fittext": "^1.0.0"
   },
   "devDependencies": {
-    "antd": "^3.1.0",
     "babel-eslint": "^8.0.1",
     "babel-jest": "^21.0.0",
     "babel-plugin-dva-hmr": "^0.3.2",

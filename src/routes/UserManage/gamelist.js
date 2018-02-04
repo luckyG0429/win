@@ -5,10 +5,10 @@
 
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Select, Button, DatePicker, Modal, Divider, Tabs, Table } from 'antd';
+import { Row, Col, Card, Form, Input, Select, Button, DatePicker, Modal, Divider, Tabs } from 'antd';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import AddQuiz from '../../components/GameQuiz/AddQuiz';
+import AddGame from '../../components/Game/AddGame';
 
 import styles from './Servicelist.less';
 
@@ -18,23 +18,14 @@ const RangePicker = DatePicker.RangePicker;
 const { Option } = Select;
 
 @connect(state => ({
-  quizlist: state.quizlist,
+  gamelist: state.gamelist,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
   state = {
-    formValues: {
-      page:1,
-      size:10,
-      kgName:'',
-      applyName:'',
-      applyPhone:'',
-      applyStartTime:'',
-      applyEndTime:'',
-      state:'',
-    },
-    modalVisible: false,
-    record: {},
+    formValues: {},
+    record:'',
+    modalVisible:false,
     modaltype:'',
     btnloading:false,
   };
@@ -43,7 +34,7 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     const { formValues } = this.state;
     dispatch({
-      type: 'quizlist/fetch',
+      type: 'gamelist/fetch',
       payload: formValues
     });
   }
@@ -63,48 +54,50 @@ export default class TableList extends PureComponent {
       }
     });
     dispatch({
-      type: 'quizlist/fetch',
+      type: 'gamelist/fetch',
       payload: params
     });
   }
 
+
+
   handleConfirm=(record, type)=>{
-    const obj = ((type)=>type==='stop'?{
-      title:'您确定要提前结束当前的比赛竞猜吗？',
-      content:'提示：一旦结束，将无法在重新开始！',
-    }:{
-      title:'您确定要删除当前的竞猜吗？',
-      content:'提示：一旦删除，将无法恢复数据！',
-      okText: '确定',
-      okType: 'danger',
-      cancelText: '取消',
-    })(type);
+      const obj = ((type)=>type==='release'?{
+        title:'您确定要发布当前的比赛吗？',
+        content:'提示：比赛一旦发布，其下的所有竞猜也会被同时发布上线。！',
+        }:{
+        title:'您确定要删除当前的比赛吗？',
+        content:'提示：比赛一旦删除，其下的所有竞猜将也会被删除掉！',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+      })(type);
 
-    console.log(obj);
-    return Modal.confirm({
-      ...obj,
-      width:'480px',
-      onOk(){
+      console.log(obj);
+      return Modal.confirm({
+        ...obj,
+        width:'480px',
+        onOk(){
 
-      },
-      onCancel(){
+        },
+        onCancel(){
 
-      }
-    })
+        }
+      })
   }
 
   /*TODO: 弹框的显示与隐藏 - 查看用户详情 - 传递数据[userId]*/
   handleModalVisible = (flag = false,record={}, type) => {
-    /** type 0为新增  1为修改**/
     const { dispatch } = this.props;
     this.setState({
       modalVisible: flag,
       record: record,
       modaltype:type,
+      btnloading:true,
     });
     if(type===1 && flag){
       dispatch({
-        type:'quizlist/detailorder',
+        type:'gamelist/detailorder',
         payload:record,
         callback:(result)=>{
           console.log(result);
@@ -116,8 +109,7 @@ export default class TableList extends PureComponent {
           }
         }
       })
-    }else if(type === 0){
-
+    }else if(type === 2 && record){
 
     }else{
 
@@ -171,7 +163,7 @@ export default class TableList extends PureComponent {
         },
       });
       dispatch({
-        type: 'quizlist/fetch',
+        type: 'gamelist/fetch',
         payload: {
           page: 1,
           size: 10,
@@ -182,13 +174,14 @@ export default class TableList extends PureComponent {
   }
 
   handleOk(type, params) {
+    //type: 0 新增 ；1 修改
     const { dispatch } = this.props;
     this.setState({
       btnloading: true,
     });
     if (type == 1) {
       dispatch({
-        type: 'quizlist/changeorderstate',
+        type: 'gamelist/changeorderstate',
         payload: params,
         callback: (result) => {
           if (result.code === 200) {
@@ -200,7 +193,7 @@ export default class TableList extends PureComponent {
               title: '受理成功！',
               onOk() {
                 dispatch({
-                  type: 'quizlist/fetch',
+                  type: 'gamelist/fetch',
                   payload: {
                     page:1,
                     size:10,
@@ -225,7 +218,7 @@ export default class TableList extends PureComponent {
       });
     } else if(type == 2) {
       dispatch({
-        type: 'quizlist/senddeliveryinfo',
+        type: 'gamelist/senddeliveryinfo',
         payload: params,
         callback: (result) => {
           if (result.code === 200) {
@@ -233,7 +226,7 @@ export default class TableList extends PureComponent {
               title: '添加成功！',
               onOk() {
                 dispatch({
-                  type: 'quizlist/fetch',
+                  type: 'gamelist/fetch',
                   payload: {
                     page:1,
                     size:10,
@@ -279,126 +272,75 @@ export default class TableList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={7} sm={24}>
-            <FormItem label="比赛名">
-              {getFieldDecorator('gameName')(
-                <Input placeholder="请输入"  maxLength='34' style={{ width: '80%' }} />
+            <FormItem label="幼儿园名称">
+              {getFieldDecorator('kgName')(
+                <Input placeholder="请输入"  maxLength={18} style={{ width: '80%' }} />
               )}
             </FormItem>
           </Col>
+
           <Col md={7} sm={24}>
-            <FormItem label="赛事类别">
-              {getFieldDecorator('eventClass')(
-                <Select placeholder="请选择" style={{ width: '80%' }}>
-                  <Option key={1} value={1}>足球</Option>
-                  <Option key={2} value={0}>篮球</Option>
-                  <Option key={3} value=''>LOL</Option>
-                </Select>
+            <FormItem label="申请人姓名">
+              {getFieldDecorator('applyName')(
+                <Input placeholder="请输入"  maxLength={18} style={{ width: '80%' }} />
               )}
             </FormItem>
           </Col>
-          <Col md={7} sm={24}>
-            <FormItem label="赛事状态">
-              {getFieldDecorator('state')(
-                <Select placeholder="请选择" style={{ width: '80%' }}>
-                  <Option key={1} value={1}>已发布</Option>
-                  <Option key={2} value={0}>未发布</Option>
-                  <Option key={3} value=''>全部</Option>
-                </Select>
+          <Col md={9} sm={24}>
+            <FormItem label="提交时间">
+              {getFieldDecorator('createTime')(
+                <RangePicker style={{ width: '100%' }}/>
               )}
             </FormItem>
           </Col>
         </Row>
-          <Row>
-            <Col span={24} style={{ textAlign: 'right' }}>
-              <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                重置
-              </Button>
-            </Col>
-          </Row>
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+          <Col md={7} sm={24}>
+            <FormItem label="申请人手机">
+              {getFieldDecorator('applyPhone',{
+                rules:[
+                  { pattern:/^1[3|4|5|7|8]\d{9}$/,
+                    len:11,
+                    message:'请输入有效的手机号'}
+                ],
+                validateTrigger:'onBlur'
+              })(
+                <Input placeholder="请输入" maxLength={11} style={{ width: '80%' }} />
+              )}
+            </FormItem>
+          </Col>
+          <Col md={7} sm={24}>
+            <FormItem label="审核状态">
+              {getFieldDecorator('state')(
+                <Select placeholder="请选择" style={{ width: '80%' }}>
+                  <Option key={1}>未受理</Option>
+                  <Option key={2}>已受理</Option>
+                  <Option key={3}>已完成</Option>
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col md={10} sm={24}>
+             <span style={{ float: 'left', marginBottom: 24 }}>
+                <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>查询</Button>
+                <Button  onClick={this.handleFormReset}>重置</Button>
+              </span>
+          </Col>
+        </Row>
+
       </Form>
     );
   }
 
-  renderInnertable(data){
-    const {quizlist, gamestatus} = data;
-    const columns = [{
-      title: '竞猜开始时间',
-      dataIndex: 'quizTimeStart',
-    },{
-      title: '竞猜规则',
-      dataIndex: 'quizRules',
-    },{
-      title: '竞猜结束时间',
-      dataIndex: 'quizTimeEnd',
-    },{
-      title: '战队-A队',
-      dataIndex: '',
-      render:(text,record)=>{
-        return <div>
-          <a>{`赔率：${record.Ateamodds}`}</a>
-          <hr/>
-          <a>{`下注人数：${record.quizAteamJoin}`}</a>
-        </div>
-      }
-    },{
-      title: '战队-B队',
-      dataIndex: '',
-      render:(text,record)=>{
-        return <div>
-          <a>{`赔率：${record.Bteamodds}`}</a>
-          <hr/>
-          <a>{`下注人数：${record.quizBteamJoin}`}</a>
-        </div>
-      }
-    },{
-      title: '下注总人数',
-      dataIndex: 'quizTotalJoin',
-    },{
-      title: '下注总金币',
-      dataIndex: 'quizTotalCoin',
-    },{
-      title: '竞猜状态',
-      dataIndex: 'quizStatus',
-    },{
-      title: '操作',
-      dataIndex: '',
-      render:(text,record)=>{
-        switch(gamestatus){
-          case 0: return <div>
-            <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
-            <Divider type='vertical'/>
-            <a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>
-          </div>;
-          case 1:return <a onClick={() => this.handleConfirm(record,'stop')}>结束</a>;
-          default: return '-'
-        }
-      }
-    }];
-    return <Table dataSource={quizlist}
-                  style={{background:'#fff'}}
-                  bordered
-                  columns={columns}
-                  size="small"
-                  pagination={false}
-    />
-  }
-
-
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { quizlist: { data, loading } ,  dispatch } = this.props;
-
-    const { modalVisible, record,  modaltype, btnloading} = this.state;
+    const { gamelist: { data, loading, eventtype } ,  dispatch } = this.props;
+    console.log(data);
+    const { modalVisible, modaltype, record, btnloading} = this.state;
 
     const columns = [{
-      // title: '比赛名称',
-      // dataIndex: 'gameName',
-      title: '比赛开始时间',
-      dataIndex: 'gameTimeStart',
-    },{
-      title: '赛事名',
-      dataIndex: 'eventName',
+      title: '比赛名称',
+      dataIndex: 'gameName',
     },{
       title: '比赛战队-A',
       dataIndex: 'gameTeamA',
@@ -406,11 +348,17 @@ export default class TableList extends PureComponent {
       title: '比赛战队-B',
       dataIndex: 'gameTeamB',
     },{
-      title: '比赛结束时间',
+      title: '比赛开始时间',
+      dataIndex: 'gameTimeStart',
+    },{
+       title: '比赛结束时间',
       dataIndex: 'gameTimeEnd',
     },{
       title: '赛事类型',
       dataIndex: 'eventclass',
+    },{
+      title: '赛事名',
+      dataIndex: 'eventName',
     },{
       title: '赛事状态',
       dataIndex: 'gamestatus',
@@ -421,7 +369,11 @@ export default class TableList extends PureComponent {
       render:(text,record)=>{
         switch(record.gamestatus){
           case 0:return <div>
-            <a onClick={() => this.handleModalVisible(true,record,0)}>添加竞猜</a>
+            <a onClick={() => this.handleConfirm(record,'release')}>发布</a>
+            <Divider type='vertical'/>
+            <a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>
+            <Divider type='vertical'/>
+            <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
           </div>;
           default: return '-'
         }
@@ -430,46 +382,36 @@ export default class TableList extends PureComponent {
     }];
 
 
-    const footbtn1 = [<Button type="primary" key="reset" onClick={() => this.handleModalVisible()}>返回</Button>];
-    console.log(data);
     return (
-      <PageHeaderLayout title="竞猜列表">
+      <PageHeaderLayout title="比赛列表">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
-              {this.renderAdvancedForm()}
+                <Button  onClick={() => this.handleModalVisible(true,'',0)}>新增比赛</Button>
             </div>
-
-
-            <Table style={{marginTop:'24px'}}
-              columns={ columns }
-              loading={ loading }
-              expandedRowRender={record=>this.renderInnertable(record)}
-              dataSource={data.list}
+            <StandardTable
+              columns = { columns }
+              loading={loading}
+              data={ data }
+              onChange={this.handleStandardTableChange}
             />
-
-
-
           </div>
         </Card>
         <Modal
-          title={modaltype ===1?'修改':'新增'}
+          title={modaltype===0?'新增赛事':'赛事修改'}
           visible={ modalVisible }
           width={ 800 }
           style={{top:50}}
+
           footer={[]}
           onCancel={() => this.handleModalVisible()}
         >
-          <AddQuiz data={record}
-                   modaltype={modaltype}
-                   gameName="中国VS韩国"
-                   gameId="1"
-                   btnloading={btnloading}
-                   handleOk={(type, params) => this.handleOk(type, params)}
-                   handleCancel={() => this.handleModalVisible()}/>
-
-
-
+          <AddGame modalType={modaltype}
+                   handleOk={() => this.handleOk(type,params)}
+                   handleCancel={() => this.handleModalVisible()}
+                   data={record}
+                   menu={eventtype}
+                   btnloading={btnloading}/>
         </Modal>
       </PageHeaderLayout>
     );

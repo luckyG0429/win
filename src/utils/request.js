@@ -2,6 +2,7 @@ import fetch from 'dva/fetch';
 import { notification,Modal } from 'antd';
 
 function checkStatus(response) {
+
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
@@ -17,6 +18,7 @@ function checkStatus(response) {
 function CheckResponse(data){
   console.log('CheckResponse');
   console.log(data);
+  return data;
   if (data.code == 200) {
      return data;
   } else if(data.code == 800){

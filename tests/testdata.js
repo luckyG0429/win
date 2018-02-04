@@ -19,6 +19,8 @@
  *   ---| 比赛时间：gameTimeEnd
  *   ---| 赛事类型：eventclass
  *   ---/ 赛事状态：gamestatus
+ *   ---/所属赛事：eventName
+ *   ---所属赛事id：eventId
  *
  * 竞猜：quiz
  *  ----| 竞猜规则 quizrules
@@ -72,63 +74,190 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 module.exports = {
   //mock数据返回
 
   //赛事分类枚举  - game
-  'GET /gametype': [{value:'LOL',code:'1'},{value:'足球',code:'2'},{value:'Dota',code:'3'},{value:'篮球',code:'10'}],
+  'GET /module/event/eventcategory': [{value:'LOL',code:'1'},{value:'足球',code:'2'},{value:'Dota',code:'3'},{value:'篮球',code:'10'}],
   //赛事列表  - game
-  'GET /gamelist': [{
-    gid:1,
-    gname:'中国VS韩国',
-    gtype:'2',
-    gtypeStr:'足球',
-    gstartTime:'2018-02-01 09:00',
-  },{
-    gid:2,
-    gname:'日本VS韩国',
-    gtype:'2',
-    gtypeStr:'足球',
-    gstartTime:'2018-02-03 09:00',
-  }],
-  //赛事列表  - game
-  'GET /gamelist/detail/1': {
-    gid:1,
-    gname:'中国VS韩国',
-    gtype:'2',
-    gtypeStr:'足球',
-    gstartTime:'2018-02-01 09:00',
-    gamelist:[
-      {
-        id:1,
-        gname:''
-      }
-    ]
+  'GET /module/event/eventlist': {
+    data:[{
+      id:1,
+      eventName:'中国VS日本',
+      eventclass:'2',
+      eventclassStr:'足球',
+      eventTimeStart:'2018-02-01 09:00',
+      eventTimeEnd:'2018-02-05 09:00',
+      eventstatus:1,
+      eventstatusStr:'已发布',
+    },{
+      id:3,
+      eventName:'中国VS韩国',
+      eventclass:'2',
+      eventclassStr:'足球',
+      eventTimeStart:'2018-02-01 09:00',
+      eventTimeEnd:'2018-02-05 09:00',
+      eventstatus:1,
+      eventstatusStr:'已发布',
+    }]
   },
-  'POST /users':{name:'JSLite'},
-  'POST /users/2':"22323sd",
-  'POST /users':function(data,url){
-    // data 接受传递数据
-    // url 请求
-    // 接受
-    // - form-data
-    // - x-www-form-urlencoded
-    // - raw
-    if(data.name === 'jslite'){
-      return {name:'卧槽121221'}
-    }else{
-      return {name:'yyy'}
-    }
-  }
+  //比赛列表  - game
+  'GET /module/game/gamelist.htm':{
+    code: 200,
+  data:[{
+      id:'201',
+      gameName:'20180201上午场',
+      gameTeamA:'恒大足球',
+      gameTeamB:'和田君队',
+      gameTimeStart:'2018-02-01 09:00',
+      gameTimeEnd:'2018-02-01 12:00',
+      eventclass:'足球',
+      gamestatus:0,
+      eventName:'中国VS韩国',
+      eventId:2
+      }, {
+        id:'202',
+        gameName:'20180201上午场',
+        gameTeamA:'恒大足球',
+        gameTeamB:'和田君队',
+        gameTimeStart:'2018-02-01 15:00',
+        gameTimeEnd:'2018-02-01 18:00',
+        eventclass:'足球',
+        gamestatus:1,
+        eventName:'中国VS韩国',
+        eventId:2
+      }]
+  },
+  'GET /module/game/gamedetail':{
+    id:'202',
+    gameName:'0201上午场',
+    gameTeamA:'恒大足球',
+    gameTeamB:'和田君队',
+    gameTimeStart:'',
+    gameTimeEnd:'2018-02-01 15:00',
+    eventclass:'2018-02-01 18:00',
+    gamestatus:'0',
+    eventName:'中国VS韩国',
+    eventId:2
+  },
+
+  'GET /module/quiz/quizrules':[{code:'1',value:'猜大小'},{code:'2',value:'猜胜负'},{code:'3',value:'胜分差'}],
+  'GET /module/quiz/quizlist':{
+    data:[
+      {
+        id:'201',
+        gameName:'20180201上午场',
+        gameTeamA:'恒大足球',
+        gameTeamB:'和田君队',
+        gameTimeStart:'2018-02-01 09:00',
+        gameTimeEnd:'2018-02-01 12:00',
+        eventclass:'足球',
+        gamestatus:1,
+        eventName:'中国VS韩国',
+        eventId:2,
+        quizlist:[{
+          id: 1,
+          gameName: '0201上午场',
+          gameId: '202',
+          quizRules: '猜大小',
+          Ateamodds: '0.94',
+          Bteamodds: '0.65',
+          quizMinCoin: '100',
+          quizTimeStart: '2018-01-25 09:00',
+          quizTimeEnd: '2018-02-01 09:00',
+          quizTotalJoin: '100231',
+          quizAteamJoin: '21922',
+          quizBteamJoin: '87328',
+          quizTotalCoin: '10899000',
+          quizAteamCoin: '4090900',
+          quizBteamCoin: '5800000',
+          quizStatus: 1,
+        }, {
+          id: 3,
+          gameName: '0201上午场',
+          gameId: '202',
+          quizRules: '胜分差',
+          Ateamodds: '0.95',
+          Bteamodds: '0.95',
+          quizMinCoin: '50',
+          quizTimeStart: '2018-01-25 09:00',
+          quizTimeEnd: '2018-02-01 09:00',
+          quizTotalJoin: '1002310',
+          quizAteamJoin: '219229',
+          quizBteamJoin: '873281',
+          quizTotalCoin: '1089990000',
+          quizAteamCoin: '409090000',
+          quizBteamCoin: '580000000',
+          quizStatus: 0,
+        }]
+      },
+      {
+        id:'202',
+        gameName:'0201上午场',
+        gameTeamA:'恒大足球',
+        gameTeamB:'和田君队',
+        gameTimeStart:'2018-02-01 09:00',
+        gameTimeEnd:'2018-02-01 12:00',
+        eventclass:'足球',
+        gamestatus:0,
+        eventName:'中国VS韩国',
+        eventId:2,
+        quizlist:[{
+          id: 1,
+          gameName: '0201上午场',
+          gameId: '202',
+          quizRules: '猜大小',
+          Ateamodds: '0.94',
+          Bteamodds: '0.65',
+          quizMinCoin: '100',
+          quizTimeStart: '2018-01-25 09:00',
+          quizTimeEnd: '2018-02-01 09:00',
+          quizTotalJoin: '0',
+          quizAteamJoin: '0',
+          quizBteamJoin: '0',
+          quizTotalCoin: '0',
+          quizAteamCoin: '0',
+          quizBteamCoin: '0',
+          quizStatus: 1,
+      }, {
+        id: 3,
+        gameName: '0201上午场',
+        gameId: '202',
+        quizRules: '胜分差',
+        Ateamodds: '0.95',
+        Bteamodds: '0.95',
+        quizMinCoin: '50',
+        quizTimeStart: '2018-01-25 09:00',
+        quizTimeEnd: '2018-02-01 09:00',
+        quizTotalJoin: '0',
+        quizAteamJoin: '0',
+        quizBteamJoin: '0',
+        quizTotalCoin: '0',
+        quizAteamCoin: '0',
+        quizBteamCoin: '0',
+        quizStatus: 1,
+      }]
+  }]
+  },
+
+  'GET /module/quiz/quizdetail':{
+    id:3,
+    gameName:'0201上午场',
+    gameId:'202',
+    quizRules:'胜分差',
+    Ateamodds:'0.95',
+    Bteamodds:'0.95',
+    quizMinCoin:'50',
+    quizTimeStart:'2018-01-25 09:00',
+    quizTimeEnd:'2018-02-01 09:00',
+    quizTotalJoin:'1002310',
+    quizAteamJoin:'219229',
+    quizBteamJoin:'873281',
+    quizTotalCoin:'1089990000',
+    quizAteamCoin:'409090000',
+    quizBteamCoin:'580000000',
+    quizStatus:1,
+  },
+
+
 };

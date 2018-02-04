@@ -15,163 +15,67 @@ export const getNavData = app => [
     name: '首页', // for breadcrumb
     path: '/',
     children: [
-      // {
-      //   name: 'Dashboard',
-      //   icon: 'dashboard',
-      //   path: 'dashboard',
-      //   children: [
-      //     {
-      //       name: '分析页',
-      //       path: 'analysis',
-      //       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
-      //     },
-      //     {
-      //       name: '监控页',
-      //       path: 'monitor',
-      //       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Dashboard/Monitor')),
-      //     },
-      //     {
-      //       name: '工作台',
-      //       path: 'workplace',
-      //       component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/Dashboard/Workplace')),
-      //     },
-      //   ],
-      // },
-      // {
-      //   name: '订单管理',
-      //   path: 'order',
-      //   icon: 'order',
-      //   children: [
-      //     {
-      //       name: '借款订单',
-      //       path: 'borroworder',
-      //       component: dynamicWrapper(app, ['order_borrow'], () => import('../routes/OrderManage/BorrowOrderList')),
-      //     },
-      //     {
-      //       name: '放款订单',
-      //       path: 'loanorder',
-      //       component: dynamicWrapper(app, ['order_loan'], () => import('../routes/OrderManage/LoanOrderList')),
-      //     },
-      //   ]
-      // },
-      // {
-      //   name: '表单页',
-      //   path: 'form',
-      //   icon: 'form',
-      //   children: [
-      //     {
-      //       name: '基础表单',
-      //       path: 'basic-form',
-      //       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
-      //     },
-      //     {
-      //       name: '分步表单',
-      //       path: 'step-form',
-      //       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm')),
-      //       children: [
-      //         {
-      //           path: 'confirm',
-      //           component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
-      //         },
-      //         {
-      //           path: 'result',
-      //           component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step3')),
-      //         },
-      //       ],
-      //     },
-      //     {
-      //       name: '高级表单',
-      //       path: 'advanced-form',
-      //       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
-      //     },
-      //   ],
-      // },
-      // {
-      //   name: '列表页',
-      //   path: 'list',
-      //   icon: 'table',
-      //   children: [
-      //     {
-      //       name: '查询表格',
-      //       path: 'table-list',
-      //       component: dynamicWrapper(app, ['rule'], () => import('../routes/List/TableList')),
-      //     },
-      //     {
-      //       name: '标准列表',
-      //       path: 'basic-list',
-      //       component: dynamicWrapper(app, ['list'], () => import('../routes/List/BasicList')),
-      //     },
-      //     {
-      //       name: '卡片列表',
-      //       path: 'card-list',
-      //       component: dynamicWrapper(app, ['list'], () => import('../routes/List/CardList')),
-      //     },
-      //     {
-      //       name: '搜索列表（项目）',
-      //       path: 'cover-card-list',
-      //       component: dynamicWrapper(app, ['list'], () => import('../routes/List/CoverCardList')),
-      //     },
-      //     {
-      //       name: '搜索列表（应用）',
-      //       path: 'filter-card-list',
-      //       component: dynamicWrapper(app, ['list'], () => import('../routes/List/FilterCardList')),
-      //     },
-      //     {
-      //       name: '搜索列表（文章）',
-      //       path: 'search',
-      //       component: dynamicWrapper(app, ['list'], () => import('../routes/List/SearchList')),
-      //     },
-      //   ],
-      // },
-      // {
-      //   name: '用户管理',
-      //   path: 'usermanage',
-      //   icon: 'table',
-      //   children: [
-      //     {
-      //       name: '幼儿园',
-      //       path: 'childhome',
-      //       component: dynamicWrapper(app, ['childhomelist'], () => import('../routes/UserManage/ChildhomeUser')),
-      //     },
-      //   ],
-      // },
-      // {
-      //   name: '详情页',
-      //   path: 'profile',
-      //   icon: 'profile',
-      //   children: [
-      //     {
-      //       name: '基础详情页',
-      //       path: 'basic',
-      //       component: dynamicWrapper(app, ['profile'], () => import('../routes/Profile/BasicProfile')),
-      //     },
-      //     {
-      //       name: '高级详情页',
-      //       path: 'advanced',
-      //       component: dynamicWrapper(app, ['profile'], () => import('../routes/Profile/AdvancedProfile')),
-      //     },
-      //   ],
-      // },
       {
-        name: '赛事管理',
-        path: 'game',
-        icon: 'check-circle-o',
+        name: '用户管理',
+        path: 'userlist',
+        icon: 'user',
         children: [
           {
-            name: '比赛列表',
-            path: 'gamelist',
-            component: dynamicWrapper(app, ['gamelist'], () => import('../routes/GameManage/list')),
+            name: '用户列表',
+            path: 'list',
+            component: dynamicWrapper(app, ['eventlist'], () => import('../routes/GameManage/eventlist')),
+          }
+          ]
+      },
+      {
+        name: '支付管理',
+        path: 'trade',
+        icon: 'pay-circle-o',
+        children: [
+          {
+            name: '交易流水',
+            path: 'list',
+            component: dynamicWrapper(app, ['eventlist'], () => import('../routes/GameManage/eventlist')),
           },
+        ],
+      },
+      {
+        name: '赛事管理',
+        path: 'listgame',
+        icon: 'api',
+        children: [
+          {
+            name: '赛事列表',
+            path: 'eventlist',
+            component: dynamicWrapper(app, ['eventlist'], () => import('../routes/GameManage/eventlist')),
+          },
+          // {
+          //   name: '比赛列表',
+          //   path: 'gamelist',
+          //   component: dynamicWrapper(app, ['gamelist'], () => import('../routes/GameManage/gamelist')),
+          // },
         ],
       },
       {
         name: '竞猜管理',
         path: 'quiz',
-        icon: 'check-circle-o',
+        icon: 'appstore',
         children: [
           {
             name: '竞猜列表',
             path: 'quizlist',
+            component: dynamicWrapper(app, ['quizlist'], () => import('../routes/QuizManage/list')),
+          },
+        ],
+      },
+      {
+        name: '系统管理',
+        path: 'system',
+        icon: 'setting',
+        children: [
+          {
+            name: '参数配置',
+            path: 'param',
             component: dynamicWrapper(app, ['quizlist'], () => import('../routes/QuizManage/list')),
           },
         ],

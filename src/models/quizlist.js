@@ -1,16 +1,14 @@
 /**
- * model  借款订单状态管理
+ * model  竞猜管理
  */
-import { queryBorrowOrder, queryBorrowOrderDetail} from '../services/ordermanage';
+import { queryQuizlist, queryQuiztype} from '../services/win_quiz';
 
 export default {
   namespace:'quizlist',
   state:{
     data:{
-      list:[
-
-      ],
-      page:{}
+      list:[],
+      pagination:false
     },
     loading:false,
     modal:false,
@@ -23,7 +21,8 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      const result = yield call(queryBorrowOrder,payload);
+      const result = yield call(queryQuizlist,payload);
+      console.log(result);
       yield put({
         type: 'setListdata',
         payload: result
@@ -33,24 +32,7 @@ export default {
         payload: false
       })
     },
-    *modalrecordfetch({payload},{call,put}){
-      yield put({
-        type:'changeModal',
-        payload:true,
-      })
-      const resultmodalrecord = yield  call(queryBorrowOrderDetail,payload);
-      yield  put({
-        type: 'setModalRecord',
-        payload: resultmodalrecord
-      })
-    },
-    *modallistfetch({payload},{call,put}){
-      const resultmodallist = yield  call(queryBorrowOrderDetail,payload);
-      yield  put({
-        type: 'setModalList',
-        payload: resultmodallist
-      })
-    }
+
   },
   reducers:{
     changeLoading(state, action){
@@ -62,7 +44,10 @@ export default {
     setListdata(state, action){
       return {
         ...state,
-        data:action.payload
+        data:{
+          list:action.payload.data,
+          pagination:false
+        }
       }
     },
     changeModal(state,action) {

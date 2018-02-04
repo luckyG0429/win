@@ -12,3 +12,6 @@ export async function queryTradelist(params){
 export async function queryUserinfo(params){
   return request('index/watchUserInfo')
 }
+
+//win+ 01 交易列表
+

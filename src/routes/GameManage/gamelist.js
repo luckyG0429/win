@@ -8,7 +8,7 @@ import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Select, Button, DatePicker, Modal, Divider, Tabs } from 'antd';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import TabList from '../../components/ChildService/Tablelist';
+import AddGame from '../../components/Game/AddGame';
 
 import styles from './Servicelist.less';
 
@@ -23,22 +23,11 @@ const { Option } = Select;
 @Form.create()
 export default class TableList extends PureComponent {
   state = {
-    formValues: {
-      page:1,
-      size:10,
-      kgName:'',
-      applyName:'',
-      applyPhone:'',
-      applyStartTime:'',
-      applyEndTime:'',
-      state:'',
-    },
-    recorduser: {},
+    formValues: {},
+    record:'',
     modalVisible:false,
-    resultlist:[],
-    activeKey:"0",
-    userlist:[],
-    modaltype:''
+    modaltype:'',
+    btnloading:false,
   };
 
   componentDidMount() {
@@ -70,14 +59,41 @@ export default class TableList extends PureComponent {
     });
   }
 
+
+
+  handleConfirm=(record, type)=>{
+      const obj = ((type)=>type==='release'?{
+        title:'您确定要发布当前的比赛吗？',
+        content:'提示：比赛一旦发布，其下的所有竞猜也会被同时发布上线。！',
+        }:{
+        title:'您确定要删除当前的比赛吗？',
+        content:'提示：比赛一旦删除，其下的所有竞猜将也会被删除掉！',
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+      })(type);
+
+      console.log(obj);
+      return Modal.confirm({
+        ...obj,
+        width:'480px',
+        onOk(){
+
+        },
+        onCancel(){
+
+        }
+      })
+  }
+
   /*TODO: 弹框的显示与隐藏 - 查看用户详情 - 传递数据[userId]*/
   handleModalVisible = (flag = false,record={}, type) => {
     const { dispatch } = this.props;
     this.setState({
       modalVisible: flag,
-      recorduser: record,
+      record: record,
       modaltype:type,
-      tabloading:true,
+      btnloading:true,
     });
     if(type===1 && flag){
       dispatch({
@@ -158,6 +174,7 @@ export default class TableList extends PureComponent {
   }
 
   handleOk(type, params) {
+    //type: 0 新增 ；1 修改
     const { dispatch } = this.props;
     this.setState({
       btnloading: true,
@@ -317,9 +334,9 @@ export default class TableList extends PureComponent {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { gamelist: { data, loading } ,  dispatch } = this.props;
-
-    const { modalVisible, resultlist,  modaltype, recorduser} = this.state;
+    const { gamelist: { data, loading, eventtype } ,  dispatch } = this.props;
+    console.log(data);
+    const { modalVisible, modaltype, record, btnloading} = this.state;
 
     const columns = [{
       title: '比赛名称',
@@ -340,28 +357,37 @@ export default class TableList extends PureComponent {
       title: '赛事类型',
       dataIndex: 'eventclass',
     },{
+      title: '赛事名',
+      dataIndex: 'eventName',
+    },{
       title: '赛事状态',
       dataIndex: 'gamestatus',
+      render:(text)=>text===0?'未发布':'已发布'
     },{
       title: '操作',
       dataIndex: '',
       render:(text,record)=>{
-        return <div>
-          <a onClick={() => this.handleModalVisible(record)}>终止</a>
-          <Divider/>
-          <a onClick={() => this.handleModalVisible(record)}>删除</a>
-        </div>
+        switch(record.gamestatus){
+          case 0:return <div>
+            <a onClick={() => this.handleConfirm(record,'release')}>发布</a>
+            <Divider type='vertical'/>
+            <a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>
+            <Divider type='vertical'/>
+            <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
+          </div>;
+          default: return '-'
+        }
+
       }
     }];
-    const footbtn1 = [<Button type="primary" key="reset" onClick={() => this.handleModalVisible()}>返回</Button>];
+
 
     return (
       <PageHeaderLayout title="比赛列表">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
-              {/*{this.renderAdvancedForm()}*/}
-              <Button  onClick={() => this.handleModalVisible(true,'','1')}>新增比赛</Button>
+                <Button  onClick={() => this.handleModalVisible(true,'',0)}>新增比赛</Button>
             </div>
             <StandardTable
               columns = { columns }
@@ -372,23 +398,20 @@ export default class TableList extends PureComponent {
           </div>
         </Card>
         <Modal
-          title="服务受理"
+          title={modaltype===0?'新增赛事':'赛事修改'}
           visible={ modalVisible }
           width={ 800 }
           style={{top:50}}
-          bodyStyle={{ height:'320px',overflowY:'auto'}}
-          footer={modaltype ==1?[]:footbtn1 }
+
+          footer={[]}
           onCancel={() => this.handleModalVisible()}
         >
-          {
-            modaltype ==1  ?<TabList data={resultlist}
-                                                        userorder={ recorduser}
-                                                        modaltype={modaltype}
-                                                        handleOk={(type, params) => this.handleOk(type, params)}
-                                                        handleCancel={() => this.handleModalVisible()}/>:<p>物流的相关功能正在开发中</p>
-          }
-
-
+          <AddGame modalType={modaltype}
+                   handleOk={() => this.handleOk(type,params)}
+                   handleCancel={() => this.handleModalVisible()}
+                   data={record}
+                   menu={eventtype}
+                   btnloading={btnloading}/>
         </Modal>
       </PageHeaderLayout>
     );

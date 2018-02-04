@@ -11,13 +11,13 @@ class StandardTable extends PureComponent {
   };
 
   componentWillReceiveProps(nextProps) {
-    // clean state
+    /* clean state
     if (nextProps.selectedRows.length === 0) {
       this.setState({
         selectedRowKeys: [],
         totalCallNo: 0,
       });
-    }
+    }*/
   }
 
   handleRowSelectChange = (selectedRowKeys, selectedRows) => {
@@ -65,8 +65,9 @@ class StandardTable extends PureComponent {
         <Table
           loading={loading}
           bordered
+          size={'middle'}
           rowKey={ record => record.key }
-          rowSelection={rowSelection}
+       //   rowSelection={rowSelection}
           dataSource={list}
           columns={columns}
           pagination={paginationProps}
