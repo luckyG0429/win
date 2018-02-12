@@ -6,12 +6,12 @@ import request from '../utils/request';
 
 //win+ 0 竞猜规则枚举
 export async function queryQuiztype() {
-  return request('/module/quiz/quizrules');
+  return request('/guessing/quiz/quizrules');
 }
 
 //win+ 01 比赛的竞猜列表
 export async function queryQuizlist(params) {
-  return request('/module/quiz/quizlist');
+  return request('/guessing/quiz/quizlist');
 }
 
 //win+ 02 新增竞猜

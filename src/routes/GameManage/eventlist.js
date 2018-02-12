@@ -12,6 +12,7 @@ import AddEvent from '../../components/Game/AddEvent';
 import AddGame from '../../components/Game/AddGame';
 
 import styles from './Servicelist.less';
+import List from "../../components/PageList";
 
 const FormItem = Form.Item;
 const TabPane = Tabs.TabPane;
@@ -475,6 +476,7 @@ export default class TableList extends PureComponent {
                 <Button type='primary' ghost onClick={()=>this.handleInnerCardlist()}>返回赛事</Button>
                 <Button type='primary' onClick={() => this.handleModalVisible(true,'',10)}>添加比赛</Button>
               </div>
+
               <Table dataSource={innerData}
                      pagination={false}
                      loading={innerLoading}

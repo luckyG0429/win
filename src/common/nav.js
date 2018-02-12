@@ -80,45 +80,6 @@ export const getNavData = app => [
           },
         ],
       },
-      // {
-      //   name: '结果',
-      //   path: 'result',
-      //   icon: 'check-circle-o',
-      //   children: [
-      //     {
-      //       name: '成功',
-      //       path: 'success',
-      //       component: dynamicWrapper(app, [], () => import('../routes/Result/Success')),
-      //     },
-      //     {
-      //       name: '失败',
-      //       path: 'fail',
-      //       component: dynamicWrapper(app, [], () => import('../routes/Result/Error')),
-      //     },
-      //   ],
-      // },
-      // {
-      //   name: '异常',
-      //   path: 'exception',
-      //   icon: 'warning',
-      //   children: [
-      //     {
-      //       name: '403',
-      //       path: '403',
-      //       component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
-      //     },
-      //     {
-      //       name: '404',
-      //       path: '404',
-      //       component: dynamicWrapper(app, [], () => import('../routes/Exception/404')),
-      //     },
-      //     {
-      //       name: '500',
-      //       path: '500',
-      //       component: dynamicWrapper(app, [], () => import('../routes/Exception/500')),
-      //     },
-      //   ],
-      // },
     ],
   },
   {
@@ -139,7 +100,7 @@ export const getNavData = app => [
           {
             name: '注册',
             path: 'register',
-            component: dynamicWrapper(app, ['login'], () => import('../routes/User/Register')),
+            component: dynamicWrapper(app, ['register'], () => import('../routes/User/Register')),
           },
           {
             name: '注册结果',

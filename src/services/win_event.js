@@ -5,7 +5,7 @@ import request from '../utils/request';
 
 //win+ 0 赛事分类枚举
 export async function enumEventtype(params) {
-  return request('/module/event/eventcategory');
+  return request('/guessing/event/eventcategory');
 }
 
 
@@ -19,12 +19,12 @@ export async function queryEventlist(params) {
  //    method: 'POST',
  //    body: paramsStr,
  //  });
-  return request('/module/event/eventlist');
+  return request('/guessing/event/eventlist');
 }
 
 // win+  03 新增比赛
 export async function createGame(params) {
-  return request('/module/game/createGameData', {
+  return request('/guessing/game/createGameData', {
     method: ' POST',
     body: params,
   });

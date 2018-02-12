@@ -15,12 +15,12 @@ export async function queryGamelist(params) {
  //    method: 'POST',
  //    body: paramsStr,
  //  });
-  return request('/module/game/gamelist.htm');
+  return request('/guessing/game/gamelist.htm');
 }
 
 // win+  03 新增比赛
 export async function createGame(params) {
-  return request('/module/game/createGameData', {
+  return request('/guessing/game/createGameData', {
     method: ' POST',
     body: params,
   });

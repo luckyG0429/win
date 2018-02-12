@@ -1,4 +1,4 @@
-import { fakeRegister } from '../services/api';
+import { setRegister } from '../services/login';
 
 export default {
   namespace: 'register',
@@ -8,16 +8,18 @@ export default {
   },
 
   effects: {
-    *submit(_, { call, put }) {
+    *submit({payload }, { call, put }) {
       yield put({
         type: 'changeSubmitting',
         payload: true,
       });
-      const response = yield call(fakeRegister);
-      yield put({
-        type: 'registerHandle',
-        payload: response,
-      });
+      const response = yield call(setRegister,payload);
+      if(response.resultCode === 0){
+        yield put({
+          type: 'registerHandle',
+          payload: 'ok',
+        });
+      }
       yield put({
         type: 'changeSubmitting',
         payload: false,
@@ -26,10 +28,10 @@ export default {
   },
 
   reducers: {
-    registerHandle(state, { payload }) {
+    registerHandle(state,  { payload }) {
       return {
         ...state,
-        status: payload.status,
+        status: payload,
       };
     },
     changeSubmitting(state, { payload }) {

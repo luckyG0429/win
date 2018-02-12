@@ -22,12 +22,12 @@
   "theme": "./src/theme.js",
   "hash": true,
   "proxy": {
-                "/game": {
-                    "target": "http://localhost:2018",
+                "/guessing": {
+                    "target": "http://www.nannan.kim",
                     "secure": false
                 },
                 "/module": {
-                    "target": "http://localhost:2018",
+                    "target": "http://www.nannan.kim",
                     "secure": false
                 }
             }

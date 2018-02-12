@@ -80,9 +80,12 @@ class BasicLayout extends React.PureComponent {
     return { location, breadcrumbNameMap };
   }
   componentDidMount() {
-    // this.props.dispatch({
-    //   type: 'user/fetchCurrent',
-    // });
+    const { userdata } = this.props;
+    console.log(userdata);
+    this.props.dispatch({
+      type: 'user/fetchCurrent',
+      payload: userdata.username
+    });
   }
   componentWillUnmount() {
     this.triggerResizeEvent.cancel();
@@ -255,12 +258,12 @@ class BasicLayout extends React.PureComponent {
     }
   }
   render() {
-    const { currentUser, collapsed, fetchingNotices, getRouteData } = this.props;
+    const { currentUser, collapsed, loading, getRouteData } = this.props;
 
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
-        <Menu.Item disabled><Icon type="user" />个人中心</Menu.Item>
-        <Menu.Item disabled><Icon type="setting" />设置</Menu.Item>
+        <Menu.Item><Icon type="user" />个人中心</Menu.Item>
+        <Menu.Item><Icon type="setting" />设置</Menu.Item>
         <Menu.Divider />
         <Menu.Item key="logout"><Icon type="logout" />退出登录</Menu.Item>
       </Menu>
@@ -308,10 +311,10 @@ class BasicLayout extends React.PureComponent {
               onClick={this.toggle}
             />
             <div className={styles.right}>
-              {currentUser.name ? (
+              {currentUser.username  ? (
                 <Dropdown overlay={menu}>
                   <span className={`${styles.action} ${styles.account}`}>
-                      {currentUser.name+'，'}
+                      {currentUser.username+'，'}
                       {Tipstxt()}
                   </span>
                 </Dropdown>
@@ -374,6 +377,7 @@ class BasicLayout extends React.PureComponent {
 
 export default connect(state => ({
   currentUser: state.user.currentUser,
+  userdata: state.login.userdata,
   collapsed: state.global.collapsed,
   fetchingNotices: state.global.fetchingNotices,
   notices: state.global.notices,

@@ -24,6 +24,7 @@ export default class Login extends Component {
   }
 
   componentWillUnmount() {
+    console.log(this.interval)
     clearInterval(this.interval);
   }
 
@@ -65,11 +66,11 @@ export default class Login extends Component {
     return (
       <div className={styles.main}>
         <Form onSubmit={this.handleSubmit}>
-          {
+             {
                 login.status === false &&
                 login.submitting === false &&
                 this.renderMessage(login.tipMessage)
-              }
+             }
           <FormItem>
             {getFieldDecorator('username', {
                   rules: [{
@@ -98,36 +99,39 @@ export default class Login extends Component {
                   />
                 )}
           </FormItem>
-          {/* <FormItem> */}
-          {/* <Row gutter={8}> */}
-          {/* <Col span={16}> */}
-          {/* {getFieldDecorator('imgcode', { */}
-          {/* rules: [{ */}
-          {/* required: true, message: '请输入验证码！', */}
-          {/* }], */}
-          {/* })( */}
-          {/* <Input */}
-          {/* size="large" */}
-          {/* type="text" */}
-          {/* prefix={<Icon type="mail" className={styles.prefixIcon} />} */}
-          {/* placeholder="验证码" */}
-          {/* /> */}
-          {/* )} */}
-          {/* </Col> */}
-          {/* <Col span={8}> */}
-          {/* <img onClick={this.onChangeImg} */}
-          {/* className={styles.getCaptcha} */}
-          {/* ref={'imgCode'} */}
-          {/* src="/system/user/imgCode/generate.htm" */}
-          {/* alt="图片验证码" */}
-          {/* /> */}
-          {/* </Col> */}
-          {/* </Row> */}
-          {/* </FormItem> */}
+           <FormItem>
+           <Row gutter={8}>
+           <Col span={16}>
+           {getFieldDecorator('imgcode', {
+           rules: [{
+           required: true, message: '请输入验证码！',
+           }],
+           })(
+           <Input
+           size="large"
+           type="text"
+           prefix={<Icon type="mail" className={styles.prefixIcon} />}
+           placeholder="验证码"
+           />
+           )}
+           </Col>
+           <Col span={8}>
+           <img onClick={this.onChangeImg}
+           className={styles.getCaptcha}
+           ref={'imgCode'}
+           src="/system/user/imgCode/generate.htm"
+           alt="图片验证码"
+           />
+           </Col>
+           </Row>
+           </FormItem>
           <FormItem className={styles.additional}>
             <Button size="large" loading={login.submitting} className={styles.submit} type="primary" htmlType="submit">
               登录
             </Button>
+          </FormItem>
+          <FormItem>
+            <a href='/user/register'>注册</a>
           </FormItem>
         </Form>
       </div>

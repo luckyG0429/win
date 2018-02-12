@@ -223,7 +223,7 @@ export default class Register extends Component {
             {/*</Row>*/}
           {/*</FormItem>*/}
           <FormItem>
-            <Button size="large" loading={register.submitting} className={styles.submit} type="primary" htmlType="submit">
+            <Button size="large" loading={false} className={styles.submit} type="primary" htmlType="submit">
               注册
             </Button>
             <Link className={styles.login} to="/user/login">使用已有账户登录</Link>
