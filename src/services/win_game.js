@@ -15,7 +15,7 @@ export async function queryGamelist(params) {
  //    method: 'POST',
  //    body: paramsStr,
  //  });
-  return request('/guessing/game/gamelist.htm');
+  return request('/guessing/game/createGame');
 }
 
 // win+  03 新增比赛
