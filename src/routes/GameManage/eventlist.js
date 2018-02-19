@@ -26,7 +26,12 @@ const { Option } = Select;
 export default class TableList extends PureComponent {
   state = {
     showGamelist:false,//日程列表的显示与否
-    formValues: {},//搜索参数
+    formValues: {
+      pageSequence:1,
+      pageSize:10,
+      name:'',
+      type:''
+    },//搜索参数
     recordparent:'',// 父级数据
     record:'',//当前被操作的数据
     modalVisible:false,//模态框的显示与否
@@ -47,10 +52,10 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     const { formValues } = this.state;
-    dispatch({
-      type: 'eventlist/fetch',
-      payload: formValues
-    });
+    // dispatch({
+    //   type: 'eventlist/fetch',
+    //   payload: formValues
+    // });
   }
 
   /* TODO: 表格的分页处理 - 以及内部状态管理：表单数据[ formValues ] */
@@ -456,12 +461,15 @@ export default class TableList extends PureComponent {
       }
     }];
 
+    const isHidden = showGamelist?'none':'block';
 
     return (
       <PageHeaderLayout title="比赛列表">
         <Card bordered={false}>
-          {
-            (!showGamelist)?(<div className={styles.tableList}>
+
+           <div className={styles.tableList} style={
+             {  display:isHidden }
+           }>
               <div className={styles.tableListForm}>
                 <Button  onClick={() => this.handleModalVisible(true,'',0)}>新增赛事</Button>
               </div>
@@ -471,7 +479,9 @@ export default class TableList extends PureComponent {
                 data={ data }
                 onChange={this.handleStandardTableChange}
               />
-            </div>):<div>
+            </div>
+          {
+            showGamelist && <div>
               <div className={styles.innerTablelist}>
                 <Button type='primary' ghost onClick={()=>this.handleInnerCardlist()}>返回赛事</Button>
                 <Button type='primary' onClick={() => this.handleModalVisible(true,'',10)}>添加比赛</Button>
@@ -484,6 +494,8 @@ export default class TableList extends PureComponent {
                      columns={innerColumns}/>
             </div>
           }
+
+
         </Card>
         <Modal
           title={(modaltype<10)?(modaltype===0?'新增赛事':'赛事修改'):(modaltype===10?'新增比赛':'比赛修改')}
@@ -501,7 +513,7 @@ export default class TableList extends PureComponent {
                                 handleCancel={() => this.handleModalVisible()}
                                 data={record}
                                 parentData={recordparent}
-                                menu={eventtype}
+                                menu={[]}
                                 btnloading={btnloading}/>) : (<AddEvent modalType={modaltype}
                                                                     handleOk={() => this.handleOk(type,params)}
                                                                     handleCancel={() => this.handleModalVisible()}

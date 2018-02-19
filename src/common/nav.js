@@ -23,7 +23,7 @@ export const getNavData = app => [
           {
             name: '用户列表',
             path: 'list',
-            component: dynamicWrapper(app, ['eventlist'], () => import('../routes/GameManage/eventlist')),
+            component: dynamicWrapper(app, ['userlist'], () => import('../routes/UserManage/list')),
           }
           ]
       },
@@ -35,7 +35,7 @@ export const getNavData = app => [
           {
             name: '交易流水',
             path: 'list',
-            component: dynamicWrapper(app, ['eventlist'], () => import('../routes/GameManage/eventlist')),
+            component: dynamicWrapper(app, ['tradelist'], () => import('../routes/TradeManage/list')),
           },
         ],
       },
@@ -76,7 +76,7 @@ export const getNavData = app => [
           {
             name: '参数配置',
             path: 'param',
-            component: dynamicWrapper(app, ['quizlist'], () => import('../routes/QuizManage/list')),
+            component: dynamicWrapper(app, ['systemlist'], () => import('../routes/SystemManage/list')),
           },
         ],
       },

@@ -8,7 +8,15 @@ export default {
   namespace:'eventlist',
   state:{
     data:{
-      list:[],
+      list:[{id:3,
+  eventName:'中国VS韩国',
+  eventclass:'2',
+  eventclassStr:'足球',
+  eventTimeStart:'2018-02-01 09:00',
+  eventTimeEnd:'2018-02-05 09:00',
+  eventstatus:1,
+  eventstatusStr:'已发布',
+}],
       pagination:false
     },
     loading:false,

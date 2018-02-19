@@ -56,11 +56,18 @@ export default function request(url, options) {
 
   const newOptions = { ...defaultOptions, ...options };
   if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
-    newOptions.headers = {
-      Accept: 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded',
-      ...newOptions.headers,
-    };
+    if(newOptions.contentType === 'files'){
+      newOptions.headers = {
+        Accept: 'application/json',
+        ...newOptions.headers,
+      };
+    }else{
+      newOptions.headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        ...newOptions.headers,
+      };
+    }
   }
   return fetch(url, newOptions)
     .then(checkStatus)

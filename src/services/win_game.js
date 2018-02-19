@@ -21,7 +21,7 @@ export async function queryGamelist(params) {
 // win+  03 新增比赛
 export async function createGame(params) {
   return request('/guessing/game/createGameData', {
-    method: ' POST',
+    method: 'POST',
     body: params,
   });
 }

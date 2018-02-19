@@ -14,7 +14,7 @@ var Eventdetail =(props) =>{
 
   const { modalType, form, handleOk, handleCancel, data , menu, btnloading} = props;
   //赛事分类列表
-  const optionListClass = menu.length ==0 ?[]:menu.map((item)=><Option key={item} value={item.id}>{item.name}</Option>);
+  const optionListClass = true ?[]:menu.map((item)=><Option key={item} value={item.id}>{item.name}</Option>);
   const canEdit = modalType === 1;
 
   const optionListTeam=[];
