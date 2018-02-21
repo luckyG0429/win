@@ -18,10 +18,15 @@ export default {
         payload: true,
       });
       const response = yield call(queryCurrent,payload);
-      yield put({
-        type: 'saveCurrentUser',
-        payload: response,
-      });
+      if(response.resultCode === 0){
+        yield put({
+          type: 'saveCurrentUser',
+          payload: response,
+        });
+      }else{
+        yield put(routerRedux.push('/user/login'));
+      }
+
       yield put({
         type: 'changeLoading',
         payload: false,
