@@ -38,7 +38,29 @@ export default class TableList extends PureComponent {
     modaltype:'',//模态框的操作类型
     modalclass:'',//模态框的分类
     btnloading:false,//模态框的发送表单按钮
-    innerData:[],
+    innerData:[{
+      id:'201',
+      gameName:'中超1轮',
+      gameTeamA:'建业',
+      gameTeamB:'权健',
+      gameTimeStart:'2018-03-02 19:35',
+      gameTimeEnd:'-',
+      eventclass:'足球',
+      gamestatus:0,
+      eventName:'2018中超联赛',
+      eventId:2
+    }, {
+      id:'202',
+      gameName:'中超1轮',
+      gameTeamA:'申花',
+      gameTeamB:'亚泰',
+      gameTimeStart:'2018-03-02 19:35',
+      gameTimeEnd:'-',
+      eventclass:'足球',
+      gamestatus:0,
+      eventName:'2018中超联赛',
+      eventId:2
+    }],
     innerLoading:false,
   };
 
@@ -127,7 +149,7 @@ export default class TableList extends PureComponent {
         payload:record.id,
         callback:(result)=>{
           this.setState({
-            innerData:result.data,
+          //  innerData:result.data,
             innerLoading:false,
           })
         }
@@ -413,8 +435,8 @@ export default class TableList extends PureComponent {
       title: '操作',
       dataIndex: '',
       render:(text,record)=>{
-        switch(record.gamestatus){
-          case 1:return '-';
+        switch(record.eventstatus){
+          case 1:return  <a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>;
           default:
             return <div>
               <a onClick={() => this.handleConfirm(record,'release')}>发布</a>
@@ -431,8 +453,8 @@ export default class TableList extends PureComponent {
       title: '比赛开始时间',
       dataIndex: 'gameTimeStart',
     },{
-      title: '赛事名',
-      dataIndex: 'eventName',
+      title: '赛事小组',
+      dataIndex: 'gameName',
     },{
       title: '比赛战队-A',
       dataIndex: 'gameTeamA',
@@ -445,7 +467,7 @@ export default class TableList extends PureComponent {
     },{
       title: '赛事状态',
       dataIndex: 'gamestatus',
-      render:(text)=>text===0?'未发布':'已发布'
+      render:(text)=>text===0?'赛前':'赛中'
     },{
       title: '操作',
       dataIndex: '',

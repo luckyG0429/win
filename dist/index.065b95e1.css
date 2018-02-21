@@ -17266,6 +17266,15 @@ textarea.ant-time-picker-input {
 .tableList___29Tdc .tableListOperator___3hhuu button {
   margin-right: 8px;
 }
+.innerTablelist___38HNY {
+  margin-bottom: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
 .tableListForm___1X3tI {
   border: 1px solid #ddd;
   border-radius: 12px;

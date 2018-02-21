@@ -35,17 +35,55 @@ export default class TableList extends PureComponent {
     },
     modalVisible: false,
     record: {},
+
+    showdiv:false,
     modaltype:'',
     btnloading:false,
+    innerLoading:false,
+    innerData:[{
+      id: 1,
+      gameName: '中超1轮',
+      gameId: '201',
+      quizRules: '猜大小',
+      Ateamodds: '0.94',
+      Bteamodds: '0.65',
+      quizMinCoin: '100',
+      quizTimeStart: '2018-01-25 09:00',
+      quizTimeEnd: '2018-02-01 09:00',
+      quizTotalJoin: '100231',
+      quizAteamJoin: '21922',
+      quizBteamJoin: '87328',
+      quizTotalCoin: '10899000',
+      quizAteamCoin: '4090900',
+      quizBteamCoin: '5800000',
+      quizStatus: 1,
+    }, {
+      id: 3,
+      gameName: '中超1轮',
+      gameId: '201',
+      quizRules: '胜分差',
+      Ateamodds: '0.95',
+      Bteamodds: '0.95',
+      quizMinCoin: '50',
+      quizTimeStart: '2018-01-25 09:00',
+      quizTimeEnd: '2018-02-01 09:00',
+      quizTotalJoin: '0',
+      quizAteamJoin: '0',
+      quizBteamJoin: '0',
+      quizTotalCoin: '0',
+      quizAteamCoin: '0',
+      quizBteamCoin: '0',
+      quizStatus: 0,
+    }]
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
     const { formValues } = this.state;
-    dispatch({
-      type: 'quizlist/fetch',
-      payload: formValues
-    });
+    // dispatch({
+    //   type: 'quizlist/fetch',
+    //   payload: formValues
+    // });
   }
 
   /* TODO: 表格的分页处理 - 以及内部状态管理：表单数据[ formValues ] */
@@ -91,6 +129,27 @@ export default class TableList extends PureComponent {
 
       }
     })
+  }
+
+  handleInnerCardlist = (flag=false,record={})=>{
+    const { dispatch } = this.props;
+    this.setState({
+      showdiv:flag,
+      recordparent:record,
+      innerLoading:false
+    })
+    // if(flag){
+    //   dispatch({
+    //     type: 'eventlist/gamefetch',
+    //     payload:record.id,
+    //     callback:(result)=>{
+    //       this.setState({
+    //         //  innerData:result.data,
+    //         innerLoading:false,
+    //       })
+    //     }
+    //   });
+    // }
   }
 
   /*TODO: 弹框的显示与隐藏 - 查看用户详情 - 传递数据[userId]*/
@@ -360,21 +419,9 @@ export default class TableList extends PureComponent {
     },{
       title: '竞猜状态',
       dataIndex: 'quizStatus',
-    },{
-      title: '操作',
-      dataIndex: '',
-      render:(text,record)=>{
-        switch(gamestatus){
-          case 0: return <div>
-            <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
-            <Divider type='vertical'/>
-            <a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>
-          </div>;
-          case 1:return <a onClick={() => this.handleConfirm(record,'stop')}>结束</a>;
-          default: return '-'
-        }
-      }
     }];
+
+    console.log(quizlist);
     return <Table dataSource={quizlist}
                   style={{background:'#fff'}}
                   bordered
@@ -389,16 +436,18 @@ export default class TableList extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     const { quizlist: { data, loading } ,  dispatch } = this.props;
 
-    const { modalVisible, record,  modaltype, btnloading} = this.state;
+    const { modalVisible, record,  modaltype, btnloading, innerLoading, innerData, showdiv} = this.state;
 
     const columns = [{
-      // title: '比赛名称',
-      // dataIndex: 'gameName',
-      title: '比赛开始时间',
-      dataIndex: 'gameTimeStart',
-    },{
       title: '赛事名',
       dataIndex: 'eventName',
+
+    },{
+      title: '赛事小组',
+      dataIndex: 'gameName',
+    },{
+      title: '比赛开始时间',
+      dataIndex: 'gameTimeStart',
     },{
       title: '比赛战队-A',
       dataIndex: 'gameTeamA',
@@ -416,12 +465,18 @@ export default class TableList extends PureComponent {
       dataIndex: 'gamestatus',
       render:(text)=>text===0?'未发布':'已发布'
     },{
+      title: '竞猜设置',
+      dataIndex: 'gamestatus',
+      render:(text, record)=>{
+        return <a  onClick={()=>this.handleInnerCardlist(true, record)}>竞猜列表</a>
+      }
+    },{
       title: '操作',
       dataIndex: '',
       render:(text,record)=>{
         switch(record.gamestatus){
           case 0:return <div>
-            <a onClick={() => this.handleModalVisible(true,record,0)}>添加竞猜</a>
+            <a onClick={() => this.handleModalVisible(true,record,11)}>发布</a>
           </div>;
           default: return '-'
         }
@@ -430,27 +485,96 @@ export default class TableList extends PureComponent {
     }];
 
 
+    const innerColumns = [{
+      title: '竞猜开始时间',
+      dataIndex: 'quizTimeStart',
+    },{
+      title: '竞猜规则',
+      dataIndex: 'quizRules',
+    },{
+      title: '竞猜结束时间',
+      dataIndex: 'quizTimeEnd',
+    },{
+      title: '战队-A队',
+      dataIndex: '',
+      render:(text,record)=>{
+        return <div>
+          <a>{`赔率：${record.Ateamodds}`}</a>
+          <hr/>
+          <a>{`下注人数：${record.quizAteamJoin}`}</a>
+        </div>
+      }
+    },{
+      title: '战队-B队',
+      dataIndex: '',
+      render:(text,record)=>{
+        return <div>
+          <a>{`赔率：${record.Bteamodds}`}</a>
+          <hr/>
+          <a>{`下注人数：${record.quizBteamJoin}`}</a>
+        </div>
+      }
+    },{
+      title: '下注总人数',
+      dataIndex: 'quizTotalJoin',
+    },{
+      title: '下注总金币',
+      dataIndex: 'quizTotalCoin',
+    },{
+      title: '竞猜状态',
+      dataIndex: 'quizStatus',
+    },{
+      title: '操作',
+      dataIndex: '',
+      render:(text,record)=>{
+        switch(record.quizStatus){
+          case 0: return <div>
+            <a onClick={() => this.handleConfirm(record,'delete')}>发布</a>
+            <Divider type='vertical'/>
+            <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
+            <Divider type='vertical'/>
+            <a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>
+          </div>;
+          case 1:return <a onClick={() => this.handleConfirm(record,'stop')}>结束</a>;
+          default: return '-'
+        }
+      }
+    }];
+
     const footbtn1 = [<Button type="primary" key="reset" onClick={() => this.handleModalVisible()}>返回</Button>];
-    console.log(data);
+    const isHidden = showdiv?'none':'block';
+
+    console.log('showdiv',showdiv);
     return (
       <PageHeaderLayout title="竞猜列表">
         <Card bordered={false}>
-          <div className={styles.tableList}>
+          <div className={styles.tableList} style={
+            {  display:isHidden }
+          }>
             <div className={styles.tableListForm}>
               {this.renderAdvancedForm()}
             </div>
-
-
             <Table style={{marginTop:'24px'}}
               columns={ columns }
               loading={ loading }
               expandedRowRender={record=>this.renderInnertable(record)}
               dataSource={data.list}
             />
-
-
-
           </div>
+            {
+              showdiv && <div>
+                <div className={styles.innerTablelist}>
+                <Button type='primary' ghost onClick={()=>this.handleInnerCardlist()}>返回比赛列表</Button>
+                <Button type='primary' onClick={() => this.handleModalVisible(true,'',10)}>新增竞猜</Button>
+              </div>
+              <Table dataSource={innerData}
+              pagination={false}
+              loading={innerLoading}
+              size='small'
+              columns={innerColumns}/>
+              </div>
+            }
+
         </Card>
         <Modal
           title={modaltype ===1?'修改':'新增'}
