@@ -300,7 +300,7 @@ class BasicLayout extends React.PureComponent {
             selectedKeys={this.getCurrentMenuSelectedKeys()}
             style={{ margin: '16px 0', width: '100%' }}
           >
-            {this.getNavMenuItems(this.menus)}
+            {this.getNavMenuItems(this.menus.slice(0,this.menus.length-1))}
           </Menu>
         </Sider>
         <Layout>
@@ -336,7 +336,7 @@ class BasicLayout extends React.PureComponent {
                     )
                   )
                 }
-                <Redirect exact from="/" to="/dashboard/analysis" />
+                {/*<Redirect exact from="/" to="/dashboard/analysis" />*/}
                 <Route component={NotFound} />
               </Switch>
             </div>
@@ -356,7 +356,7 @@ class BasicLayout extends React.PureComponent {
               }]}
               copyright={
                 <div>
-                  Copyright <Icon type="copyright" /> 2017 蚂蚁金服体验技术部出品
+                  Copyright <Icon type="copyright" /> 2017 Win研发团队制作
                 </div>
               }
             />

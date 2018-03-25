@@ -7,7 +7,29 @@ export default {
   namespace:'gamelist',
   state:{
     data:{
-      list:[],
+      list:[{
+        id:'201',
+        gameName:'20180201上午场',
+        gameTeamA:'恒大足球',
+        gameTeamB:'和田君队',
+        gameTimeStart:'2018-02-01 09:00',
+        gameTimeEnd:'2018-02-01 12:00',
+        eventclass:'足球',
+        gamestatus:0,
+        eventName:'中国VS韩国',
+        eventId:2
+      }, {
+        id:'202',
+        gameName:'20180201上午场',
+        gameTeamA:'恒大足球',
+        gameTeamB:'和田君队',
+        gameTimeStart:'2018-02-01 15:00',
+        gameTimeEnd:'2018-02-01 18:00',
+        eventclass:'足球',
+        gamestatus:1,
+        eventName:'中国VS韩国',
+        eventId:2
+      }],
       pagination:false
     },
     loading:false,

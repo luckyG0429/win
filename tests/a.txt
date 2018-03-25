@@ -1,0 +1,23 @@
+竞猜属性：
+
+id 竞猜id
+quizType 竞猜类型
+quizName  竞猜名称
+endtime  结束时间
+
+totalGoldAmount  总下注金币
+totalExperienceAmount  总下注体验币
+
+status  竞猜状态
+quizResult 竞猜结果
+
+
+
+
+mock/quiz/quizList:
+{
+data:[]
+eData:null
+info:null
+resultCode:0
+}

@@ -10,7 +10,7 @@ import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import AddQuiz from '../../components/GameQuiz/AddQuiz';
 
-import styles from './Servicelist.less';
+import styles from './quiz.less';
 
 const FormItem = Form.Item;
 const TabPane = Tabs.TabPane;
@@ -118,7 +118,6 @@ export default class TableList extends PureComponent {
       cancelText: '取消',
     })(type);
 
-    console.log(obj);
     return Modal.confirm({
       ...obj,
       width:'480px',
@@ -131,26 +130,6 @@ export default class TableList extends PureComponent {
     })
   }
 
-  handleInnerCardlist = (flag=false,record={})=>{
-    const { dispatch } = this.props;
-    this.setState({
-      showdiv:flag,
-      recordparent:record,
-      innerLoading:false
-    })
-    // if(flag){
-    //   dispatch({
-    //     type: 'eventlist/gamefetch',
-    //     payload:record.id,
-    //     callback:(result)=>{
-    //       this.setState({
-    //         //  innerData:result.data,
-    //         innerLoading:false,
-    //       })
-    //     }
-    //   });
-    // }
-  }
 
   /*TODO: 弹框的显示与隐藏 - 查看用户详情 - 传递数据[userId]*/
   handleModalVisible = (flag = false,record={}, type) => {
@@ -441,42 +420,34 @@ export default class TableList extends PureComponent {
     const columns = [{
       title: '赛事名',
       dataIndex: 'eventName',
-
     },{
-      title: '赛事小组',
-      dataIndex: 'gameName',
+      title: '比赛名称',
+      dataIndex: 'gameName'
     },{
-      title: '比赛开始时间',
+      title: '竞猜名',
+      dataIndex: 'quizRules'
+    },{
+      title: '竞猜结束时间',
       dataIndex: 'gameTimeStart',
     },{
-      title: '比赛战队-A',
+      title: '战队双方',
       dataIndex: 'gameTeamA',
+      render:(text,record)=>`${text} VS ${record.gameTeamB}`
     },{
-      title: '比赛战队-B',
-      dataIndex: 'gameTeamB',
-    },{
-      title: '比赛结束时间',
+      title: '总下注金额(金币体验币)',
       dataIndex: 'gameTimeEnd',
     },{
-      title: '赛事类型',
-      dataIndex: 'eventclass',
-    },{
-      title: '赛事状态',
+      title: '竞猜状态',
       dataIndex: 'gamestatus',
-      render:(text)=>text===0?'未发布':'已发布'
-    },{
-      title: '竞猜设置',
-      dataIndex: 'gamestatus',
-      render:(text, record)=>{
-        return <a  onClick={()=>this.handleInnerCardlist(true, record)}>竞猜列表</a>
-      }
     },{
       title: '操作',
       dataIndex: '',
       render:(text,record)=>{
         switch(record.gamestatus){
           case 0:return <div>
-            <a onClick={() => this.handleModalVisible(true,record,11)}>发布</a>
+            <a onClick={() => this.handleModalVisible(true,record,1)}>查看</a>
+            <Divider type='vertical'/>
+            <a onClick={() => this.handleModalVisible(true,record,4)}>下注流水</a>
           </div>;
           default: return '-'
         }
@@ -484,100 +455,22 @@ export default class TableList extends PureComponent {
       }
     }];
 
-
-    const innerColumns = [{
-      title: '竞猜开始时间',
-      dataIndex: 'quizTimeStart',
-    },{
-      title: '竞猜规则',
-      dataIndex: 'quizRules',
-    },{
-      title: '竞猜结束时间',
-      dataIndex: 'quizTimeEnd',
-    },{
-      title: '战队-A队',
-      dataIndex: '',
-      render:(text,record)=>{
-        return <div>
-          <a>{`赔率：${record.Ateamodds}`}</a>
-          <hr/>
-          <a>{`下注人数：${record.quizAteamJoin}`}</a>
-        </div>
-      }
-    },{
-      title: '战队-B队',
-      dataIndex: '',
-      render:(text,record)=>{
-        return <div>
-          <a>{`赔率：${record.Bteamodds}`}</a>
-          <hr/>
-          <a>{`下注人数：${record.quizBteamJoin}`}</a>
-        </div>
-      }
-    },{
-      title: '下注总人数',
-      dataIndex: 'quizTotalJoin',
-    },{
-      title: '下注总金币',
-      dataIndex: 'quizTotalCoin',
-    },{
-      title: '竞猜状态',
-      dataIndex: 'quizStatus',
-    },{
-      title: '操作',
-      dataIndex: '',
-      render:(text,record)=>{
-        switch(record.quizStatus){
-          case 0: return <div>
-            <a onClick={() => this.handleConfirm(record,'delete')}>发布</a>
-            <Divider type='vertical'/>
-            <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
-            <Divider type='vertical'/>
-            <a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>
-          </div>;
-          case 1:return <a onClick={() => this.handleConfirm(record,'stop')}>结束</a>;
-          default: return '-'
-        }
-      }
-    }];
-
-    const footbtn1 = [<Button type="primary" key="reset" onClick={() => this.handleModalVisible()}>返回</Button>];
-    const isHidden = showdiv?'none':'block';
-
-    console.log('showdiv',showdiv);
     return (
       <PageHeaderLayout title="竞猜列表">
         <Card bordered={false}>
-          <div className={styles.tableList} style={
-            {  display:isHidden }
-          }>
+          <div className={styles.tableList}>
             <div className={styles.tableListForm}>
               {this.renderAdvancedForm()}
             </div>
             <Table style={{marginTop:'24px'}}
               columns={ columns }
               loading={ loading }
-              expandedRowRender={record=>this.renderInnertable(record)}
               dataSource={data.list}
             />
           </div>
-            {
-              showdiv && <div>
-                <div className={styles.innerTablelist}>
-                <Button type='primary' ghost onClick={()=>this.handleInnerCardlist()}>返回比赛列表</Button>
-                <Button type='primary' onClick={() => this.handleModalVisible(true,'',10)}>新增竞猜</Button>
-              </div>
-              <Table dataSource={innerData}
-              pagination={false}
-              loading={innerLoading}
-              size='small'
-              columns={innerColumns}/>
-              </div>
-            }
-
         </Card>
         <Modal
-          title={modaltype ===1?'修改':'新增'}
+          title={modaltype ===1?'查看':'新增'}
           visible={ modalVisible }
           width={ 800 }
           style={{top:50}}

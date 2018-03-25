@@ -13,18 +13,19 @@ export async function enumEventtype() {
 
 // win+  02.赛事列表
 export async function queryEventlist(params) {
- const { pageSequence, pageSize, name, type } = params;
- const paramsStr = `pageSequence=${pageSequence}&pageSize=${pageSize}&type=${type}&name=${name}`;
+  let { pageSize, currentPage, searchParams} = params;
+  let paramsStr = `pageSequence=${currentPage}&pageSize=${pageSize}&searchParams=${searchParams}`;
  return request(`/guessing/game/recentlyGames?${paramsStr}`);
 }
 
-// win+  03 新增比赛
-export async function createGame(params) {
-  const { name, icon, description, type, startTime, endTime } = params;
-  const paramsStr = `name=${name}`;
+// win+  03 新增赛事
+export async function addEvent(params) {
+  console.log(params);
+  const {name, type, startTime, endTime} = params;
+  const paramsStr = `name=${name}&type=${type}&startTime=${startTime}&endTime=${endTime}`;
   return request('/guessing/game/createGame', {
-    method: ' POST',
-    body: params,
+    method:'POST',
+    body: paramsStr
   });
 }
 

@@ -1,5 +1,5 @@
 /**
- * 额度管理审核
+ * 比赛管理
  *
  */
 
@@ -10,7 +10,8 @@ import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import AddGame from '../../components/Game/AddGame';
 
-import styles from './Servicelist.less';
+
+import styles from './game.less';
 
 const FormItem = Form.Item;
 const TabPane = Tabs.TabPane;
@@ -33,10 +34,10 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     const { formValues } = this.state;
-    dispatch({
-      type: 'gamelist/fetch',
-      payload: formValues
-    });
+    // dispatch({
+    //   type: 'gamelist/fetch',
+    //   payload: formValues
+    // });
   }
 
   /* TODO: 表格的分页处理 - 以及内部状态管理：表单数据[ formValues ] */
@@ -93,7 +94,6 @@ export default class TableList extends PureComponent {
       modalVisible: flag,
       record: record,
       modaltype:type,
-      btnloading:true,
     });
     if(type===1 && flag){
       dispatch({
@@ -180,90 +180,11 @@ export default class TableList extends PureComponent {
       btnloading: true,
     });
     if (type == 1) {
-      dispatch({
-        type: 'gamelist/changeorderstate',
-        payload: params,
-        callback: (result) => {
-          if (result.code === 200) {
-            this.setState({
-              btnloading: false,
-              modalVisible:false,
-            });
-            Modal.success({
-              title: '受理成功！',
-              onOk() {
-                dispatch({
-                  type: 'gamelist/fetch',
-                  payload: {
-                    page:1,
-                    size:10,
-                    kgName:'',
-                    applyName:'',
-                    applyPhone:'',
-                    applyStartTime:'',
-                    applyEndTime:'',
-                    state:'',
-                  },
-                });
-              },
-            });
-          }else{
-            this.setState({
-              btnloading: false,
-              modalVisible:false,
-            });
-          }
 
-        },
-      });
-    } else if(type == 2) {
-      dispatch({
-        type: 'gamelist/senddeliveryinfo',
-        payload: params,
-        callback: (result) => {
-          if (result.code === 200) {
-            Modal.success({
-              title: '添加成功！',
-              onOk() {
-                dispatch({
-                  type: 'gamelist/fetch',
-                  payload: {
-                    page:1,
-                    size:10,
-                    kgName:'',
-                    applyName:'',
-                    applyPhone:'',
-                    applyStartTime:'',
-                    applyEndTime:'',
-                    state:'',
-                  },
-                });
-              },
-            });
-          }
-          this.setState({
-            btnloading: false,
-            modalVisible:false,
-          });
-        },
-      });
     } else {
-      dispatch({
-        type: 'childuser/changechild',
-        payload: params,
-        callback: (result) => {
-          if (result.code === 200) {
 
-          }
-          this.setState({
-            btnloading: false,
-            modalVisible:false,
-          });
-        },
-      });
     }
   }
-
 
   /*TODO: 生成条件查询表单 ,参数是：渠道枚举数据 ,额度状态枚举，额度产品枚举 */
   renderAdvancedForm( ) {
@@ -272,47 +193,16 @@ export default class TableList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={7} sm={24}>
-            <FormItem label="幼儿园名称">
-              {getFieldDecorator('kgName')(
-                <Input placeholder="请输入"  maxLength={18} style={{ width: '80%' }} />
-              )}
-            </FormItem>
-          </Col>
-
-          <Col md={7} sm={24}>
-            <FormItem label="申请人姓名">
-              {getFieldDecorator('applyName')(
-                <Input placeholder="请输入"  maxLength={18} style={{ width: '80%' }} />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={9} sm={24}>
-            <FormItem label="提交时间">
-              {getFieldDecorator('createTime')(
-                <RangePicker style={{ width: '100%' }}/>
-              )}
-            </FormItem>
-          </Col>
-        </Row>
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={7} sm={24}>
-            <FormItem label="申请人手机">
-              {getFieldDecorator('applyPhone',{
-                rules:[
-                  { pattern:/^1[3|4|5|7|8]\d{9}$/,
-                    len:11,
-                    message:'请输入有效的手机号'}
-                ],
-                validateTrigger:'onBlur'
-              })(
-                <Input placeholder="请输入" maxLength={11} style={{ width: '80%' }} />
+            <FormItem label="">
+              {getFieldDecorator('name')(
+                <Input placeholder="请输入赛事名称"  maxLength={18} style={{ width: '80%' }} />
               )}
             </FormItem>
           </Col>
           <Col md={7} sm={24}>
-            <FormItem label="审核状态">
+            <FormItem label="">
               {getFieldDecorator('state')(
-                <Select placeholder="请选择" style={{ width: '80%' }}>
+                <Select placeholder="请选择比赛" style={{ width: '80%' }}>
                   <Option key={1}>未受理</Option>
                   <Option key={2}>已受理</Option>
                   <Option key={3}>已完成</Option>
@@ -320,10 +210,16 @@ export default class TableList extends PureComponent {
               )}
             </FormItem>
           </Col>
-          <Col md={10} sm={24}>
+          {/*<Col md={9} sm={24}>*/}
+            {/*<FormItem label="提交时间">*/}
+              {/*{getFieldDecorator('createTime')(*/}
+                {/*<RangePicker style={{ width: '100%' }}/>*/}
+              {/*)}*/}
+            {/*</FormItem>*/}
+          {/*</Col>*/}
+        <Col md={10} sm={24}>
              <span style={{ float: 'left', marginBottom: 24 }}>
                 <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>查询</Button>
-                <Button  onClick={this.handleFormReset}>重置</Button>
               </span>
           </Col>
         </Row>
@@ -339,43 +235,40 @@ export default class TableList extends PureComponent {
     const { modalVisible, modaltype, record, btnloading} = this.state;
 
     const columns = [{
+      title: '赛事',
+      dataIndex: 'eventName',
+    },{
       title: '比赛名称',
       dataIndex: 'gameName',
-    },{
-      title: '比赛战队-A',
-      dataIndex: 'gameTeamA',
-    },{
-      title: '比赛战队-B',
-      dataIndex: 'gameTeamB',
     },{
       title: '比赛开始时间',
       dataIndex: 'gameTimeStart',
     },{
-       title: '比赛结束时间',
-      dataIndex: 'gameTimeEnd',
+      title: '战队-A',
+      dataIndex: 'gameTeamA',
     },{
-      title: '赛事类型',
-      dataIndex: 'eventclass',
+      title: '战队-B',
+      dataIndex: 'gameTeamB',
     },{
-      title: '赛事名',
-      dataIndex: 'eventName',
-    },{
-      title: '赛事状态',
+      title: '比赛状态',
       dataIndex: 'gamestatus',
       render:(text)=>text===0?'未发布':'已发布'
+    },{
+      title: '创建人',
+      dataIndex: 'person',
     },{
       title: '操作',
       dataIndex: '',
       render:(text,record)=>{
         switch(record.gamestatus){
           case 0:return <div>
-            <a onClick={() => this.handleConfirm(record,'release')}>发布</a>
+            <a onClick={() => this.handleConfirm(record,'release')}>提交</a>
             <Divider type='vertical'/>
-            <a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>
+            <a onClick={() => this.handleModalVisible(true,record,1)}>编辑</a>
             <Divider type='vertical'/>
-            <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
+            <a onClick={() => this.handleModalVisible(true,record,1)}>查看</a>
           </div>;
-          default: return '-'
+          default: return  <a onClick={() => this.handleModalVisible(true,record,1)}>查看</a>
         }
 
       }
@@ -398,7 +291,7 @@ export default class TableList extends PureComponent {
           </div>
         </Card>
         <Modal
-          title={modaltype===0?'新增赛事':'赛事修改'}
+          title={modaltype===0?'新增比赛':'比赛编辑'}
           visible={ modalVisible }
           width={ 800 }
           style={{top:50}}
@@ -413,6 +306,7 @@ export default class TableList extends PureComponent {
                    menu={eventtype}
                    btnloading={btnloading}/>
         </Modal>
+
       </PageHeaderLayout>
     );
   }

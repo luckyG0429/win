@@ -49,7 +49,6 @@ class EventTypeForm extends PureComponent{
       for(var x in values){
         formData.append([x],values[x])
       }
-
       handleOk(formData);
     });
   }
@@ -111,7 +110,7 @@ class EventTypeForm extends PureComponent{
               { required: false, message: '请输入' }
             ]
           })(
-            <Input placeholder='请输入赛事类型'/>
+            <Input placeholder='赛事类型值为正整数且唯一，如：10'/>
           )
         }
       </FormItem>

@@ -1,0 +1,15 @@
+赛事
+
+id
+type 赛事分类
+name 赛事名称
+startTime  开赛时间
+endTime  结束时间
+status  赛事状态
+
+
+
+
+
+
+

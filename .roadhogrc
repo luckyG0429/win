@@ -23,11 +23,11 @@
   "hash": true,
   "proxy": {
                 "/guessing": {
-                    "target": "http://www.nannan.kim",
+                    "target": "http://120.55.44.19:80",
                     "secure": false
                 },
                 "/module": {
-                    "target": "http://www.nannan.kim",
+                    "target": "http://120.55.44.19:80",
                     "secure": false
                 }
             }

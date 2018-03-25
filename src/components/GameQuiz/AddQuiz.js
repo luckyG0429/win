@@ -14,24 +14,26 @@ var Quizdetail =(props) =>{
 
   const { modalType, form, handleOk, handleCancel, data , gameName, gameId, menu, btnloading} = props;
   //竞猜规则列表
- // const optionList = menu.length ==0 ?[]:menu.map((item)=><Option key={item} value={item.id}>{item.name}</Option>);
+  // const optionList = menu.length == 0?[]: menu.map((item)=><Option key={item} value={item.id}>{item.name}</Option>);
   const optionList =[];
   const canEdit = modalType === 'change';
 
   if(data && data != undefined){
     var {
+      eventName,
       quizRules,
-      Ateamodds,
-      Bteamodds,
+      gameTeamA,
+      gameTeamB,
       quizMinCoin,
       quizTimeStart,
       quizTimeEnd
     } = data
   }else{
-    var  quizRules='',
-      Ateamodds='',
-      Bteamodds='',
-      quizMinCoin='',
+    var  eventName='',
+      quizRules= '',
+      gameTeamA='',
+      gameTeamB='',
+      quizMinCoin= '',
       quizTimeStart='',
       quizTimeEnd='';
   }
@@ -69,8 +71,8 @@ var Quizdetail =(props) =>{
       };
       var jsonParams = {
         quizRules:values.quizRules|| undefined,
-        Ateamodds:values.Ateamodds|| undefined,
-        Bteamodds:values.Bteamodds|| undefined,
+        gameTeamA:values.gameTeamA|| undefined,
+        gameTeamB:values.gameTeamB|| undefined,
         quizMinCoin:values.quizMinCoin|| undefined,
         quizTimeStart:values.quizTimeStart|| undefined,
         quizTimeEnd:values.quizTimeEnd|| undefined,
@@ -97,58 +99,34 @@ var Quizdetail =(props) =>{
       {...formItemLayout}
       label="赛事名"
     >
-      <span className="ant-form-text">China</span>
+      <span className="ant-form-text">{`${eventName}`}</span>
     </FormItem>
     <FormItem label="竞猜规则" {...formItemLayout}>
       {getFieldDecorator('quizRules',{
         rules: [{
           required: true , message: '请选择竞猜规则！',
         }],
-        initialValue:quizRules
-      })(<Select>
-        { optionList }
-      </Select>)}
-    </FormItem>
-    <Divider>赔率设置</Divider>
-    <FormItem label="赔率-A队"  {...formItemLayout}>
-      {getFieldDecorator('Ateamodds',{
-        rules: [{
-          required: true , message: '请设置赔率'
-        }],
-        initialValue:Ateamodds
+        initialValue: quizRules
       })(<Input />)}
     </FormItem>
-    <FormItem label="赔率-B队"  {...formItemLayout}>
-      {getFieldDecorator('Bteamodds',{
+    <Divider>赔率设置</Divider>
+    <FormItem label="战队A队"  {...formItemLayout}>
+      {getFieldDecorator('gameTeamA',{
         rules: [{
           required: true , message: '请设置赔率'
         }],
-        initialValue:Bteamodds
+        initialValue:gameTeamA
+      })(<Input />)}
+    </FormItem>
+    <FormItem label="战队B"  {...formItemLayout}>
+      {getFieldDecorator('gameTeamB',{
+        rules: [{
+          required: true , message: '请设置赔率'
+        }],
+        initialValue:gameTeamB
       })(<Input />)}
     </FormItem>
     <Divider/>
-    <FormItem label="最低投注金币数"  {...formItemLayout}>
-      {getFieldDecorator('quizMinCoin',{
-        rules: [{
-          required: true , message: '请输入最低投注金币数！',
-        }],
-        initialValue:quizMinCoin
-      })(<Input />)}
-    </FormItem>
-    <FormItem label="竞猜开始时间"  {...formItemLayout}>
-      {getFieldDecorator('quizTimeStart',{
-        rules: [{
-          required: true , message: '请输入竞猜开始时间！',
-        }],
-        initialValue:moment(quizTimeStart)
-      })(<DatePicker
-          showTime
-          disabledDate={disabledDate}
-          disabledTime={disabledDateTime}
-          format="YYYY-MM-DD HH:mm:ss"
-          placeholder="Select Time"
-        />)}
-    </FormItem>
     <FormItem label="竞猜结束时间"  {...formItemLayout}>
       {getFieldDecorator('quizTimeEnd',{
         rules: [{

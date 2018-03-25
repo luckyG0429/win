@@ -15,58 +15,42 @@ export const getNavData = app => [
     name: '首页', // for breadcrumb
     path: '/',
     children: [
-      {
-        name: '用户管理',
-        path: 'userlist',
-        icon: 'user',
-        children: [
-          {
-            name: '用户列表',
-            path: 'list',
-            component: dynamicWrapper(app, ['userlist'], () => import('../routes/UserManage/list')),
-          }
-          ]
-      },
-      {
-        name: '支付管理',
-        path: 'trade',
-        icon: 'pay-circle-o',
-        children: [
-          {
-            name: '交易流水',
-            path: 'list',
-            component: dynamicWrapper(app, ['tradelist'], () => import('../routes/TradeManage/list')),
-          },
-        ],
-      },
+
       {
         name: '赛事管理',
-        path: 'listgame',
+        path: 'eventlist',
         icon: 'api',
-        children: [
-          {
-            name: '赛事列表',
-            path: 'eventlist',
-            component: dynamicWrapper(app, ['eventlist'], () => import('../routes/GameManage/eventlist')),
-          },
-          // {
-          //   name: '比赛列表',
-          //   path: 'gamelist',
-          //   component: dynamicWrapper(app, ['gamelist'], () => import('../routes/GameManage/gamelist')),
-          // },
-        ],
+        component: dynamicWrapper(app, ['eventlist'], () => import('../routes/GameManage/eventlist')),
       },
       {
-        name: '竞猜管理',
-        path: 'quiz',
-        icon: 'appstore',
-        children: [
-          {
-            name: '竞猜列表',
-            path: 'quizlist',
-            component: dynamicWrapper(app, ['quizlist'], () => import('../routes/QuizManage/list')),
-          },
-        ],
+        name: '比赛管理',
+        path: 'gamelist',
+        icon: 'bars',
+        component: dynamicWrapper(app, ['gamelist'], () => import('../routes/GameManage/gamelist')),
+      },
+      {
+        name: '上架审核列表',
+        path: 'audit_gamelist',
+        icon: 'pushpin-o',
+        component: dynamicWrapper(app, ['gameauditlist'], () => import('../routes/GameManage/auditGameList')),
+      },
+      {
+        name: '竞猜情况',
+        path: 'quizlist',
+        icon: 'calculator',
+        component: dynamicWrapper(app, ['quizlist'], () => import('../routes/QuizManage/list')),
+      },
+      {
+        name: '竞猜结果审核',
+        path: 'audit_quizlist',
+        icon: 'check-square-o',
+        component: dynamicWrapper(app, ['userlist'], () => import('../routes/QuizManage/auditList')),
+      },
+      {
+        name: '战队管理',
+        path: 'teamlist',
+        icon: 'check-square-o',
+        component: dynamicWrapper(app, ['teamlist'], () => import('../routes/TeamManage/list')),
       },
       {
         name: '系统管理',

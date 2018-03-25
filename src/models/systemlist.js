@@ -20,7 +20,7 @@ export default {
       const result = yield call(queryEventtypelist);
       if(callback) callback(result);
     },
-    *addEventtype({payload},{call, put}){
+    *addEventtype({payload,callback},{call, put}){
       yield put({
         type: 'changeLoading',
         payload: true,

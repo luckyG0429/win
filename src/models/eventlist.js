@@ -1,8 +1,9 @@
 /**
  * model  比赛管理
  */
-import { enumEventtype, queryEventlist} from '../services/win_event';
+import { enumEventtype, queryEventlist, addEvent} from '../services/win_event';
 import { queryGamelist, queryBorrowOrderDetail} from '../services/win_game';
+import { routerRedux } from 'dva/router';
 
 export default {
   namespace:'eventlist',
@@ -33,6 +34,8 @@ export default {
     },
     loading:false,
     eventtype:[],
+    activateEvent:{}
+
   },
   effects:{
     *typefetch({},{call,put}){
@@ -48,7 +51,6 @@ export default {
         payload: true,
       });
       const result = yield call(queryEventlist,payload);
-      console.log(result);
       yield put({
         type: 'setListdata',
         payload: result
@@ -61,6 +63,17 @@ export default {
     *gamefetch({payload, callback},{call, put}){
       const result = yield call(queryGamelist,payload);
       if(callback) callback(result);
+    },
+    *addgame({payload, callback}, {call, put}){
+      const result = yield call(addEvent,payload);
+      if(callback) callback(result);
+    },
+    *changeRouter({payload},{put}){
+      yield put({
+        type:'setActivateEvent',
+        payload:payload
+      });
+      yield put(routerRedux.push('/gamelist'));
     }
   },
   reducers:{
@@ -83,8 +96,15 @@ export default {
     setEventtype(state,action) {
       return {
         ...state,
-        eventtype:action.payload
+        eventtype:action.payload.data
       }
     },
+    setActivateEvent(state, action){
+      console.log(action.payload);
+      return {
+        ...state,
+        activateEvent:action.payload
+      }
+    }
   }
 }

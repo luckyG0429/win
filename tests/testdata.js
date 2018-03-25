@@ -25,20 +25,17 @@
  * 竞猜：quiz
  *  ----| 竞猜规则 quizrules
  *  ----|竞猜列表 quizlist
- *  ---- --------/id:
- *  ---- --------/gameName:
- *  -------------/gameId:
- *  ------------/quizRules：
- *  ------------/Ateamodds:
- *   -----------/Bteamodds:
+ *  --id: 竞猜id
+ *
+ *
  *   ----------/quizMinCoin:
- *   ---------/quizTimeStart
+ *
  *  ---------/quizTimeEnd
- *  --------- /quizTotalJoin
- *  --------- /quizAteamJoin
- *  --------- /quizBteamJoin
- *  --------- /quizTotalCoin
- *   --------- /quizAteamCoin
+ *  --------- /
+ *  --------- /
+ *  --------- /
+ *  --------- /quizGoldTotal
+ *   --------- /quiz
  *  --------- /quizBteamCoin
  *  ------- /quizStatus
  * 规则：rules
@@ -103,8 +100,14 @@ module.exports = {
   },
   //比赛列表  - game
   'GET /module/game/gamelist.htm':{
-    code: 200,
-  data:[{
+    resultCode: 200,
+    info:'操作成功',
+    eData:{
+        total:80,
+        pageSequence:1,
+        pageSize:10,
+    },
+   data:[{
       id:'201',
       gameName:'20180201上午场',
       gameTeamA:'恒大足球',

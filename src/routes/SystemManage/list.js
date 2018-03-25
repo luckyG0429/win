@@ -126,14 +126,22 @@ export default class TableList extends PureComponent {
         callback:(result)=>{
           if(result.resultCode === 0){
             this.setState({
-              eventloading:true
-            })
+              eventloading:false,
+              modalVisible:false
+            });
             this.fetch('eventtypefetch')
           }
         }
       })
     }
+  }
 
+
+  asyStatefn=()=>{
+    console.log(arguments);
+    this.setState({
+      ...arguments[0]
+    })
   }
 
 
@@ -144,7 +152,7 @@ export default class TableList extends PureComponent {
 
 
     const eventColumns = [{
-      title: '类别',
+      title: '类型',
       dataIndex: 'type',
     },{
       title: '名称',
@@ -153,14 +161,15 @@ export default class TableList extends PureComponent {
       title: '图标',
       dataIndex: 'icon',
       render:(text,record)=>{
-        return <div>
-          阿斯顿接口设计的
-        </div>
+        let href= `http://www.nannan.kim/guessing/${text}`;
+        // console.log(href);
+        return <a href={href}>图片连接
+        </a>
       }
     },{
       title: '状态',
       dataIndex: 'available',
-
+      render:text=><span>{text?'启用中':'未启用'}</span>
     },{
       title: '操作',
       dataIndex: '',
@@ -179,6 +188,9 @@ export default class TableList extends PureComponent {
 
 
     const quizColumns = [{
+      title: '类型',
+      dataIndex: 'type',
+    },{
       title: '名称',
       dataIndex: 'name',
     },{

@@ -3,7 +3,9 @@
  */
 import React from 'react';
 import moment from 'moment';
-import { Form, Input, Select, Button, DatePicker } from 'antd';
+import { Form, Input, Select, Button, DatePicker, Divider } from 'antd';
+import EditQuizTable from '../GameQuiz/QuizTable';
+import styles from './Game.less';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -13,27 +15,28 @@ var Gamedetail =(props) =>{
   const { getFieldDecorator } = props.form
 
   const { modalType, form, handleOk, handleCancel, data, parentData, menu, btnloading} = props;
-  //赛事分类列表
+  console.log(data);
+  //赛事列表
   const optionListClass = menu.length ==0 ?[]:menu.map((item)=><Option key={item} value={item.id}>{item.name}</Option>);
   const canEdit = modalType === 1;
 
   const optionListTeam=[];
-  const eventName=parentData.eventName;
+  //const eventName=parentData.eventName;
 
-  if(modalType ===11 && data != undefined){
+  if(modalType ===1 && data != undefined){
     var {
+      eventName,
       gameName,
       gameTeamA,
       gameTeamB,
-      gameTimeStart,
-      gameTimeEnd,
+      gameTimeStart
     } = data
   }else{
     var gameName='',
+      eventName='',
     gameTeamA='',
     gameTeamB='',
-    gameTimeStart='2018-01-01',
-   gameTimeEnd='2018-01-01';
+    gameTimeStart='2018-01-01'
   }
 
   const formItemLayout = {
@@ -52,13 +55,6 @@ var Gamedetail =(props) =>{
     return current && current < moment().endOf('day');
   }
 
-  const disabledDateTime = ()=>{
-    return {
-      disabledHours: () => range(0, 24).splice(4, 20),
-      disabledMinutes: () => range(30, 60),
-      disabledSeconds: () => [55, 56],
-    };
-  }
 
   var handleSubmit = (e) => {
     e.preventDefault();
@@ -88,15 +84,22 @@ var Gamedetail =(props) =>{
     form.resetFields();
     handleCancel();
   }
-  return  (<Form layout="horizontal"  style={{width:'80%',marginLeft:'10%',marginTop:'20px'}}>
+  return  (<Form layout="horizontal"  className={styles.modalform} style={{width:'80%',marginLeft:'10%',marginTop:'5px'}}>
     <FormItem label="比赛名称" {...formItemLayout}>
       {getFieldDecorator('gameName',{
         initialValue:gameName
       })(<Input/>)
       }
     </FormItem>
-    <FormItem label="赛事名" {...formItemLayout}>
-      <span>{eventName}</span>
+    <FormItem label="赛事名" {...formItemLayout} >
+      {getFieldDecorator('eventName',{
+        rules: [{
+          required: true , message: '请输入赛事名！',
+        }],
+        initialValue:eventName
+      })(<Select>
+        { optionListTeam }
+      </Select>)}
     </FormItem>
     <FormItem label="战队-A队" {...formItemLayout}>
       {getFieldDecorator('gameTeamA',{
@@ -111,7 +114,7 @@ var Gamedetail =(props) =>{
     <FormItem label="战队-B队"  {...formItemLayout}>
       {getFieldDecorator('gameTeamB',{
         rules: [{
-          required: true , message: '请设置赔率'
+          required: true , message: '请选择战队'
         }],
         initialValue:gameTeamB
       })(<Select>
@@ -121,7 +124,7 @@ var Gamedetail =(props) =>{
     <FormItem label="比赛开始时间"  {...formItemLayout}>
       {getFieldDecorator('gameTimeStart',{
         rules: [{
-          required: true , message: '请输入竞猜开始时间！',
+          required: true , message: '请输入比赛开始时间！',
         }],
         initialValue:moment(gameTimeStart)
       })(<DatePicker
@@ -132,23 +135,11 @@ var Gamedetail =(props) =>{
         style={{width:'80%'}}/>
         )}
     </FormItem>
-    <FormItem label="比赛结束时间"  {...formItemLayout}>
-      {getFieldDecorator('gameTimeEnd',{
-        rules: [{
-          required: false , message: '请输入竞猜结束时间！',
-        }],
-        initialValue:moment(gameTimeEnd)
-      })(<DatePicker
-        showTime
-        disabledDate={disabledDate}
-        disabledTime={disabledDateTime}
-        format="YYYY-MM-DD HH:mm:ss"
-        placeholder="Select Time"
-        style={{width:'80%'}}/>
-      )}
-    </FormItem>
-    <FormItem style={{textAlign:'center'}}>
-      <Button type="primary"  loading={ btnloading } style={{ marginRight: 16 }} onClick={(e)=>handleSubmit(e)}>确定</Button>
+    <Divider/>
+    <EditQuizTable data={[]}/>
+    <Divider style={{clear:'both'}}/>
+    <FormItem style={{justifyContent:'center'}}>
+      <Button type="primary"  loading={ btnloading } style={{ marginRight: 16 }} onClick={(e)=>handleSubmit(e)}>新增</Button>
       <Button onClick={()=>handleReset()} style={{marginLeft:'15px'}}>取消</Button>
     </FormItem>
   </Form>)

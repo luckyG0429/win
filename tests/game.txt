@@ -1,0 +1,16 @@
+比赛属性：
+
+id
+name  比赛名称
+gameTeamAId  A队
+gameTeamAName  A队名称
+gameTeamBId  B队
+gameTeamBName  B队名称
+
+startTime  开赛时间
+
+gameTeamAScore A队得分
+gameTeamBScore B队得分
+
+status  比赛状态
+creator 创建人

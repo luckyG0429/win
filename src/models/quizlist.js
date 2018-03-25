@@ -13,6 +13,7 @@ export default {
           gameTeamB:'权健',
           gameTimeStart:'2018-03-02 19:35',
           gameTimeEnd:'-',
+          quizRules: '猜大小',
           eventclass:'足球',
           gamestatus:0,
           eventName:'2018中超联赛',
@@ -54,6 +55,7 @@ export default {
 }]
         }, {
           id:'202',
+          quizRules: '猜大小',
           gameName:'中超1轮',
           gameTeamA:'申花',
           gameTeamB:'亚泰',
