@@ -45,10 +45,10 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     const { formValues } = this.state;
-    // dispatch({
-    //   type: 'eventlist/fetch',
-    //   payload: formValues
-    // });
+    dispatch({
+      type: 'eventlist/fetch',
+      payload: formValues
+    });
   }
 
 
@@ -192,6 +192,17 @@ export default class TableList extends PureComponent {
     }
   }
 
+  timestampToTime=(timestamp) =>{
+    var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+    let Y = date.getFullYear() + '-';
+    let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+    let D = date.getDate() + ' ';
+    let h = date.getHours() + ':';
+    let m = date.getMinutes() + ':';
+    let s = date.getSeconds();
+    return Y+M+D+h+m+s;
+  }
+
 
   render() {
     const { eventlist: { data, loading, eventtype } ,  dispatch, form:{ getFieldDecorator} } = this.props;
@@ -199,16 +210,18 @@ export default class TableList extends PureComponent {
 
     const columns = [{
       title: '开赛时间',
-      dataIndex: 'eventTimeStart',
+      dataIndex: 'startTime',
+      render:(text)=><p>{this.timestampToTime(text)}</p>
     },{
       title: '赛事',
-      dataIndex: 'eventName',
+      dataIndex: 'name',
     },{
       title: '赛事类别',
-      dataIndex: 'eventclassStr',
+      dataIndex: 'strType',
     },{
       title: '结束时间',
-      dataIndex: 'eventTimeEnd',
+      dataIndex: 'endTime',
+      render:(text)=><p>{this.timestampToTime(text)}</p>
     },{
        title: '比赛日程',
       dataIndex: '',
@@ -256,6 +269,7 @@ export default class TableList extends PureComponent {
                 columns = { columns }
                 loading={loading}
                 data={ data }
+                rowKey ={ (record)=>record.id}
                 onChange={this.handleStandardTableChange}
               />
             </div>

@@ -66,7 +66,7 @@ class StandardTable extends PureComponent {
           loading={loading}
           bordered
           size={'middle'}
-          rowKey={ record => record.key }
+          rowKey={ record => record.id }
        //   rowSelection={rowSelection}
           dataSource={list}
           columns={columns}
