@@ -25,7 +25,8 @@ export default class TableList extends PureComponent {
     formValues: {
       pageSize:10,
       currentPage:1,
-      searchParams:''
+      name:'',
+      type:'',
     }, //搜索参数
 
     modalVisible:false,//模态框的显示与否
@@ -126,30 +127,27 @@ export default class TableList extends PureComponent {
   /**条件查询 - 条件查询事件  - 内部状态管理：表单数据[ formValues ] **/
   handleSearch = (e) => {
     e.preventDefault();
-    const { dispatch, form } = this.props;
+    const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       const values = {
         ...fieldsValue
       };
 
-      this.setState({
-        formValues: {
-          pageSize: 10,
-          currentPage: 1,
-          searchParams: JSON.stringify(values),
-        },
-      });
+      this.setState(function(prevState,props){
+        return {formValues: {
+            ...values,
+            ...prevState.formValues
+          }}
+      })
 
-      dispatch({
-        type: 'eventlist/fetch',
-        payload: {
-          pageSize: 10,
-          currentPage: 1,
-          searchParams: JSON.stringify(values),
-        },
-      });
-    });
+      this.sendList({
+        pageSize: 10,
+        currentPage: 1,
+        type:'',
+        ...values,
+      })
+    })
   }
 
   handleOk=(type, params)=>{
@@ -183,6 +181,7 @@ export default class TableList extends PureComponent {
       Modal.success({
         title: '结果反馈',
         content: '操作成功',
+        onOk:()=>{this.sendList()}
       });
     }else{
       Modal.error({
@@ -191,6 +190,19 @@ export default class TableList extends PureComponent {
       })
     }
   }
+
+
+  sendList=(params)=>{
+    const {dispatch} = this.props;
+    if(!params){
+      params = this.state.formValues;
+    }
+    dispatch({
+      type:'eventlist/fetch',
+      payload:params
+    })
+  }
+
 
   timestampToTime=(timestamp) =>{
     var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
@@ -228,19 +240,19 @@ export default class TableList extends PureComponent {
       render:(text,record)=><a onClick={()=>this.hangleChangeRouter(record)}>日程列表</a>
     },{
       title: '赛事状态',
-      dataIndex: 'eventstatus',
-      render:(text)=>text===0?'未发布':'已发布'
+      dataIndex: 'available',
+      render:(text)=>text?'已发布':'未发布'
     },{
       title: '操作',
       dataIndex: '',
       render:(text,record)=>{
-        switch(record.eventstatus){
-          case 1:return  <a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>;
+        switch(record.available){
+          case true:return  <a onClick={() => this.handleModalVisible(true,record,1)}>-</a>;
           default:
             return <div>
-              <a onClick={() => this.handleConfirm(record,'release')}>发布</a>
-              <Divider type='vertical'/>
-              <a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>
+              {/*<a onClick={() => this.handleConfirm(record,'release')}>发布</a>*/}
+              {/*<Divider type='vertical'/>*/}
+              {/*<a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>*/}
             </div>;
         }
       }

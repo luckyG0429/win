@@ -13,9 +13,9 @@ export async function enumEventtype() {
 
 // win+  02.赛事列表
 export async function queryEventlist(params) {
-  let { pageSize, currentPage, searchParams} = params;
-  let paramsStr = `pageSequence=${currentPage}&pageSize=${pageSize}&searchParams=${searchParams}`;
- return request(`/guessing/game/recentlyGames?${paramsStr}`);
+  let { pageSize, currentPage, name,type} = params;
+  let paramsStr = `pageSequence=${currentPage}&pageSize=${pageSize}&name=${name}&type=${type}`;
+  return request(`/guessing/game/recentlyGames?${paramsStr}`);
 }
 
 // win+  03 新增赛事

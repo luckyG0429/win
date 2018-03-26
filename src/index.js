@@ -2,7 +2,6 @@ import 'babel-polyfill';
 import dva from 'dva';
 import 'moment/locale/zh-cn';
 import browserHistory from 'history/createBrowserHistory';
-import './g2';
 import './rollbar';
 import './index.less';
 import router from './router';

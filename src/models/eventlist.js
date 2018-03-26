@@ -84,12 +84,11 @@ export default {
       }
     },
     setListdata(state, action){
-      console.log(action.payload);
       return {
         ...state,
         data:{
           list:action.payload.data,
-          pagination:false
+          pagination: action.payload.edata
         }
       }
     },

@@ -208,6 +208,30 @@ export default class TableList extends PureComponent {
       }
     }];
 
+
+    const authorizeColumns = [{
+      title: '类型',
+      dataIndex: 'type',
+    },{
+      title: '名称',
+      dataIndex: 'name',
+    },{
+      title: '描述',
+      dataIndex: 'desc',
+    },{
+      title: '操作',
+      dataIndex: '',
+      render:(text,record)=>{
+        return <div>
+          <a onClick={() => this.handleConfirm(record,'delete')}>权限设置</a>
+          <Divider type='vertical'/>
+          <a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>
+          <Divider type='vertical'/>
+          <a onClick={() => this.handleModalVisible(true,record,1)}>删除</a>
+        </div>;
+      }
+    }];
+
     return (
       <PageHeaderLayout title="系统参数列表">
         <Card bordered={false}>
@@ -227,6 +251,16 @@ export default class TableList extends PureComponent {
                 <p className={styles.tips}><Icon type="smile-o" /> 您好，以下是当前已配置好的竞猜规则列表</p>
                 <Table dataSource={quizRules}
                        columns={quizColumns}
+                       loading={quizloading}
+                       size='small'
+                       rowKey={record=>record.id}
+                       bordered/>
+              </TabPane>
+              <TabPane tab="职位配置" key="3" className={styles.tableTab}>
+                <Button type='primary' ghost icon="plus" onClick={()=>this.handleModalVisible(true,2)}>创建职位</Button>
+                <p className={styles.tips}><Icon type="smile-o" /> 您好，以下是当前已配置好的竞猜规则列表</p>
+                <Table dataSource={[{type:1}]}
+                       columns={authorizeColumns}
                        loading={quizloading}
                        size='small'
                        rowKey={record=>record.id}

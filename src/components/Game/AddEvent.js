@@ -129,7 +129,9 @@ class EventDetail extends PureComponent {
         {/*</Button>*/}
       {/*</Upload>*/}
     {/*</FormItem>*/}
-    <FormItem label="比赛开始时间"  {...formItemLayout}>
+    <FormItem label="比赛开始时间"  {...formItemLayout}
+              validateStatus="warning"
+              help="请注意比赛时间的选择，必须大于当前时间">
       {getFieldDecorator('startTime',{
         rules: [{
           required: true , message: '请输入比赛开始时间！',
@@ -142,7 +144,9 @@ class EventDetail extends PureComponent {
         style={{width:'80%'}}/>
       )}
     </FormItem>
-    <FormItem label="比赛结束时间"  {...formItemLayout}>
+    <FormItem label="比赛结束时间"  {...formItemLayout}
+              validateStatus="warning"
+              help="比赛结束时间必须大于比赛的开始时间">
       {getFieldDecorator('endTime',{
         rules: [{
           required: false , message: '请输入比赛结束时间！',

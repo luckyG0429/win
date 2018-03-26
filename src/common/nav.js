@@ -15,7 +15,6 @@ export const getNavData = app => [
     name: '首页', // for breadcrumb
     path: '/',
     children: [
-
       {
         name: '赛事管理',
         path: 'eventlist',
