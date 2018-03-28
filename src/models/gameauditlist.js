@@ -2,7 +2,7 @@
  * 上架审核状态管理
  一**/
 
-import {queryGamelist, setGamedstarttime,getGamedetail,checkedGame, overGame, checkedGameguess, overGameguess} from '../services/win_game';
+import {queryCheckGamelist, setGamedstarttime,getGamedetail,sendGamescore, checkedGame, checkedGameguess, overGameguess} from '../services/win_game';
 
 export default {
   namespace:'gameauditlist',
@@ -20,9 +20,9 @@ export default {
         type:'changeLoading',
         payload:true
       });
-      const result = yield call(queryGamelist,payload);
+      const result = yield call(queryCheckGamelist,payload);
       yield put({
-        type:'setList',
+        type:'setListdata',
         payload:result
       });
       yield put({
@@ -42,7 +42,14 @@ export default {
       const result = yield cal(setGamedstarttime,payload);
       if(callback) callback(result);
     },
-
+    *sendGameScore({payload,callback},{call}){
+      const result = yield call(sendGamescore,payload);
+      if(callback) callback(result);
+    },
+    *sendGamePass({payload,callback},{call}) {
+      const result = yield call(checkedGame, payload);
+      if (callback) callback(result);
+    }
 
 
   },
@@ -53,14 +60,12 @@ export default {
         loading:action.payload
       }
     },
-    setList(state, action){
+    setListdata(state, action){
       return {
         ...state,
-        list:{
-          data:action.payload.data,
-          pagination:{
-
-          }
+        data:{
+          list:action.payload.data,
+          pagination:action.payload.eData,
         }
       }
     },

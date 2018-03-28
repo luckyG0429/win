@@ -6,6 +6,7 @@ import moment from 'moment';
 import { Form, Input, Select, Button, DatePicker, Divider } from 'antd';
 import EditQuizTable from '../GameQuiz/QuizTable';
 import styles from './Game.less';
+import { datetimeToTimestamp } from '../../utils/utils';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -22,10 +23,6 @@ export default class Gamedetail extends PureComponent{
    return current && current < moment().endOf('day');
    }
 
-  DateChangeNumber(str){
-    let dataT = new Date(str);
-    return Date.parse(dataT);
-  }
 
   handleSubmit = (e) => {
   e.preventDefault();
@@ -41,7 +38,7 @@ export default class Gamedetail extends PureComponent{
       gameId:values.gameId|| undefined,
       gameTeamAId:values.gameTeamAId|| undefined,
       gameTeamBId:values.gameTeamBId|| undefined,
-      startTime:this.DateChangeNumber(values.startTime.format('YYYY-MM-DD  HH:mm:ss').toString())|| undefined,
+      startTime:datetimeToTimestamp(values.startTime.format('YYYY-MM-DD  HH:mm:ss').toString())|| undefined,
     };
 
     console.log(jsonParams);
@@ -49,8 +46,8 @@ export default class Gamedetail extends PureComponent{
       jsonParams.id = data.id;
     }
     var json = {
-      gameData: JSON.stringify(jsonParams),
-      gameGuesses:JSON.stringify(gameGuesses),
+      gameData: {...jsonParams},
+      gameGuesses
     };
     handleOk(modalType,json);
   });

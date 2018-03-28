@@ -92,6 +92,11 @@ class EditQuizTable extends Component {
     this.cacheData = props.data.map(item => ({ ...item }));
   }
 
+  DateChangeNumber(str){
+    let dataT = new Date(str);
+    return Date.parse(dataT);
+  }
+
   renderColumns(text, record, column) {
     return (
       <EditableCell
@@ -107,7 +112,11 @@ class EditQuizTable extends Component {
     const newData = [...this.state.data];
     const target = newData.filter(item => key === item.key)[0];
     if (target) {
-      target[column] = value;
+      if(column === 'endTime'){
+        target[column] = this.DateChangeNumber(value)
+      }else{
+        target[column] = value;
+      }
       this.setState({ data: newData });
     }
   }

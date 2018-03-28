@@ -10,7 +10,7 @@ import { Row, Col, Card, Form, Input, Select, Button, DatePicker, Modal, Divider
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import AddEvent from '../../components/Game/AddEvent';
-
+import {timestampToDatetime} from '../../utils/utils';
 import styles from './game.less';
 
 const FormItem = Form.Item;
@@ -203,19 +203,6 @@ export default class TableList extends PureComponent {
     })
   }
 
-
-  timestampToTime=(timestamp) =>{
-    var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-    let Y = date.getFullYear() + '-';
-    let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-    let D = date.getDate()<10? ('0'+date.getDate()+ ' '):(date.getDate()+ ' ');
-    let h = date.getHours()<10? ('0'+date.getHours()+ ':'): (date.getHours()+ ':');
-    let m = date.getMinutes()<10? ('0'+date.getMinutes()+ ':'): (date.getMinutes()+ ':');
-    let s = date.getSeconds()<10?('0'+date.getMinutes()): date.getMinutes();
-    return Y+M+D+h+m+s;
-  }
-
-
   render() {
     const { eventlist: { data, loading, eventtype } ,  dispatch, form:{ getFieldDecorator} } = this.props;
     const { modalVisible, modaltype, _record, btnloading }  = this.state;
@@ -223,7 +210,7 @@ export default class TableList extends PureComponent {
     const columns = [{
       title: '开赛时间',
       dataIndex: 'startTime',
-      render:(text)=><p>{this.timestampToTime(text)}</p>
+      render:(text)=><p>{timestampToDatetime(text)}</p>
     },{
       title: '赛事',
       dataIndex: 'name',
@@ -233,7 +220,7 @@ export default class TableList extends PureComponent {
     },{
       title: '结束时间',
       dataIndex: 'endTime',
-      render:(text)=><p>{this.timestampToTime(text)}</p>
+      render:(text)=><p>{timestampToDatetime(text)}</p>
     },{
        title: '比赛日程',
       dataIndex: '',

@@ -9,7 +9,8 @@ import { Row, Col, Card, Form, Input, Select, Button, DatePicker, Modal, Divider
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import AddGame from '../../components/Game/AddGame';
-
+import GameDetail from '../../components/Game/GameDetail';
+import {timestampToDatetime} from '../../utils/utils';
 
 import styles from './game.less';
 
@@ -69,25 +70,37 @@ export default class TableList extends PureComponent {
   }
 
 
-
-  handleConfirm=(record, type)=>{
+  handleConfirm = (record, type)=>{
+      const {dispatch} = this.props;
       const obj = ((type)=>type==='release'?{
-        title:'您确定要发布当前的比赛吗？',
-        content:'提示：比赛一旦发布，其下的所有竞猜也会被同时发布上线。！',
+        title:'您确定要提交当前的比赛吗？',
+        content:'提示：比赛一旦提交，其下的所有竞猜也会被审核。',
         }:{
         title:'您确定要删除当前的比赛吗？',
-        content:'提示：比赛一旦删除，其下的所有竞猜将也会被删除掉！',
+        content:'提示：比赛一旦删除，其下的所有竞猜将也会被删除掉！请谨慎操作',
         okText: '确定',
         okType: 'danger',
         cancelText: '取消',
       })(type);
 
-      console.log(obj);
+      const params = {
+        url:type==='release'?'submitGamedata':'deleteGamedata',
+        msg:type==='release'?'已提交成功！正在被审核，请耐心等待...':'已删除成功！',
+      }
+
       return Modal.confirm({
         ...obj,
         width:'480px',
-        onOk(){
-
+        onOk:()=>{
+          dispatch({
+            type:'gamelist/'+params.url,
+            payload:record.id,
+            callback:(result)=>{
+              if(result.resultCode ==0){
+                this.handleResult(result,params.msg);
+              }
+            }
+          })
         },
         onCancel(){
 
@@ -209,11 +222,11 @@ export default class TableList extends PureComponent {
     }
   }
 
-  handleResult = (result)=>{
+  handleResult = (result,msg='操作成功')=>{
    if(result.resultCode === 0){
        Modal.success({
        title: '结果反馈',
-        content: '操作成功',
+        content: msg,
         onOk:()=>{this.sendList()}
       });
    }else{
@@ -243,10 +256,11 @@ export default class TableList extends PureComponent {
       dataIndex: 'eventName',
     },{
       title: '比赛名称',
-      dataIndex: 'gameName',
+      dataIndex: 'name',
     },{
       title: '比赛开始时间',
-      dataIndex: 'gameTimeStart',
+      dataIndex:'startTime',
+      render:(text)=><span>{timestampToDatetime(text)}</span>
     },{
       title: '战队-A',
       dataIndex: 'gameTeamA',
@@ -265,14 +279,16 @@ export default class TableList extends PureComponent {
       dataIndex: '',
       render:(text,record)=>{
         switch(record.gamestatus){
-          case 0:return <div>
+          default:return <div>
             <a onClick={() => this.handleConfirm(record,'release')}>提交</a>
             <Divider type='vertical'/>
             <a onClick={() => this.handleModalVisible(true,record,1)}>编辑</a>
             <Divider type='vertical'/>
-            <a onClick={() => this.handleModalVisible(true,record,1)}>查看</a>
+            <a onClick={() => this.handleModalVisible(true,record,2)}>查看</a>
+            <Divider type='vertical'/>
+            <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
           </div>;
-          default: return  <a onClick={() => this.handleModalVisible(true,record,1)}>查看</a>
+          // default: return  <a onClick={() => this.handleModalVisible(true,record,1)}>查看</a>
         }
 
       }
@@ -333,14 +349,16 @@ export default class TableList extends PureComponent {
           footer={[]}
           onCancel={() => this.handleModalVisible()}
         >
-          <AddGame modalType={modaltype}
+          {
+            modaltype!=2?<AddGame modalType={modaltype}
                    handleOk={(type,params) => this.handleOk(type,params)}
                    handleCancel={() => this.handleModalVisible()}
                    data={record}
                    dispatch =  {dispatch}
                    activeObj={activateEvent}
                    menu={eventtype}
-                   btnloading={btnloading}/>
+                   btnloading={btnloading}/>: <GameDetail isBtn={false} data={record} dispatch={dispatch}/>
+          }
         </Modal>
 
       </PageHeaderLayout>

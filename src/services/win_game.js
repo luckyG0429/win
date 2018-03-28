@@ -28,39 +28,60 @@ export async function addGame(params) {
   const {gameData,gameGuesses} = params
   return request('/guessing/game/createGameData', {
     method:'POST',
-    body: `gameData=${gameData}&gameGuesses=${gameGuesses}`
+    body:JSON.stringify(params)
   });
 }
 
-//win+  04 编辑比赛
-
+//win+  04 修改比赛
+export async function updateGame(params) {
+  return request('/guessing/game/alterGameData', {
+    method:'POST',
+    body:JSON.stringify(params)
+  });
+}
 
 //win+  05 查看比赛
 
 
+//win+  055 提交比赛
+export async function putGame(params){
+  return request('/guessing/game/postGameData?id='+params);
+}
 
+//win+ 056 移除比赛
+export async function delGame(params){
+  return request('/guessing/game/removeGameData?id='+params);
+}
 
 //win+  06 延迟比赛开赛时间
 export async function  setGamedstarttime(params){
-  return request(`/guessing/game/gamedatil?id=${params}`)
+  const {id, startTime} = params;
+  return request('/guessing/game/alterGameDataStartTime?',{
+    method:'POST',
+    body:`id=${id}&startTime=${startTime}`
+  })
 }
 
 
-
+// win+  0.上架比赛列表
+export async function queryCheckGamelist(params) {
+  let { pageSize, currentPage, name,type} = params;
+  let paramsStr = `page=${currentPage}&pageSize=${pageSize}&status=2`;
+  return request(`/guessing/game/listGameData?${paramsStr}`);
+}
 
 //win+  07 上架审核 --  比赛查看
 export async function  getGamedetail(params){
   return request(`/guessing/game/gamedatil?id=${params}`)
 }
 
-//win+ 08 上架审核 -- 集体上架
+//win+ 08 上架审核 -- 比赛审核
 export async function checkedGame(params){
-  return request(`/guessing/game/gamepass?id=${params}`)
-}
-
-//win+ 09 上架审核 -- 集体驳回
-export async function overGame(params){
-  return request(`/guessing/game/gameover?id=${params}`)
+  const {id,pass} = params;
+  return request('/guessing/game/authorGameData',{
+    method:'POST',
+    body:`id=${id}&pass=${pass}`
+  })
 }
 
 //win 10 上架审核 -- 单个竞猜上架
@@ -71,4 +92,13 @@ export async function checkedGameguess(params){
 //win 11 上架审核 -- 单个竞猜驳回
 export async function overGameguess(params){
   return request(`/guessing/game/gameguessover?id=${params}`)
+}
+
+//win 12 编辑比赛的比分game/alterGameDataScore
+export async function sendGamescore(params){
+  const {id,scoreA,scoreB} = params;
+  return request('/guessing/game/alterGameDataScore',{
+    method:'POST',
+    body:`id=${id}&scoreA=${scoreA}&scoreB=${scoreB}`
+  })
 }

@@ -55,8 +55,6 @@ const EditableCell = ({num,editable, value, onChange})=>{
 class EditQuizTable extends Component {
   constructor(props){
     super(props);
-    console.log(props);
-    // this.data= props.data;
 
     this.columns = [{
       title:"竞猜名称",

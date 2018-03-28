@@ -9,6 +9,7 @@ import { Row, Col, Card, Form, Input, Select, Button, DatePicker, Modal, Divider
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import AddQuiz from '../../components/GameQuiz/AddQuiz';
+import QuizList from '../../components/GameQuiz/QuizList'
 
 import styles from './quiz.less';
 
@@ -82,30 +83,6 @@ export default class TableList extends PureComponent {
     });
   }
 
-  handleConfirm=(record, type)=>{
-    const obj = ((type)=>type==='stop'?{
-      title:'您确定要提前结束当前的比赛竞猜吗？',
-      content:'提示：一旦结束，将无法在重新开始！',
-    }:{
-      title:'您确定要删除当前的竞猜吗？',
-      content:'提示：一旦删除，将无法恢复数据！',
-      okText: '确定',
-      okType: 'danger',
-      cancelText: '取消',
-    })(type);
-
-    return Modal.confirm({
-      ...obj,
-      width:'480px',
-      onOk(){
-
-      },
-      onCancel(){
-
-      }
-    })
-  }
-
 
   /*TODO: 弹框的显示与隐藏 - 查看用户详情 - 传递数据[userId]*/
   handleModalVisible = (flag = false,record={}, type) => {
@@ -136,24 +113,6 @@ export default class TableList extends PureComponent {
     }else{
 
     }
-  }
-
-  /* TODO:条件查询 - 清空查询条件  - 内部状态管理：初始化表单数据[ formValues ] */
-  handleFormReset = () => {
-    const { form } = this.props;
-    form.resetFields();
-    this.setState({
-      formValues: {
-        page:1,
-        size:10,
-        kgName:'',
-        applyName:'',
-        applyPhone:'',
-        applyStartTime:'',
-        applyEndTime:'',
-        state:'',
-      }
-    });
   }
 
   /* TODO:条件查询 - 条件查询事件  - 内部状态管理：表单数据[ formValues ] */
@@ -334,58 +293,16 @@ export default class TableList extends PureComponent {
     );
   }
 
-  renderInnertable(data){
-    const {quizlist, gamestatus} = data;
-    const columns = [{
-      title: '竞猜开始时间',
-      dataIndex: 'quizTimeStart',
-    },{
-      title: '竞猜规则',
-      dataIndex: 'quizRules',
-    },{
-      title: '竞猜结束时间',
-      dataIndex: 'quizTimeEnd',
-    },{
-      title: '战队-A队',
-      dataIndex: '',
-      render:(text,record)=>{
-        return <div>
-          <a>{`赔率：${record.Ateamodds}`}</a>
-          <hr/>
-          <a>{`下注人数：${record.quizAteamJoin}`}</a>
-        </div>
-      }
-    },{
-      title: '战队-B队',
-      dataIndex: '',
-      render:(text,record)=>{
-        return <div>
-          <a>{`赔率：${record.Bteamodds}`}</a>
-          <hr/>
-          <a>{`下注人数：${record.quizBteamJoin}`}</a>
-        </div>
-      }
-    },{
-      title: '下注总人数',
-      dataIndex: 'quizTotalJoin',
-    },{
-      title: '下注总金币',
-      dataIndex: 'quizTotalCoin',
-    },{
-      title: '竞猜状态',
-      dataIndex: 'quizStatus',
-    }];
-
-    console.log(quizlist);
-    return <Table dataSource={quizlist}
-                  style={{background:'#fff'}}
-                  bordered
-                  columns={columns}
-                  size="small"
-                  pagination={false}
-    />
+  timestampToTime=(timestamp) =>{
+    var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+    let Y = date.getFullYear() + '-';
+    let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+    let D = date.getDate()<10? ('0'+date.getDate()+ ' '):(date.getDate()+ ' ');
+    let h = date.getHours()<10? ('0'+date.getHours()+ ':'): (date.getHours()+ ':');
+    let m = date.getMinutes()<10? ('0'+date.getMinutes()+ ':'): (date.getMinutes()+ ':');
+    let s = date.getSeconds()<10?('0'+date.getMinutes()): date.getMinutes();
+    return Y+M+D+h+m+s;
   }
-
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -401,10 +318,11 @@ export default class TableList extends PureComponent {
       dataIndex: 'gameName'
     },{
       title: '竞猜名',
-      dataIndex: 'quizRules'
+      dataIndex: 'name'
     },{
       title: '竞猜结束时间',
-      dataIndex: 'gameTimeStart',
+      dataIndex: 'endTime',
+      render:(text)=><p>{this.timestampToTime(text)}</p>
     },{
       title: '战队双方',
       dataIndex: 'gameTeamA',
@@ -420,12 +338,12 @@ export default class TableList extends PureComponent {
       dataIndex: '',
       render:(text,record)=>{
         switch(record.gamestatus){
-          case 0:return <div>
+          default:return <div>
             <a onClick={() => this.handleModalVisible(true,record,1)}>查看</a>
             <Divider type='vertical'/>
             <a onClick={() => this.handleModalVisible(true,record,4)}>下注流水</a>
           </div>;
-          default: return '-'
+       //   default: return '-'
         }
 
       }
@@ -468,21 +386,23 @@ export default class TableList extends PureComponent {
           </div>
         </Card>
         <Modal
-          title={modaltype ===1?'查看':'新增'}
+          title={modaltype ===1?'查看':'下注流水'}
           visible={ modalVisible }
           width={ 800 }
           style={{top:50}}
           footer={[]}
           onCancel={() => this.handleModalVisible()}
         >
-          <AddQuiz data={record}
-                   modaltype={modaltype}
-                   gameName="中国VS韩国"
-                   gameId="1"
-                   btnloading={btnloading}
-                   handleOk={(type, params) => this.handleOk(type, params)}
-                   handleCancel={() => this.handleModalVisible()}/>
+          {
+            modaltype === 1 ? <AddQuiz data={record}
+                                      modaltype={modaltype}
+                                      gameName="中国VS韩国"
+                                      gameId="1"
+                                      btnloading={btnloading}
+                                      handleOk={(type, params) => this.handleOk(type, params)}
+                                      handleCancel={() => this.handleModalVisible()}/> : <QuizList data={record}/>
 
+          }
 
 
         </Modal>

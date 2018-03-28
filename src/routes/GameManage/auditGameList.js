@@ -7,7 +7,7 @@ import { Row, Col, Card, Form, Input, Select, Button, DatePicker, Modal, Divider
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import GameDetail from '../../components/Game/GameDetail';
-
+import {timestampToDatetime} from '../../utils/utils';
 
 import styles from './game.less';
 
@@ -22,7 +22,10 @@ const { Option } = Select;
 @Form.create()
 export default class AuditList extends PureComponent {
   state = {
-    formValues: {},
+    formValues: {
+      pageSize:10,
+      currentPage:1,
+    },
     record:'',
     modalVisible:false,
     modaltype:'',
@@ -33,10 +36,10 @@ export default class AuditList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     const { formValues } = this.state;
-    // dispatch({
-    //   type: 'gamelist/fetch',
-    //   payload: formValues
-    // });
+    dispatch({
+      type: 'gameauditlist/fetch',
+      payload: formValues
+    });
   }
 
   /* TODO: 表格的分页处理 - 以及内部状态管理：表单数据[ formValues ] */
@@ -61,30 +64,6 @@ export default class AuditList extends PureComponent {
 
 
 
-  handleConfirm=(record, type)=>{
-    const obj = ((type)=>type==='release'?{
-      title:'您确定要发布当前的比赛吗？',
-      content:'提示：比赛一旦发布，其下的所有竞猜也会被同时发布上线。！',
-    }:{
-      title:'您确定要删除当前的比赛吗？',
-      content:'提示：比赛一旦删除，其下的所有竞猜将也会被删除掉！',
-      okText: '确定',
-      okType: 'danger',
-      cancelText: '取消',
-    })(type);
-
-    console.log(obj);
-    return Modal.confirm({
-      ...obj,
-      width:'480px',
-      onOk(){
-
-      },
-      onCancel(){
-
-      }
-    })
-  }
 
   /*TODO: 弹框的显示与隐藏 - 查看用户详情 - 传递数据[userId]*/
   handleModalVisible = (flag = false,record={}, type) => {
@@ -193,13 +172,14 @@ export default class AuditList extends PureComponent {
 
     const columns = [{
       title: '赛事',
-      dataIndex: 'name',
+      dataIndex: 'eventname',
     },{
       title: '比赛名称',
-      dataIndex: 'gameName',
+      dataIndex: 'name',
     },{
       title: '比赛开始时间',
-      dataIndex: 'gameTimeStart',
+      dataIndex: 'startTime',
+      render:(text)=><span>{timestampToDatetime(text)}</span>
     },{
       title: '战队-A',
       dataIndex: 'gameTeamA',
@@ -218,13 +198,6 @@ export default class AuditList extends PureComponent {
       dataIndex: '',
       render:(text,record)=> <a onClick={() => this.handleModalVisible(true,record,1)}>查看</a>
     }];
-
-    const obj = {
-      id:1,
-      name:'bajc',
-      status:0,
-      statusStr:'比赛中'
-    };
 
     return (
       <PageHeaderLayout title="比赛列表">
@@ -261,6 +234,7 @@ export default class AuditList extends PureComponent {
             <StandardTable
               columns = { columns }
               loading={loading}
+              rowKey={(record)=>record.id}
               data={ data }
               onChange={this.handleStandardTableChange}
             />
@@ -275,7 +249,7 @@ export default class AuditList extends PureComponent {
           footer={[]}
           onCancel={() => this.handleModalVisible()}
         >
-          <GameDetail data={obj}/>
+          <GameDetail data={record} dispatch={dispatch} isBtn={true}/>
         </Modal>
 
       </PageHeaderLayout>

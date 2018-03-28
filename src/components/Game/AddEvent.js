@@ -4,6 +4,7 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { Form, Input, Select, Button, DatePicker } from 'antd';
+import { datetimeToTimestamp } from '../../utils/utils';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -11,15 +12,9 @@ const TextArea = Input.TextArea;
 
 
 class EventDetail extends PureComponent {
-
   handleReset = ()=>{
     this.props.form.resetFields();
     this.props.handleCancel();
-  }
-
-  DateChangeNumber(str){
-    let dataT = new Date(str);
-    return Date.parse(dataT);
   }
 
   handleSubmit = (e) => {
@@ -35,23 +30,14 @@ class EventDetail extends PureComponent {
       var jsonParams = {
         type:values.type|| undefined,
         name:values.name|| undefined,
-        startTime:this.DateChangeNumber(values.startTime.format('YYYY-MM-DD  HH:mm:ss').toString())|| undefined,
-        endTime:this.DateChangeNumber(values.endTime.format('YYYY-MM-DD  HH:mm:ss').toString())|| undefined,
-        // startTime:values.startTime.format('YYYY-MM-DD  HH:mm:ss').toString(),
-        // endTime:values.endTime.format('YYYY-MM-DD  HH:mm:ss').toString(),
+        startTime:datetimeToTimestamp(values.startTime.format('YYYY-MM-DD  HH:mm:ss').toString())|| undefined,
+        endTime:datetimeToTimestamp(values.endTime.format('YYYY-MM-DD  HH:mm:ss').toString())|| undefined,
       };
 
       if(modalType === '1'){
         jsonParams.id = data.id;
       }
 
-      // const formData = new FormData();
-      // fileList.forEach((file) => {
-      //   formData.append('icon', file);
-      // });
-      // for(var x in jsonParams){
-      //   formData.append([x],jsonParams[x])
-      // }
       handleOk(modalType,jsonParams);
     });
   };

@@ -1,7 +1,7 @@
 /**
  * model  比赛管理
  */
-import { queryGamelist,queryEventlist, addGame, enumTeam} from '../services/win_game';
+import { queryGamelist,queryEventlist, addGame, enumTeam, putGame, delGame} from '../services/win_game';
 
 export default {
   namespace:'gamelist',
@@ -43,9 +43,15 @@ export default {
       })
     },
     *addGamedata({payload, callback},{ call, put}){
-      console.log('add');
-      console.log(payload);
       const result = yield call(addGame,payload);
+      if(callback) callback(result);
+    },
+    *submitGamedata({payload,callback},{call}){
+      const result = yield call(putGame,payload);
+      if(callback) callback(result);
+    },
+    *deleteGamedata({payload,callback},{call}){
+      const result = yield call(delGame,payload);
       if(callback) callback(result);
     }
   },
@@ -62,7 +68,7 @@ export default {
         ...state,
         data:{
           list:action.payload.data,
-          pagination:false
+          pagination:action.payload.eData,
         }
       }
     },
