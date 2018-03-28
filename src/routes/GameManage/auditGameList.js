@@ -1,104 +1,285 @@
 /**
  * 上架审核列表
  * **/
-
-import React, { Component } from 'react';
-import {connect} from "dva";
-import {Table, Col, Row, Form, Input, Button, Card } from 'antd';
+import React, { PureComponent } from 'react';
+import { connect } from 'dva';
+import { Row, Col, Card, Form, Input, Select, Button, DatePicker, Modal, Divider, Tabs } from 'antd';
+import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import styles from './game.less'
+import GameDetail from '../../components/Game/GameDetail';
+
+
+import styles from './game.less';
 
 const FormItem = Form.Item;
+const TabPane = Tabs.TabPane;
+const RangePicker = DatePicker.RangePicker;
+const { Option } = Select;
 
 @connect(state => ({
   gameauditlist: state.gameauditlist,
 }))
 @Form.create()
-
-export default class AuditLisr extends Component {
-
+export default class AuditList extends PureComponent {
   state = {
-    formValues :{
-      pageSize:10,
-      pageSequence:1,
-    },
-
-
+    formValues: {},
+    record:'',
+    modalVisible:false,
+    modaltype:'',
+    btnloading:false,
+    selectMenu:[]
   };
 
-  componentDidMount(){
+  componentDidMount() {
     const { dispatch } = this.props;
     const { formValues } = this.state;
+    // dispatch({
+    //   type: 'gamelist/fetch',
+    //   payload: formValues
+    // });
+  }
+
+  /* TODO: 表格的分页处理 - 以及内部状态管理：表单数据[ formValues ] */
+  handleStandardTableChange = (pagination) => {
+    const { dispatch } = this.props;
+    const { formValues } = this.state;
+    const params = {
+      ...formValues,
+      page: pagination.current,
+      size: pagination.pageSize,
+    };
+    this.setState({
+      formValues:{
+        ...params
+      }
+    });
     dispatch({
-      type:'auditlist/fetch',
-      payload:formValues
+      type: 'gamelist/fetch',
+      payload: params
+    });
+  }
+
+
+
+  handleConfirm=(record, type)=>{
+    const obj = ((type)=>type==='release'?{
+      title:'您确定要发布当前的比赛吗？',
+      content:'提示：比赛一旦发布，其下的所有竞猜也会被同时发布上线。！',
+    }:{
+      title:'您确定要删除当前的比赛吗？',
+      content:'提示：比赛一旦删除，其下的所有竞猜将也会被删除掉！',
+      okText: '确定',
+      okType: 'danger',
+      cancelText: '取消',
+    })(type);
+
+    console.log(obj);
+    return Modal.confirm({
+      ...obj,
+      width:'480px',
+      onOk(){
+
+      },
+      onCancel(){
+
+      }
     })
   }
 
-  showMsg(){
+  /*TODO: 弹框的显示与隐藏 - 查看用户详情 - 传递数据[userId]*/
+  handleModalVisible = (flag = false,record={}, type) => {
+    const { dispatch } = this.props;
+    this.setState({
+      modalVisible: flag,
+      record: record,
+      modaltype:type,
+    });
+    if(type===1 && flag){
+      dispatch({
+        type:'gamelist/detailorder',
+        payload:record,
+        callback:(result)=>{
+          console.log(result);
+          if(result.code == 200){
+            this.setState({
+              resultlist:result.data.ordergamelist,
+              tabloading:false,
+            })
+          }
+        }
+      })
+    }else if(type === 2 && record){
 
+    }else{
+
+    }
   }
 
-  renderAdvanceForm(){
+  /* TODO:条件查询 - 清空查询条件  - 内部状态管理：初始化表单数据[ formValues ] */
+  handleFormReset = () => {
+    const { form } = this.props;
+    form.resetFields();
+    this.setState({
+      formValues: {
+        page:1,
+        size:10,
+        kgName:'',
+        applyName:'',
+        applyPhone:'',
+        applyStartTime:'',
+        applyEndTime:'',
+        state:'',
+      }
+    });
+  }
+
+  /* TODO:条件查询 - 条件查询事件  - 内部状态管理：表单数据[ formValues ] */
+  handleSearch = (e) => {
+    e.preventDefault();
+    const { dispatch, form } = this.props;
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      const values = {
+        ...fieldsValue
+      };
+      var jsonParams = {
+        kgName:values.kgName||"",
+        applyName:values.applyName||"",
+        applyPhone:values.applyPhone||"",
+        state:values.state||'',
+        applyStartTime: '',
+        applyEndTime:''
+      };
+      if(values.createTime && values.createTime.length != 0 ){
+        jsonParams.applyStartTime = values.createTime[0].format('YYYY-MM-DD').toString();
+        jsonParams.applyEndTime = values.createTime[1].format('YYYY-MM-DD').toString()
+      }
+      this.setState({
+        formValues:{
+          page: 1,
+          size: 10,
+          ...jsonParams
+        },
+      });
+      dispatch({
+        type: 'gamelist/fetch',
+        payload: {
+          page: 1,
+          size: 10,
+          ...jsonParams
+        },
+      });
+    });
+  }
+
+  handleOk(type, params) {
+    //type: 0 新增 ；1 修改
+    const { dispatch } = this.props;
+    this.setState({
+      btnloading: true,
+    });
+    if (type == 1) {
+
+    } else {
+
+    }
+  }
+
+
+  render() {
     const { getFieldDecorator } = this.props.form;
-    return <Form layout='inline'  onSubmit={this.handleSubmit}>
-      <FormItem>
-        {getFieldDecorator('name')(
-          <Input placeholder='请输入赛事名称'/>
-        )}
-      </FormItem>
-      <FormItem>
-        {getFieldDecorator('gamename')(
-          <Input placeholder='请输入比赛名称'/>
-        )}
-      </FormItem>
-      <FormItem>
-        <Button htmlType='submit' type='primary'>搜索</Button>
-      </FormItem>
-    </Form>
-  }
-
-  render(){
+    const { gameauditlist: { data, loading, eventtype } ,  dispatch } = this.props;
+    const { modalVisible, modaltype, record, btnloading, selectMenu} = this.state;
 
     const columns = [{
-      title:'赛事',
-      dataIndex:'eventname'
+      title: '赛事',
+      dataIndex: 'name',
     },{
-      title:'比赛名称',
-      dataIndex:'gamename'
+      title: '比赛名称',
+      dataIndex: 'gameName',
     },{
-      title:'比赛开始时间',
-      dataIndex:'startTime'
+      title: '比赛开始时间',
+      dataIndex: 'gameTimeStart',
     },{
-      title:'战队A',
-      dataIndex:'quizEndtime'
+      title: '战队-A',
+      dataIndex: 'gameTeamA',
     },{
-      title:'对赛',
-      dataIndex:'teams'
+      title: '战队-B',
+      dataIndex: 'gameTeamB',
     },{
-      title:'竞猜状态',
-      dataIndex:'status'
+      title: '比赛状态',
+      dataIndex: 'gamestatus',
+      render:(text)=>text===0?'未发布':'已发布'
     },{
-      title:'操作',
-      dataIndex:'',
-      render:(text,record)=>{
-        return <span>
-          <a onClick={()=>this.showMsg(0,record)}>驳回</a>
-          <a onClick={()=>this.showMsg(1,record)}>结算</a>
-        </span>
-      }
-    }]
-    return <PageHeaderLayout title="上架审核列表">
-      <Card>
-        <p>正在开发调试中....</p>
-      </Card>
-      {/*<div className={styles.TableForm}>*/}
-        {/*{ this.renderAdvanceForm() }*/}
-      {/*</div>*/}
-      {/*<div>*/}
-        {/*<Table dataSource={[{'teams':'巴西'}]} columns={columns} pagination={false} bordered size='middle'/>*/}
-      {/*</div>*/}
-    </PageHeaderLayout>
-  }
+      title: '创建人',
+      dataIndex: 'person',
+    },{
+      title: '操作',
+      dataIndex: '',
+      render:(text,record)=> <a onClick={() => this.handleModalVisible(true,record,1)}>查看</a>
+    }];
 
+    const obj = {
+      id:1,
+      name:'bajc',
+      status:0,
+      statusStr:'比赛中'
+    };
+
+    return (
+      <PageHeaderLayout title="比赛列表">
+        <Card bordered={false}>
+          <div className={styles.tableList}>
+            <div className={styles.tableListForm}>
+              <Form layout="inline" style={{width:'100%',display:'block',overflow:'auto'}}  onSubmit={this.handleSearch}>
+                <FormItem  style={{float:'right',display:'inline'}}>
+                  <Button type="primary" htmlType="submit">搜索</Button>
+                </FormItem>
+                <FormItem style={{float:'right',display:'inline', marginRight:10}}>
+                  {
+                    getFieldDecorator('startTime')(<DatePicker placeholder='请选择比赛开始时间'/>)
+                  }
+                </FormItem>
+                <FormItem style={{float:'right',display:'inline', marginRight:10,width:'120px'}}>
+                  {
+                    getFieldDecorator('name')(<Select  style={{ width: '120px' }}>
+                      {
+                        selectMenu.length?selectMenu.map((item)=>{
+                          <Option value={item.id}>{item.name}</Option>
+                        }):[]
+                      }
+                    </Select>)
+                  }
+                </FormItem>
+                <FormItem style={{float:'right',display:'inline', marginRight:10}}>
+                  {
+                    getFieldDecorator('name')(<Input placeholder='请输入赛事名称'/>)
+                  }
+                </FormItem>
+              </Form>
+            </div>
+            <StandardTable
+              columns = { columns }
+              loading={loading}
+              data={ data }
+              onChange={this.handleStandardTableChange}
+            />
+          </div>
+        </Card>
+        <Modal
+          title='查看'
+          visible={ modalVisible }
+          width={ 800 }
+          style={{top:50}}
+
+          footer={[]}
+          onCancel={() => this.handleModalVisible()}
+        >
+          <GameDetail data={obj}/>
+        </Modal>
+
+      </PageHeaderLayout>
+    );
+  }
 }
+

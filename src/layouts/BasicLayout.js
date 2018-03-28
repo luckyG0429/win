@@ -9,12 +9,11 @@ import groupBy from 'lodash/groupBy';
 import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
 import Debounce from 'lodash-decorators/debounce';
-import HeaderSearch from '../components/HeaderSearch';
-import NoticeIcon from '../components/NoticeIcon';
 import GlobalFooter from '../components/GlobalFooter';
 import NotFound from '../routes/Exception/404';
+import WelcomeH from '../routes/Exception/200';
 import styles from './BasicLayout.less';
-import logo from '../assets/logo.svg';
+import logo from '../assets/logo@2x.png';
 
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -185,10 +184,10 @@ class BasicLayout extends React.PureComponent {
   getPageTitle() {
     const { location, getRouteData } = this.props;
     const { pathname } = location;
-    let title = 'Ant Design Pro';
+    let title = 'Win+ admin';
     getRouteData('BasicLayout').forEach((item) => {
       if (item.path === pathname) {
-        title = `${item.name} - Ant Design Pro`;
+        title = `${item.name} - Win+ admin`;
       }
     });
     return title;
@@ -289,7 +288,7 @@ class BasicLayout extends React.PureComponent {
           <div className={styles.logo}>
             <Link to="/">
               <img src={logo} alt="logo" />
-              <h1>Ant Design Pro</h1>
+              <h1>Win+ Admin</h1>
             </Link>
           </div>
           <Menu
@@ -337,21 +336,21 @@ class BasicLayout extends React.PureComponent {
                   )
                 }
                 {/*<Redirect exact from="/" to="/dashboard/analysis" />*/}
-                <Route component={NotFound} />
+                <Route component={WelcomeH} />
               </Switch>
             </div>
             <GlobalFooter
               links={[{
-                title: 'Pro 首页',
-                href: 'http://pro.ant.design',
+                title: '-',
+                href: '/',
                 blankTarget: true,
               }, {
-                title: 'GitHub',
-                href: 'https://github.com/ant-design/ant-design-pro',
+                title: '帮助中心',
+                href: '/',
                 blankTarget: true,
               }, {
-                title: 'Ant Design',
-                href: 'http://ant.design',
+                title: '关于我们',
+                href: '/',
                 blankTarget: true,
               }]}
               copyright={

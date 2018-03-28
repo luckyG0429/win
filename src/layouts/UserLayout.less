@@ -1,8 +1,8 @@
 @import "~antd/lib/style/themes/default.less";
 
 .container {
-  background: #f0f2f5;
-  background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
+  background: rgb(39,39,39);
+  //background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
   width: 100%;
   min-height: 100%;
   background-repeat: no-repeat;
@@ -26,13 +26,17 @@
 
 .logo {
   height: 44px;
+  width: 44px;
+  background-image: url("../assets/logo@2x.png");
+  background-size: 44px 44px;
   vertical-align: top;
   margin-right: 16px;
+  display: inline-block;
 }
 
 .title {
   font-size: 33px;
-  color: @heading-color;
+  color: rgba(252,181,29,1);
   font-family: 'Myriad Pro', 'Helvetica Neue', Arial, Helvetica, sans-serif;
   font-weight: 600;
   position: relative;
@@ -41,7 +45,7 @@
 
 .desc {
   font-size: @font-size-base;
-  color: @text-color-secondary;
+  color: #999;
   margin-top: 12px;
   margin-bottom: 40px;
 }
@@ -50,4 +54,5 @@
   position: absolute;
   width: 100%;
   bottom: 0;
+  color: #999;
 }

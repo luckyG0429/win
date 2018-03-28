@@ -11,7 +11,9 @@ export async function queryQuiztype() {
 
 //win+ 01 比赛的竞猜列表
 export async function queryQuizlist(params) {
-  return request('/guessing/quiz/quizlist');
+  let { pageSize, currentPage, name,type} = params;
+  let paramsStr = `page=${currentPage}&pageSize=${pageSize}`;
+  return request(`/guessing/guess/list?${paramsStr}`);
 }
 
 //win+ 02 新增比赛竞猜

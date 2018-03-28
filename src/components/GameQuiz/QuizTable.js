@@ -48,12 +48,10 @@ const EditableCell = ({num,editable, value, onChange})=>{
   }
 }
 
-const data=[];
 
 class EditQuizTable extends Component {
   constructor(props){
     super(props);
-    console.log(props);
     this.columns = [{
       title:"竞猜名称",
       dataIndex:'name',
@@ -88,10 +86,10 @@ class EditQuizTable extends Component {
     }];
 
     this.state = {
-      count: 701,
-      data
+      count: 2018,
+      data:props.data
     };
-    this.cacheData = data.map(item => ({ ...item }));
+    this.cacheData = props.data.map(item => ({ ...item }));
   }
 
   renderColumns(text, record, column) {
@@ -118,7 +116,7 @@ class EditQuizTable extends Component {
     const { count, data } = this.state;
     const newData = {
       key: count,
-      name: `Edward ${count}`,
+      name: `新增竞猜 ${count}`,
       editable:true,
       type: 32,
       endTime: '2018-03-18 00:00:00',
@@ -131,6 +129,7 @@ class EditQuizTable extends Component {
 
   onDelete = (key) => {
     const dataSource = [...this.state.data];
+    this.props.handleSave(dataSource.filter(item => item.key !== key));
     this.setState({ data: dataSource.filter(item => item.key !== key) });
   }
 
@@ -141,6 +140,7 @@ class EditQuizTable extends Component {
       delete target.editable;
       this.setState({ data: newData });
       this.cacheData = newData.map(item => ({ ...item }));
+      this.props.handleSave(newData);
     }
   }
 

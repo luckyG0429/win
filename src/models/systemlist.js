@@ -7,18 +7,35 @@ import { queryEventtypelist, addEventtype, queryQuiztypelist} from '../services/
 export default {
   namespace:'systemlist',
   state:{
-    data:{
+    eventdata:{
       list:[],
-      pagination:false
+      pagination:{}
     },
-    loading:false,
+    eventloading:false,
     eventtype:[],
+    roledata:{
+      list:[],
+      pagination:{}
+    },
+    roleLoading:false,
   },
   effects:{
     //赛事类型列表
-    *eventtypefetch({callback},{call,put}){
-      const result = yield call(queryEventtypelist);
-      if(callback) callback(result);
+    *eventtypefetch({payload,callback},{call,put}){
+      yield put({
+        type:'changeEventLoading',
+        payload:true
+      });
+      const result = yield call(queryEventtypelist,payload);
+      if(result.resultCode !==0) return false;
+      yield put({
+        type:'setEventListdata',
+        payload:result,
+      })
+      yield put({
+        type:'changeEventLoading',
+        payload:false
+      })
     },
     *addEventtype({payload,callback},{call, put}){
       yield put({
@@ -28,25 +45,39 @@ export default {
       const result = yield call(addEventtype,payload);
       if(callback) callback(result);
     },
-    *quizfetch({payload, callback},{call, put}){
-      const result = yield call(queryQuiztypelist,payload);
-      if(callback) callback(result);
-    }
+    // *rolefetch({payload, callback},{call, put}){
+    //   const result = yield call(queryQuiztypelist,payload);
+    //   if(callback) callback(result);
+    // }
   },
   reducers:{
-    changeLoading(state, action){
+    changeEventLoading(state, action){
       return {
         ...state,
-        loading:action.payload
+        eventloading:action.payload
       }
     },
-    setListdata(state, action){
-      console.log(action.payload);
+    setEventListdata(state, action){
       return {
         ...state,
-        data:{
+        eventdata:{
           list:action.payload.data,
-          pagination:false
+          pagination:action.payload.eData, pagination:false
+        }
+      }
+    },
+    changeRoleLoading(state, action){
+      return {
+        ...state,
+        eventloading:action.payload
+      }
+    },
+    setRoleListdata(state, action){
+      return {
+        ...state,
+        roledata:{
+          list:action.payload.data,
+          pagination:action.payload.eData,
         }
       }
     },

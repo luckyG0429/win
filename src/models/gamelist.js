@@ -1,41 +1,31 @@
 /**
  * model  比赛管理
  */
-import { queryGamelist, queryBorrowOrderDetail} from '../services/win_game';
+import { queryGamelist,queryEventlist, addGame, enumTeam} from '../services/win_game';
 
 export default {
   namespace:'gamelist',
   state:{
     data:{
-      list:[{
-        id:'201',
-        gameName:'20180201上午场',
-        gameTeamA:'恒大足球',
-        gameTeamB:'和田君队',
-        gameTimeStart:'2018-02-01 09:00',
-        gameTimeEnd:'2018-02-01 12:00',
-        eventclass:'足球',
-        gamestatus:0,
-        eventName:'中国VS韩国',
-        eventId:2
-      }, {
-        id:'202',
-        gameName:'20180201上午场',
-        gameTeamA:'恒大足球',
-        gameTeamB:'和田君队',
-        gameTimeStart:'2018-02-01 15:00',
-        gameTimeEnd:'2018-02-01 18:00',
-        eventclass:'足球',
-        gamestatus:1,
-        eventName:'中国VS韩国',
-        eventId:2
-      }],
+      list:[],
       pagination:false
     },
     loading:false,
     eventtype:[],
   },
   effects:{
+    *eventTypelist({payload},{call,put}){
+      const result = yield call(queryEventlist);
+      if(result.resultCode !==0) return false;
+      yield put({
+        type:'setEventtype',
+        payload:result
+      })
+    },
+    *teamfetch({payload,callback},{call}){
+      const result = yield call(enumTeam,payload);
+      if(callback) callback(result);
+    },
     *fetch({payload},{call, put}){
       yield put({
         type: 'changeLoading',
@@ -52,23 +42,11 @@ export default {
         payload: false
       })
     },
-    *modalrecordfetch({payload},{call,put}){
-      yield put({
-        type:'changeModal',
-        payload:true,
-      })
-      const resultmodalrecord = yield  call(queryBorrowOrderDetail,payload);
-      yield  put({
-        type: 'setModalRecord',
-        payload: resultmodalrecord
-      })
-    },
-    *modallistfetch({payload},{call,put}){
-      const resultmodallist = yield  call(queryBorrowOrderDetail,payload);
-      yield  put({
-        type: 'setModalList',
-        payload: resultmodallist
-      })
+    *addGamedata({payload, callback},{ call, put}){
+      console.log('add');
+      console.log(payload);
+      const result = yield call(addGame,payload);
+      if(callback) callback(result);
     }
   },
   reducers:{
@@ -106,5 +84,11 @@ export default {
         modallist:action.payload
       }
     },
+    setEventtype(state, action){
+      return {
+        ...state,
+        eventtype:action.payload.data
+      }
+    }
   }
 }

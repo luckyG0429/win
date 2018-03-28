@@ -23,67 +23,43 @@ const { Option } = Select;
 @Form.create()
 export default class TableList extends PureComponent {
   state = {
-    formValues: {
-      page:1,
-      size:10,
-      kgName:'',
-      applyName:'',
-      applyPhone:'',
-      applyStartTime:'',
-      applyEndTime:'',
-      state:'',
-    },
+      formValues: {
+        pageSize:10,
+        currentPage:1,
+      }, //搜索参数
+
+    selectMenu:[{
+      id:0,
+      name:'全部'
+    },{
+      id:1,
+      name:'竞猜中'
+    },{
+      id:2,
+      name:'结果核算中'
+    },{
+      id:3,
+      name:'系统结算中'
+    },{
+      id:4,
+      name:'系统结算完毕'
+    }],
+
     modalVisible: false,
     record: {},
 
     showdiv:false,
     modaltype:'',
     btnloading:false,
-    innerLoading:false,
-    innerData:[{
-      id: 1,
-      gameName: '中超1轮',
-      gameId: '201',
-      quizRules: '猜大小',
-      Ateamodds: '0.94',
-      Bteamodds: '0.65',
-      quizMinCoin: '100',
-      quizTimeStart: '2018-01-25 09:00',
-      quizTimeEnd: '2018-02-01 09:00',
-      quizTotalJoin: '100231',
-      quizAteamJoin: '21922',
-      quizBteamJoin: '87328',
-      quizTotalCoin: '10899000',
-      quizAteamCoin: '4090900',
-      quizBteamCoin: '5800000',
-      quizStatus: 1,
-    }, {
-      id: 3,
-      gameName: '中超1轮',
-      gameId: '201',
-      quizRules: '胜分差',
-      Ateamodds: '0.95',
-      Bteamodds: '0.95',
-      quizMinCoin: '50',
-      quizTimeStart: '2018-01-25 09:00',
-      quizTimeEnd: '2018-02-01 09:00',
-      quizTotalJoin: '0',
-      quizAteamJoin: '0',
-      quizBteamJoin: '0',
-      quizTotalCoin: '0',
-      quizAteamCoin: '0',
-      quizBteamCoin: '0',
-      quizStatus: 0,
-    }]
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
     const { formValues } = this.state;
-    // dispatch({
-    //   type: 'quizlist/fetch',
-    //   payload: formValues
-    // });
+    dispatch({
+      type: 'quizlist/fetch',
+      payload: formValues
+    });
   }
 
   /* TODO: 表格的分页处理 - 以及内部状态管理：表单数据[ formValues ] */
@@ -415,7 +391,7 @@ export default class TableList extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     const { quizlist: { data, loading } ,  dispatch } = this.props;
 
-    const { modalVisible, record,  modaltype, btnloading, innerLoading, innerData, showdiv} = this.state;
+    const { modalVisible, record,  modaltype, btnloading, selectMenu, innerData, showdiv} = this.state;
 
     const columns = [{
       title: '赛事名',
@@ -459,12 +435,34 @@ export default class TableList extends PureComponent {
       <PageHeaderLayout title="竞猜列表">
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>
-              {this.renderAdvancedForm()}
-            </div>
+              <Form layout="inline" style={{width:'100%',display:'block',overflow:'auto'}}  onSubmit={this.handleSearch}>
+                <FormItem  style={{float:'right',display:'inline'}}>
+                  <Button type="primary" htmlType="submit">搜索</Button>
+                </FormItem>
+                <FormItem style={{float:'right',display:'inline', marginRight:10,width:'140px'}}>
+                  {
+                    getFieldDecorator('status')(<Select  style={{ width: '140px' }} placeholder='竞猜状态选择'>
+                      {
+                        selectMenu.length != 0?selectMenu.map((item)=><Option key={item.id} value={item.id}>{item.name}</Option>):[]
+                      }
+                    </Select>)
+                  }
+                </FormItem>
+                <FormItem style={{float:'right',display:'inline', marginRight:10}}>
+                  {
+                    getFieldDecorator('gameName')(<Input placeholder='请输入比赛名称'/>)
+                  }
+                </FormItem>
+                <FormItem style={{float:'right',display:'inline', marginRight:10}}>
+                  {
+                    getFieldDecorator('name')(<Input placeholder='请输入赛事名称'/>)
+                  }
+                </FormItem>
+              </Form>
             <Table style={{marginTop:'24px'}}
               columns={ columns }
               loading={ loading }
+                   bordered
               dataSource={data.list}
             />
           </div>

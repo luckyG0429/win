@@ -7,8 +7,8 @@ import {queryGamelist, setGamedstarttime,getGamedetail,checkedGame, overGame, ch
 export default {
   namespace:'gameauditlist',
   state:{
-    list:{
-      data:[],
+    data:{
+      list:[{name:'1'}],
       pagination:{}
     },
     loading:false,

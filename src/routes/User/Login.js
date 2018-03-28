@@ -125,9 +125,9 @@ export default class Login extends Component {
               登录
             </Button>
           </FormItem>
-          <FormItem>
-            <a href='/user/register'>注册</a>
-          </FormItem>
+          {/*<FormItem>*/}
+            {/*<a href='/user/register'>注册</a>*/}
+          {/*</FormItem>*/}
         </Form>
       </div>
     );

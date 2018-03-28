@@ -21,16 +21,11 @@ class EventTypeForm extends PureComponent{
   }
 
   componentWillMount(){
-
+    console.log(1);
   }
 
-  componentDidMount(){
 
-  }
 
-  componentWillReceiveProps(){
-
-  }
 
   handleOk=(e)=>{
 
@@ -61,6 +56,7 @@ class EventTypeForm extends PureComponent{
 
   render(){
 
+    const {btnloading} = this.props;
     const {getFieldDecorator} = this.props.form;
     const iconprops = {
       action: '//jsonplaceholder.typicode.com/posts/',
@@ -136,7 +132,7 @@ class EventTypeForm extends PureComponent{
         }
       </FormItem>
       <FormItem {...buttonItemLayout} style={{display:'flex',justifyContent:'center'}}>
-        <Button type='primary' htmlType="submit">提交</Button>
+        <Button type='primary' htmlType="submit" loading={btnloading}>提交</Button>
         <Button style={{marginLeft:24}} onClick={this.handleCancel}>取消</Button>
       </FormItem>
     </Form>

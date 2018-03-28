@@ -10,6 +10,7 @@ import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import EventTypeForm from '../../components/System/EventTypeForm';
 import QuizRuleForm from '../../components/System/QuizRuleForm';
+import AuthorRoleForm from '../../components/System/AuthorRoleForm';
 import styles from './Servicelist.less';
 
 const TabPane = Tabs.TabPane;
@@ -24,12 +25,20 @@ export default class TableList extends PureComponent {
   state = {
     modalVisible:false,
     modaltype:'',
+    btnloading:false,
 
-    eventloading:false,
-    eventType:[],
+    eventformValues:{
+      currentPage:1,
+      pageSize: 10,
+    },
 
-    quizloading:false,
-    quizRules:[],
+    roleLoading:false,
+    roleList:[],
+    roleRecord:{},
+    roleformValues:{
+      currentPage:1,
+      pageSize: 10,
+    },
 
   };
 
@@ -39,26 +48,16 @@ export default class TableList extends PureComponent {
     this.setState({
       eventloading:true
     })
-    this.fetch('eventtypefetch','eventType','eventloading')
+    const {eventformValues} = this.state;
+    this.fetch('eventtypefetch','eventType','eventloading',eventformValues)
   }
 
 
-  fetch(url){
+  fetch(url,a,b,params){
     const { dispatch } = this.props;
-    console.log(arguments);
     dispatch({
       type:`systemlist/${url}`,
-      callback:(result)=>{
-        if(result.resultCode === 0){
-          this.setState({
-            [arguments[1]]:result.data,
-          })
-        }
-        this.setState({
-          [arguments[2]]:false
-        })
-
-      }
+      payload:params,
     })
   }
 
@@ -99,41 +98,62 @@ export default class TableList extends PureComponent {
 
 
   onSwitch=(key)=>{
-    console.log(typeof key);
+    const { eventformValues } = this.state;
     if(key === '1'){
       this.setState({
-        eventloading:true
+        eventLoading:true
       })
-      this.fetch('eventtypefetch','eventType','eventloading')
+      this.fetch('eventtypefetch','eventType','eventloading',eventformValues)
     }else if(key === '2' ){
       this.setState({
-        quizloading:true
+        quizLoading:true
       })
-      this.fetch('quizfetch','quizRules','quizloading')
+      this.fetch('quizfetch','quizRules','quizLoading')
     }
    // this.fetch('')
   }
 
   handleOk = (params)=>{
 
-    const { modaltype } = this.state;
+    const { modaltype,eventformValues} = this.state;
     const { dispatch } = this.props;
+    this.setState({
+      btnloading:true,});
     /** type 1为赛事类型  2为竞猜规则**/
     if(modaltype === 1){
       dispatch({
         type:'systemlist/addEventtype',
         payload: params,
         callback:(result)=>{
-          if(result.resultCode === 0){
             this.setState({
-              eventloading:false,
-              modalVisible:false
+              btnloading:false,
+              modalVisible:false,
+            },()=>{
+              this.handleResult(result);
             });
-            this.fetch('eventtypefetch')
           }
-        }
+        })
+    }
+  }
+
+  handleResult = (result)=>{
+    if(result.resultCode === 0){
+      Modal.success({
+        title: '结果反馈',
+        content: '操作成功',
+        onOk:()=>{this.sendList()}
+      });
+    }else{
+      Modal.error({
+        title: '结果反馈',
+        content: result.resultmsg,
       })
     }
+  }
+
+  sendList(){
+    const { eventformValues } = this.state;
+    this.fetch('eventtypefetch','eventType','eventloading',eventformValues)
   }
 
 
@@ -144,11 +164,39 @@ export default class TableList extends PureComponent {
     })
   }
 
+  renderModal=(type,obj)=>{
+    switch(type){
+      case 1: return <EventTypeForm {...obj}/>;
+      case 2: return <QuizRuleForm {...obj}/>;
+      case 3: return <AuthorRoleForm {...obj}/>;
+    }
+  }
+
+  handleStandardTableChange = (pagination) => {
+    const { dispatch } = this.props;
+    const { formValues } = this.state;
+    const params = {
+      ...formValues,
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    this.setState({
+      eventformValues: {
+        ...params,
+      },
+    });
+    dispatch({
+      type: 'eventlist/fetch',
+      payload: params
+    });
+  }
+
+
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { systemlist: { data, loading } ,  dispatch } = this.props;
-    const { modalVisible,modaltype, eventloading, eventType, quizloading, quizRules } = this.state;
+    const { systemlist: { eventdata, eventloading } ,  dispatch } = this.props;
+    const { modalVisible,modaltype, eventLoading, eventType, quizLoading, quizRules, roleRecord, roleLoading,btnloading } = this.state;
 
 
     const eventColumns = [{
@@ -240,28 +288,20 @@ export default class TableList extends PureComponent {
               <TabPane tab="赛事类型" key="1" className={styles.tableTab}>
                 <Button type='primary' ghost icon="plus" onClick={()=>this.handleModalVisible(true,1)}>添加赛事类型</Button>
                 <p className={styles.tips}><Icon type="smile-o" /> 您好，以下是当前已配置好的赛事类型列表</p>
-                <Table dataSource={eventType}
-                       columns={eventColumns}
-                       loading={eventloading}
-                       size='small'
-                       bordered/>
+                <StandardTable data={eventdata}
+                               columns={eventColumns}
+                               loading={eventloading}
+                               rowKey ={ (record)=>record.id}
+                               onChange={this.handleStandardTableChange}
+                               size='small'
+                               bordered/>
               </TabPane>
-              <TabPane tab="竞猜规则" key="2" className={styles.tableTab}>
-                <Button type='primary' ghost icon="plus" onClick={()=>this.handleModalVisible(true,2)}>添加竞猜规则</Button>
-                <p className={styles.tips}><Icon type="smile-o" /> 您好，以下是当前已配置好的竞猜规则列表</p>
-                <Table dataSource={quizRules}
-                       columns={quizColumns}
-                       loading={quizloading}
-                       size='small'
-                       rowKey={record=>record.id}
-                       bordered/>
-              </TabPane>
-              <TabPane tab="职位配置" key="3" className={styles.tableTab}>
+              <TabPane tab="职位配置" key="2" className={styles.tableTab}>
                 <Button type='primary' ghost icon="plus" onClick={()=>this.handleModalVisible(true,2)}>创建职位</Button>
                 <p className={styles.tips}><Icon type="smile-o" /> 您好，以下是当前已配置好的竞猜规则列表</p>
                 <Table dataSource={[{type:1}]}
                        columns={authorizeColumns}
-                       loading={quizloading}
+                       loading={roleLoading}
                        size='small'
                        rowKey={record=>record.id}
                        bordered/>
@@ -272,9 +312,13 @@ export default class TableList extends PureComponent {
                  visible={modalVisible}
                  footer={[]}
                  onCancel={()=>this.handleModalVisible()}>
-            {
-              modaltype===1?<EventTypeForm handleOk={this.handleOk} handlCancel={()=>this.handleModalVisible()}/>:<QuizRuleForm/>
-            }
+
+            { modalVisible && this.renderModal(modaltype,{
+              handleOk: (params)=>this.handleOk(params),
+              handlCancel:()=>this.handleModalVisible(),
+              record:roleRecord,
+              btnloading
+            })}
           </Modal>
         </Card>
       </PageHeaderLayout>

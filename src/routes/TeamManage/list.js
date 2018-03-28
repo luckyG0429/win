@@ -21,9 +21,10 @@ const FormItem = Form.Item;
 
 export default class TeamList extends PureComponent{
   state = {
-     formValue:{
+     formValues:{
        pageSize:10,
        currentPage:1,
+       type:''
      },
 
      modalVisible:false,
@@ -44,6 +45,7 @@ export default class TeamList extends PureComponent{
 
   componentDidMount(){
     //请求目前已有的全部战队列表
+    this.setFetch();
   }
 
   handleModalVisible=(flag=false,record={},type=0)=>{
@@ -67,6 +69,7 @@ export default class TeamList extends PureComponent{
         ...params,
       },
     });
+    this.setFetch(params);
     // dispatch({
     //   type: 'limitlist/fetch',
     //   payload: params,
@@ -100,6 +103,7 @@ export default class TeamList extends PureComponent{
       Modal.success({
         title: '结果反馈',
         content: '操作成功',
+        onOk:()=>{this.setFetch()}
       });
     }else{
       Modal.error({
@@ -107,6 +111,18 @@ export default class TeamList extends PureComponent{
         content: result.resultmsg,
       })
     }
+  }
+
+  setFetch(params){
+    const {dispatch} = this.props;
+    const { formValues } = this.state;
+    if(!params){
+      params = formValues;
+    }
+    dispatch({
+      type:'teamlist/fetch',
+      payload:params
+    })
   }
 
   render(){
@@ -123,7 +139,16 @@ export default class TeamList extends PureComponent{
       dataIndex:'name'
     },{
       title:'所属分类',
-      dataIndex:'type'
+      dataIndex:'type',
+      render:(text)=><span>{
+        eventType.find(item=>{
+          return item.type===text
+        }).name
+      }</span>
+    },{
+      title:'图标',
+      dataIndex:'icon',
+      render:(text)=><span><img src={text}/></span>
     }];
 
     //3.渲染
@@ -136,7 +161,7 @@ export default class TeamList extends PureComponent{
                   <Button type='primary'  ghost onClick={() => this.handleModalVisible(true,'',0)}>添加战队</Button>
                 </FormItem>
                 <FormItem  style={{float:'right',display:'inline'}}>
-                  <Button type="primary" htmlType="submit">提交</Button>
+                  <Button type="primary" htmlType="submit">搜索</Button>
                 </FormItem>
                 <FormItem style={{float:'right',display:'inline', marginRight:10}}>
                   {
@@ -149,6 +174,7 @@ export default class TeamList extends PureComponent{
               columns = { columns }
               loading={loading}
               data={ data }
+              rowKey ={ (record)=>record.id}
               onChange={this.handleStandardTableChange}
             />
           </div>
@@ -158,12 +184,14 @@ export default class TeamList extends PureComponent{
                title={modaltitle}
                onCancel={() => this.handleModalVisible()}
                footer={modaltype===2?[<Button type='primary' onClick={() => this.handleModalVisible()}>返回</Button>]:[]} >
-          <AddTeam modalType={modaltype}
+          {
+            modalVisible&&<AddTeam modalType={modaltype}
                    data={_record}
                    menu={eventType}
                    btnloading={btnloading}
                    handleCancel={()=>this.handleModalVisible()}
                    handleOk={(type,params)=>this.handlFormOk(type,params)}/>
+          }
         </Modal>
       </PageHeaderLayout>
     )

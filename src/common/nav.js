@@ -25,7 +25,7 @@ export const getNavData = app => [
         name: '比赛管理',
         path: 'gamelist',
         icon: 'bars',
-        component: dynamicWrapper(app, ['gamelist'], () => import('../routes/GameManage/gamelist')),
+        component: dynamicWrapper(app, ['eventlist','gamelist'], () => import('../routes/GameManage/gamelist')),
       },
       {
         name: '上架审核列表',
@@ -48,7 +48,7 @@ export const getNavData = app => [
       {
         name: '战队管理',
         path: 'teamlist',
-        icon: 'check-square-o',
+        icon: 'usergroup-add',
         component: dynamicWrapper(app, ['teamlist'], () => import('../routes/TeamManage/list')),
       },
       {

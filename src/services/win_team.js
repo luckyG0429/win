@@ -10,7 +10,12 @@ export async function createTeam(params) {
   });
 }
 
-//win+ 01 战队列表
+//win+ 01 战队列表team/list
+export async function queryTeamlist(params) {
+  let { pageSize, currentPage,type} = params;
+  let paramsStr = `page=${currentPage}&pageSize=${pageSize}&type=${type}`;
+  return request(`/guessing/team/list?${paramsStr}`);
+}
 
 //win+ 02 上传战队信息
 

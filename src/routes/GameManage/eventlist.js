@@ -208,10 +208,10 @@ export default class TableList extends PureComponent {
     var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
     let Y = date.getFullYear() + '-';
     let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-    let D = date.getDate() + ' ';
-    let h = date.getHours() + ':';
-    let m = date.getMinutes() + ':';
-    let s = date.getSeconds();
+    let D = date.getDate()<10? ('0'+date.getDate()+ ' '):(date.getDate()+ ' ');
+    let h = date.getHours()<10? ('0'+date.getHours()+ ':'): (date.getHours()+ ':');
+    let m = date.getMinutes()<10? ('0'+date.getMinutes()+ ':'): (date.getMinutes()+ ':');
+    let s = date.getSeconds()<10?('0'+date.getMinutes()): date.getMinutes();
     return Y+M+D+h+m+s;
   }
 
@@ -268,7 +268,7 @@ export default class TableList extends PureComponent {
                     <Button type='primary'  ghost onClick={() => this.handleModalVisible(true,'',0)}>新增赛事</Button>
                   </FormItem>
                   <FormItem  style={{float:'right',display:'inline'}}>
-                    <Button type="primary" htmlType="submit">提交</Button>
+                    <Button type="primary" htmlType="submit">搜索</Button>
                   </FormItem>
                    <FormItem style={{float:'right',display:'inline', marginRight:10}}>
                      {

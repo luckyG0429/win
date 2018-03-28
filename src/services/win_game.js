@@ -4,29 +4,31 @@
 import request from '../utils/request';
 
 //win+ 0 所有赛事枚举
+export async function queryEventlist(params) {
+  let paramsStr = `page=1&pageSize=100&name=&type=`;
+  return request(`/guessing/game/recentlyGames?${paramsStr}`);
+}
 
 
 //win+ 01 战队枚举
 export async function enumTeam(params){
-  return request('/guessing/team/allocatePlayers')
+  return request('/guessing/team/list?page=1&pageSize=1000&type=')
 }
 
 // win+  02.比赛列表
 export async function queryGamelist(params) {
- // const { pageSequence, pageSize } = params;
- // const paramsStr = `pageSequence=${pageSequence}&pageSize=${pageSize}`;
- //  return request('guessing/game/recentlyGames', {
- //    method: 'POST',
- //    body: paramsStr,
- //  });
- // return request('/guessing/game/createGame');
+  let { pageSize, currentPage, name,type} = params;
+  let paramsStr = `page=${currentPage}&pageSize=${pageSize}&status=`;
+  return request(`/guessing/game/listGameData?${paramsStr}`);
 }
 
 // win+  03 新增比赛
-export async function createGame(params) {
+export async function addGame(params) {
+  console.log(params);
+  const {gameData,gameGuesses} = params
   return request('/guessing/game/createGameData', {
-    method: 'POST',
-    body: params,
+    method:'POST',
+    body: `gameData=${gameData}&gameGuesses=${gameGuesses}`
   });
 }
 

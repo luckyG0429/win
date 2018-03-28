@@ -19,25 +19,33 @@ const RangePicker = DatePicker.RangePicker;
 const { Option } = Select;
 
 @connect(state => ({
+  eventlist:state.eventlist,
   gamelist: state.gamelist,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
   state = {
-    formValues: {},
+    formValues: {
+      pageSize:10,
+      currentPage:1,
+    },
     record:'',
     modalVisible:false,
     modaltype:'',
     btnloading:false,
+    selectMenu:[]
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
     const { formValues } = this.state;
-    // dispatch({
-    //   type: 'gamelist/fetch',
-    //   payload: formValues
-    // });
+    dispatch({
+      type: 'gamelist/fetch',
+      payload: formValues
+    });
+    dispatch({
+      type:'gamelist/eventTypelist'
+    })
   }
 
   /* TODO: 表格的分页处理 - 以及内部状态管理：表单数据[ formValues ] */
@@ -90,6 +98,7 @@ export default class TableList extends PureComponent {
   /*TODO: 弹框的显示与隐藏 - 查看用户详情 - 传递数据[userId]*/
   handleModalVisible = (flag = false,record={}, type) => {
     const { dispatch } = this.props;
+
     this.setState({
       modalVisible: flag,
       record: record,
@@ -179,60 +188,55 @@ export default class TableList extends PureComponent {
     this.setState({
       btnloading: true,
     });
-    if (type == 1) {
+    if (type !== 1) {
+      console.log('xinzheng');
+      console.log(params);
+      dispatch({
+        type:'gamelist/addGamedata',
+        payload:params,
+        callback:(result)=>{
+          this.setState({
+            btnloading:false,
+            modalVisible:false,
+          },()=>{
+            this.handleResult(result);
+          });
+        }
+      });
 
     } else {
 
     }
   }
 
-  /*TODO: 生成条件查询表单 ,参数是：渠道枚举数据 ,额度状态枚举，额度产品枚举 */
-  renderAdvancedForm( ) {
-    const { getFieldDecorator } = this.props.form;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={7} sm={24}>
-            <FormItem label="">
-              {getFieldDecorator('name')(
-                <Input placeholder="请输入赛事名称"  maxLength={18} style={{ width: '80%' }} />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={7} sm={24}>
-            <FormItem label="">
-              {getFieldDecorator('state')(
-                <Select placeholder="请选择比赛" style={{ width: '80%' }}>
-                  <Option key={1}>未受理</Option>
-                  <Option key={2}>已受理</Option>
-                  <Option key={3}>已完成</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          {/*<Col md={9} sm={24}>*/}
-            {/*<FormItem label="提交时间">*/}
-              {/*{getFieldDecorator('createTime')(*/}
-                {/*<RangePicker style={{ width: '100%' }}/>*/}
-              {/*)}*/}
-            {/*</FormItem>*/}
-          {/*</Col>*/}
-        <Col md={10} sm={24}>
-             <span style={{ float: 'left', marginBottom: 24 }}>
-                <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>查询</Button>
-              </span>
-          </Col>
-        </Row>
+  handleResult = (result)=>{
+   if(result.resultCode === 0){
+       Modal.success({
+       title: '结果反馈',
+        content: '操作成功',
+        onOk:()=>{this.sendList()}
+      });
+   }else{
+      Modal.error({
+      title: '结果反馈',
+      content: result.resultmsg,
+    })
+    }
+  }
 
-      </Form>
-    );
+  sendList(){
+      const { dispatch } = this.props;
+      const {formValues} = this.state;
+      dispatch({
+        type:'gamelist/fetch',
+        payload:formValues
+      })
   }
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { gamelist: { data, loading, eventtype } ,  dispatch } = this.props;
-    console.log(data);
-    const { modalVisible, modaltype, record, btnloading} = this.state;
+    const { gamelist: { data, loading, eventtype } , eventlist:{ activateEvent }, dispatch } = this.props;
+    const { modalVisible, modaltype, record, btnloading, selectMenu} = this.state;
 
     const columns = [{
       title: '赛事',
@@ -280,7 +284,37 @@ export default class TableList extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
-                <Button  onClick={() => this.handleModalVisible(true,'',0)}>新增比赛</Button>
+              <Form layout="inline" style={{width:'100%',display:'block',overflow:'auto'}}  onSubmit={this.handleSearch}>
+                <FormItem  style={{float:'left',display:'inline'}}>
+                  <Button type='primary'  ghost onClick={() => this.handleModalVisible(true,'',0)}>新增比赛</Button>
+                </FormItem>
+                <FormItem  style={{float:'right',display:'inline'}}>
+                  <Button type="primary" htmlType="submit">搜索</Button>
+                </FormItem>
+                <FormItem style={{float:'right',display:'inline', marginRight:10}}>
+                  {
+                    getFieldDecorator('startTime')(<DatePicker placeholder='请选择比赛开始时间'/>)
+                  }
+                </FormItem>
+                <FormItem style={{float:'right',display:'inline', marginRight:10,width:'120px'}}>
+                  {
+                    getFieldDecorator('gameName')(<Select  style={{ width: '120px' }}>
+                      {
+                        selectMenu.length?selectMenu.map((item)=>{
+                          <Option value={item.id}>{item.name}</Option>
+                        }):[]
+                      }
+                    </Select>)
+                  }
+                </FormItem>
+                <FormItem style={{float:'right',display:'inline', marginRight:10}}>
+                  {
+                    getFieldDecorator('name',{
+                      initialValue:activateEvent.name
+                    })(<Input placeholder='请输入赛事名称'/>)
+                  }
+                </FormItem>
+              </Form>
             </div>
             <StandardTable
               columns = { columns }
@@ -300,9 +334,11 @@ export default class TableList extends PureComponent {
           onCancel={() => this.handleModalVisible()}
         >
           <AddGame modalType={modaltype}
-                   handleOk={() => this.handleOk(type,params)}
+                   handleOk={(type,params) => this.handleOk(type,params)}
                    handleCancel={() => this.handleModalVisible()}
                    data={record}
+                   dispatch =  {dispatch}
+                   activeObj={activateEvent}
                    menu={eventtype}
                    btnloading={btnloading}/>
         </Modal>

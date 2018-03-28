@@ -59,6 +59,7 @@ export default class AuditLisr extends Component {
   }
 
   render(){
+    const { getFieldDecorator } = this.props.form;
 
     const columns = [{
       title:'赛事',
@@ -90,13 +91,27 @@ export default class AuditLisr extends Component {
       }
     }]
     return <PageHeaderLayout title="竞猜结果审核">
-      <Card>
-      <div className={styles.TableForm}>
-        { this.renderAdvanceForm() }
+      <Card bordered={false}>
+        <div className={styles.tableList}>
+          <div className={styles.tableListForm}>
+        <Form layout="inline" style={{width:'100%',display:'block',overflow:'auto'}}  onSubmit={this.handleSearch}>
+          <FormItem  style={{float:'right',display:'inline'}}>
+            <Button type="primary" htmlType="submit">搜索</Button>
+          </FormItem>
+          <FormItem style={{float:'right',display:'inline', marginRight:10}}>
+            {
+              getFieldDecorator('gameName')(<Input placeholder='请输入比赛名称'/>)
+            }
+          </FormItem>
+          <FormItem style={{float:'right',display:'inline', marginRight:10}}>
+            {
+              getFieldDecorator('name')(<Input placeholder='请输入赛事名称'/>)
+            }
+          </FormItem>
+        </Form>
       </div>
-      <div>
         <Table dataSource={[{'status':'结算中'},{'status':'竞猜中'}]} columns={columns} pagination={false} bordered size='middle'/>
-      </div>
+        </div>
       </Card>
     </PageHeaderLayout>
   }
