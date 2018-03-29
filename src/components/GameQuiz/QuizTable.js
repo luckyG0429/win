@@ -57,10 +57,6 @@ class EditQuizTable extends Component {
       dataIndex:'name',
       render:(text,record)=>this.renderColumns(text,record,'name'),
     },{
-      title:'竞猜类型',
-      dataIndex:'type',
-      render:(text,record)=>this.renderColumns(text,record,'type'),
-    },{
       title:'竞猜结束时间',
       dataIndex:'endTime',
       render:(text,record)=>this.renderColumns(text,record,'endTime'),

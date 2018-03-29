@@ -1,7 +1,13 @@
 /**
  * model  比赛管理
  */
-import { queryGamelist,queryEventlist, addGame, enumTeam, putGame, delGame} from '../services/win_game';
+import {
+  queryGamelist, queryEventlist, addGame, enumTeam, putGame, delGame,
+  setGamedstarttime
+} from '../services/win_game';
+import { addQuiz
+} from '../services/win_quiz';
+
 
 export default {
   namespace:'gamelist',
@@ -53,7 +59,15 @@ export default {
     *deleteGamedata({payload,callback},{call}){
       const result = yield call(delGame,payload);
       if(callback) callback(result);
-    }
+    },
+    *delayGameStarttime({payload,callback},{call, put}){
+      const result = yield call(setGamedstarttime,payload);
+      if(callback) callback(result);
+    },
+    *addGameQuiz({payload,callback},{call, put}){
+      const result = yield call(addQuiz,payload);
+      if(callback) callback(result);
+    },
   },
   reducers:{
     changeLoading(state, action){

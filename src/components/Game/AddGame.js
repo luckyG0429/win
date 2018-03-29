@@ -6,7 +6,7 @@ import moment from 'moment';
 import { Form, Input, Select, Button, DatePicker, Divider } from 'antd';
 import EditQuizTable from '../GameQuiz/QuizTable';
 import styles from './Game.less';
-import { datetimeToTimestamp } from '../../utils/utils';
+import { datetimeToTimestamp ,timestampToDatetime} from '../../utils/utils';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -28,11 +28,14 @@ export default class Gamedetail extends PureComponent{
   e.preventDefault();
   const {form,handleOk,modalType} = this.props;
   const {gameGuesses} = this.state;
+
   form.validateFields((err, fieldsValue) => {
     if (err) return;
     const values = {
       ...fieldsValue
     };
+    console.log(values);
+
     var jsonParams = {
       name:values.name||'',
       gameId:values.gameId|| undefined,
@@ -75,7 +78,17 @@ export default class Gamedetail extends PureComponent{
   setGussingArray(obj){
     console.log('setGussingArray');
     console.log(obj);
-    const newGuess = [...this.state.gameGuesses,...obj];
+    //
+    // var oldGuesses = this.state.gameGuesses;
+    // if(obj.length ===0){
+    //
+    // }else{
+    //   for(let i=0;i<obj.length;i++){
+    //
+    //   }
+    //
+    // }
+    const newGuess = [...obj];
     this.setState({
         gameGuesses:newGuess
     })
@@ -98,18 +111,18 @@ export default class Gamedetail extends PureComponent{
 
   if(modalType ===1 && data != undefined){
     var {
-      eventName,
-      gameName,
-      gameTeamA,
-      gameTeamB,
-      gameTimeStart
+      name,
+      gameId,
+      gameTeamAId,
+      gameTeamBId,
+      startTime
     } = data
   }else{
-    var gameName='',
-      eventName='',
-    gameTeamA='',
-    gameTeamB='',
-    gameTimeStart='2018-01-01'
+    var name='',
+      gameId='',
+      gameTeamAId='',
+      gameTeamBId='',
+      startTime='2018-01-01'
   }
 
   const formItemLayout = {
@@ -127,7 +140,7 @@ export default class Gamedetail extends PureComponent{
   return  (<Form layout="horizontal"  className={styles.modalform} style={{width:'80%',marginLeft:'10%',marginTop:'5px'}}>
     <FormItem label="比赛名称" {...formItemLayout}>
       {getFieldDecorator('name',{
-        initialValue:gameName
+        initialValue:name
       })(<Input/>)
       }
     </FormItem>
@@ -136,7 +149,7 @@ export default class Gamedetail extends PureComponent{
         rules: [{
           required: true, message: '请输入赛事名！',
         }],
-        initialValue: gameNameValue,
+        initialValue: gameId,
       })(<Select onBlur={this.handleEvent}>
         { optionListEvent }
       </Select>)}
@@ -146,7 +159,7 @@ export default class Gamedetail extends PureComponent{
         rules: [{
           required: true , message: '请选择战队！',
         }],
-        initialValue:gameTeamA
+        initialValue:gameTeamAId
       })(<Select>
         { optionListTeam }
       </Select>)}
@@ -156,7 +169,7 @@ export default class Gamedetail extends PureComponent{
         rules: [{
           required: true , message: '请选择战队'
         }],
-        initialValue:gameTeamB
+        initialValue:gameTeamBId
       })(<Select>
         { optionListTeam }
       </Select>)}
@@ -166,7 +179,7 @@ export default class Gamedetail extends PureComponent{
         rules: [{
           required: true , message: '请输入比赛开始时间！',
         }],
-        initialValue:moment(gameTimeStart)
+        initialValue:moment(timestampToDatetime(startTime))
       })(<DatePicker
         showTime
         disabledDate={this.disabledDate}
@@ -180,7 +193,7 @@ export default class Gamedetail extends PureComponent{
     <Divider style={{clear:'both'}}/>
     <FormItem style={{justifyContent:'center'}}>
       <Button type="primary"  loading={ btnloading } style={{ marginRight: 16 }} onClick={(e)=>this.handleSubmit(e)}>确定</Button>
-      <Button onClick={()=>handleReset()} style={{marginLeft:'15px'}}>取消</Button>
+      <Button onClick={()=>this.handleReset()} style={{marginLeft:'15px'}}>取消</Button>
     </FormItem>
   </Form>)
  }

@@ -7,7 +7,7 @@ import { Row, Col, Card, Form, Input, Select, Button, DatePicker, Modal, Divider
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import GameDetail from '../../components/Game/GameDetail';
-import {timestampToDatetime} from '../../utils/utils';
+import {gameStatus, timestampToDatetime} from '../../utils/utils';
 
 import styles from './game.less';
 
@@ -172,7 +172,7 @@ export default class AuditList extends PureComponent {
 
     const columns = [{
       title: '赛事',
-      dataIndex: 'eventname',
+      dataIndex: 'gameName',
     },{
       title: '比赛名称',
       dataIndex: 'name',
@@ -182,14 +182,14 @@ export default class AuditList extends PureComponent {
       render:(text)=><span>{timestampToDatetime(text)}</span>
     },{
       title: '战队-A',
-      dataIndex: 'gameTeamA',
+      dataIndex: 'gameTeamAName',
     },{
       title: '战队-B',
-      dataIndex: 'gameTeamB',
+      dataIndex: 'gameTeamBName',
     },{
       title: '比赛状态',
-      dataIndex: 'gamestatus',
-      render:(text)=>text===0?'未发布':'已发布'
+      dataIndex: 'status',
+      render:(text)=> gameStatus.filter((item)=>text===item.key).length !=0? gameStatus.filter((item)=>text===item.key)[0].name:`状态码${text}`
     },{
       title: '创建人',
       dataIndex: 'person',

@@ -10,7 +10,7 @@ import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import AddGame from '../../components/Game/AddGame';
 import GameDetail from '../../components/Game/GameDetail';
-import {timestampToDatetime} from '../../utils/utils';
+import {timestampToDatetime, gameStatus} from '../../utils/utils';
 
 import styles from './game.less';
 
@@ -251,9 +251,11 @@ export default class TableList extends PureComponent {
     const { gamelist: { data, loading, eventtype } , eventlist:{ activateEvent }, dispatch } = this.props;
     const { modalVisible, modaltype, record, btnloading, selectMenu} = this.state;
 
+    console.log(gameStatus);
+
     const columns = [{
       title: '赛事',
-      dataIndex: 'eventName',
+      dataIndex: 'gameName',
     },{
       title: '比赛名称',
       dataIndex: 'name',
@@ -263,23 +265,31 @@ export default class TableList extends PureComponent {
       render:(text)=><span>{timestampToDatetime(text)}</span>
     },{
       title: '战队-A',
-      dataIndex: 'gameTeamA',
+      dataIndex: 'gameTeamAName',
     },{
       title: '战队-B',
-      dataIndex: 'gameTeamB',
+      dataIndex: 'gameTeamBName',
     },{
       title: '比赛状态',
-      dataIndex: 'gamestatus',
-      render:(text)=>text===0?'未发布':'已发布'
+      dataIndex: 'status',
+      render:(text)=> gameStatus.filter((item)=>text===item.key).length !=0? gameStatus.filter((item)=>text===item.key)[0].name:`状态码${text}`
     },{
       title: '创建人',
-      dataIndex: 'person',
+      dataIndex: 'creator',
     },{
       title: '操作',
       dataIndex: '',
       render:(text,record)=>{
-        switch(record.gamestatus){
-          default:return <div>
+        switch(record.status){
+          case 2: return <div>
+            <a onClick={() => this.handleModalVisible(true,record,2)}>查看</a>
+          </div>;
+          case 3: return <div>
+            <a onClick={() => this.handleModalVisible(true,record,2)}>查看</a>
+            <Divider type='vertical'/>
+            <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
+          </div>;
+          case 1:return <div>
             <a onClick={() => this.handleConfirm(record,'release')}>提交</a>
             <Divider type='vertical'/>
             <a onClick={() => this.handleModalVisible(true,record,1)}>编辑</a>
@@ -288,7 +298,7 @@ export default class TableList extends PureComponent {
             <Divider type='vertical'/>
             <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
           </div>;
-          // default: return  <a onClick={() => this.handleModalVisible(true,record,1)}>查看</a>
+          default: return '-';
         }
 
       }

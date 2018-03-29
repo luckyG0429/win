@@ -10,6 +10,7 @@ import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import AddQuiz from '../../components/GameQuiz/AddQuiz';
 import QuizList from '../../components/GameQuiz/QuizList'
+import { quizStatus } from '../../utils/utils'
 
 import styles from './quiz.less';
 
@@ -312,10 +313,10 @@ export default class TableList extends PureComponent {
 
     const columns = [{
       title: '赛事名',
-      dataIndex: 'eventName',
+      dataIndex: 'gameName',
     },{
       title: '比赛名称',
-      dataIndex: 'gameName'
+      dataIndex: 'gameDataName'
     },{
       title: '竞猜名',
       dataIndex: 'name'
@@ -325,14 +326,15 @@ export default class TableList extends PureComponent {
       render:(text)=><p>{this.timestampToTime(text)}</p>
     },{
       title: '战队双方',
-      dataIndex: 'gameTeamA',
-      render:(text,record)=>`${text} VS ${record.gameTeamB}`
+      dataIndex: 'gameTeamAName',
+      render:(text,record)=>`${text} VS ${record.gameTeamBName}`
     },{
       title: '总下注金额(金币体验币)',
       dataIndex: 'gameTimeEnd',
     },{
       title: '竞猜状态',
-      dataIndex: 'gamestatus',
+      dataIndex: 'status',
+      render:(text)=>quizStatus.filter((item)=>text===item.key).length?quizStatus.filter((item)=>text===item.key)[0].name:`状态码${text}`
     },{
       title: '操作',
       dataIndex: '',

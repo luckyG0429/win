@@ -33,10 +33,10 @@ function CheckResponse(data){
       case 'B': return '钱不够引起的错误';
       default: return '发生未知错误,请联系管理员';
     }};
-   const msg = errorText(data);
-    Modal.error({
-      title:msg
-    })
+   // const msg = errorText(data);
+   //  Modal.error({
+   //    title:msg
+   //  })
     return {...data,resultmsg:msg};
   }
 }

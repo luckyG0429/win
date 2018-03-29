@@ -7,6 +7,7 @@
 import React,{ Component }from 'react';
 import {Input, DatePicker, Select, Table, Popconfirm, Button} from 'antd';
 import moment from 'moment';
+import {datetimeToTimestamp, quizStatus,handleResult} from '../../utils/utils';
 
 const Option = Select.Option;
 
@@ -61,17 +62,12 @@ class EditQuizTable extends Component {
       dataIndex:'name',
       render:(text,record)=>this.renderColumns(text,record,'name'),
     },{
-      title:'竞猜类型',
-      dataIndex:'type',
-      width:80,
-      render:(text,record)=>this.renderColumns(text,record,'type'),
-    },{
       title:'竞猜结束时间',
       dataIndex:'endTime',
       render:(text,record)=>this.renderColumns(text,record,'endTime'),
     },{
       title:'竞猜结果',
-      dataIndex:'result',
+      dataIndex:'status',
       render:(text,record)=>this.renderColumns(text,record,'-'),
     },{
       title:'操作',
@@ -84,8 +80,7 @@ class EditQuizTable extends Component {
         return (<div>
           {
             editable ? <span style={{textAlign: 'justify'}}>
-                  <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>编辑</a>
-                  <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>提交</a>
+                  <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>保存</a>
                   <Popconfirm title="您确定要删除吗?" onConfirm={() => this.onDelete(record.key)}>
                     <a>删除</a>
                   </Popconfirm>
@@ -111,7 +106,7 @@ class EditQuizTable extends Component {
       <EditableCell
         num={column}
         editable={record.editable}
-        value={text}
+        value={column==='-'?( quizStatus.filter((item)=>text===item.key).length!=0?quizStatus.filter((item)=>text===item.key)[0].name:'-'):text}
         onChange={value => this.handleChange(value, record.key, column)}
       />
     );
@@ -119,14 +114,27 @@ class EditQuizTable extends Component {
 
   handleStatus(record){
     switch(record.status){
-      case 0: return <span style={{textAlign: 'justify'}}>
+      case 1: return <span style={{textAlign: 'justify'}}>
         <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>延期封盘</a>
         <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>立即封盘</a>
       </span>;
-      case 1: return <span style={{textAlign: 'justify'}}>
+      case 2: return <span style={{textAlign: 'justify'}}>
         <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>录入比赛结果</a>
       </span>;
-      default: return '-'
+      case 3: return <span style={{textAlign: 'justify'}}>
+        <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>延期封盘</a>
+        <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>立即封盘</a>
+      </span>;
+      case 4: return '-';
+      case 5: return '-';
+      case 6: return '-';
+      case 7: return '-';
+      default: return  <span style={{textAlign: 'justify'}}>
+        <a style={{paddingRight: 15}} onClick={() => this.onSubmit(record)}>提交</a>
+        <Popconfirm title="您确定要删除吗?" onConfirm={() => this.onDelete(record.key)}>
+          <a>删除</a>
+        </Popconfirm>
+      </span>
     }
   }
 
@@ -168,6 +176,29 @@ class EditQuizTable extends Component {
       this.cacheData = newData.map(item => ({ ...item }));
     }
   }
+
+  onSubmit =(obj) => {
+    console.log('submit');
+    console.log(obj);
+    const {endTime,name}=obj;
+    // console.log('');
+    const {dispatch, record} = this.props;
+    dispatch({
+      type:'gamelist/addGameQuiz',
+      payload:{
+        gameDataId:record.id,
+        name,
+        endTime:datetimeToTimestamp(endTime)
+      },
+      callback:(result)=>{
+        handleResult(result);
+      }
+    })
+
+  }
+
+
+
 
   render(){
     return <div>

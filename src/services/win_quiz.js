@@ -4,15 +4,10 @@
 import request from '../utils/request';
 
 
-//win+ 0 竞猜规则枚举
-export async function queryQuiztype() {
-  return request('/guessing/guess/listAllGuessTypes');
-}
-
 //win+ 01 比赛的竞猜列表
 export async function queryQuizlist(params) {
-  let { pageSize, currentPage, name,type} = params;
-  let paramsStr = `page=${currentPage}&pageSize=${pageSize}`;
+  let { pageSize, currentPage, status,type} = params;
+  let paramsStr = `page=${currentPage}&pageSize=${pageSize}&status=`;
   return request(`/guessing/guess/list?${paramsStr}`);
 }
 
@@ -20,7 +15,7 @@ export async function queryQuizlist(params) {
 export async function addQuiz(params){
   return request('/guessing/guess/create',{
     method:'POST',
-    body: params
+    body: JSON.stringify(params)
   })
 }
 
@@ -56,8 +51,6 @@ export async function auditQuiz(params){
 }
 
 
-
-
 //win+ 00 竞猜结果审核 -- 结果列表
 export async function queryAuditList(params){
   let { pageSize, currentPage, name,type} = params;
@@ -66,12 +59,6 @@ export async function queryAuditList(params){
 }
 
 //win+ 05 竞猜结果审核---驳回
-export async function sendReject(params){
-  return request(`/guessing/quiz/reject?id=${params}`)
-}
 
 //win+ 06 竞猜结果审核---结算
-export async function sendAccout(params){
-  return request(`/guessing/quiz/accout?id=${params}`)
-}
 

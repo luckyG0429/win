@@ -1,4 +1,5 @@
 import moment from 'moment';
+import {Modal} from "antd/lib/index";
 
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
@@ -118,4 +119,64 @@ export function datetimeToTimestamp(d){
   return Date.parse(dataT);
 }
 
+export const gameStatus = [{
+    key:1,
+    name:'编辑'
+  },{
+    key:2,
+    name:'审核中'
+  },{
+    key:3,
+    name:'已上架'
+  },{
+    key:4,
+    name:'已删除'
+  }];
 
+export const  quizStatus =[{
+    key:1,
+    name:'编辑'
+  },{
+    key:2,
+    name:'审核中'
+  },{
+    key:3,
+    name:'审核通过'
+  },{
+    key:4,
+    name:'结果核查'
+  },{
+    key:5,
+    name:'系统结算中'
+  },{
+    key:6,
+    name:'结算完毕'
+  },{
+    key:7,
+    name:'删除'
+  }];
+
+
+export function handleResult(result,msg='操作成功',OKfn,Errorfn){
+  if(result.resultCode === 0){
+    Modal.success({
+      title: '结果反馈',
+      content: msg,
+      onOk(){
+        if(typeof OKfn === "function"){
+          OKfn()
+        }
+      }
+    });
+  }else{
+    Modal.error({
+      title: '结果反馈',
+      content: result.resultmsg,
+      onOk(){
+        if(typeof Errorfn === "function"){
+          Errorfn()
+        }
+      }
+    })
+  }
+}

@@ -9,6 +9,8 @@
 import React, { PureComponent } from 'react';
 import {Tabs, Table,Form, Input, Button,Modal,Divider } from 'antd';
 import QuziTable from './GameDetailA';
+import GameForm from './GameForm'
+import { datetimeToTimestamp ,gameStatus} from '../../utils/utils';
 
 const TabPane = Tabs.TabPane;
 const FormItem= Form.Item;
@@ -92,18 +94,26 @@ export default class GameDetail extends PureComponent {
 
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { data, isBtn } = this.props;
+    const { data, isBtn, dispatch } = this.props;
     const { canEdit } =this.state;
     return <div>
       <Tabs style={{height:'320px'}}>
-        <TabPane tab="比赛详情" key="1">比赛详情</TabPane>
+        <TabPane tab="比赛详情" key="1">
+          <GameForm  dispatch={dispatch} data={data} modalType={1} />
+        </TabPane>
         <TabPane tab="比赛竞猜列表" key="2">
-          <QuziTable data={[{name:'1',status:0},{name:'1',status:1}]}/>
+          <QuziTable dispatch={dispatch}  record={data} data={[{name:'1',status:0},{name:'1',status:1}]}/>
         </TabPane>
       </Tabs>
+
+
+
       <Divider/>
       <div style={{display:'block',textAlign:'center'}}>
-        <p style={{display:'block',textAlign:'center'}}>当前的比赛状态：{ data.statusStr||'-' }</p>
+        <p style={{display:'block',textAlign:'center'}}>当前的比赛状态：
+          {
+          gameStatus.filter((item)=>data.status===item.key).length!=0?gameStatus.filter((item)=>data.status===item.key)[0].name:'-'
+          }</p>
 
         <Form layout='inline' >
           <FormItem label='' style={{width:'10px'}}>
@@ -119,6 +129,7 @@ export default class GameDetail extends PureComponent {
                 rules: [{
                   required: true , message: '请输入！',
                 }],
+                initialValue:data.gameTeamAScore,
               })(<Input disabled={canEdit} style={{width:'80px'}}/>)
             }
           </FormItem>
@@ -128,6 +139,7 @@ export default class GameDetail extends PureComponent {
                 rules: [{
                   required: true , message: '请输入！',
                 }],
+                initialValue:data.gameTeamBScore,
               })(<Input disabled={canEdit} style={{width:'80px'}}/>)
             }
           </FormItem>
