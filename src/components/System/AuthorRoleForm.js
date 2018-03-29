@@ -20,6 +20,8 @@ class AuthorRoleForm extends PureComponent {
       if (!err) {
         console.log('Received values of form: ', values);
       }
+      alert(1);
+      console.log(values)
     //  handleOk(formData);
     });
   }
@@ -27,6 +29,7 @@ class AuthorRoleForm extends PureComponent {
   render(){
     const { getFieldDecorator } = this.props.form;
     const {data, modalType} = this.props;
+    console.log(data);
 
     const formItemLayout = {
       labelCol: { span: 4, offset:2 },
@@ -36,7 +39,7 @@ class AuthorRoleForm extends PureComponent {
       wrapperCol: { span: 12, offset: 6 },
     }
 
-    if(modalType ===1 && data != undefined){
+    if( data != undefined){
       var {
         name,
         type,
@@ -87,7 +90,7 @@ class AuthorRoleForm extends PureComponent {
             rules: [{
               require:true
             }],
-            initialValue:available
+            initialValue:available?1:0
           })( <Select placeholder='请给新建职位添加状态'>
             <Option key='1' value={0}>未启用</Option>
             <Option key='2' value={1}>启用</Option>

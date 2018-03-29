@@ -2,7 +2,8 @@
  * model  系统参数列表
  * 这里包含的有：竞猜规则的列表，添加竞猜规则，添加赛事分类，赛事分类列表
  */
-import { queryEventtypelist, addEventtype, queryQuiztypelist} from '../services/win_system';
+import { queryEventtypelist, addEventtype,
+  queryAuthorizeRole, addAuthorizeRole, updataAuthorRole, deleteAuthorRole} from '../services/win_system';
 
 export default {
   namespace:'systemlist',
@@ -17,7 +18,7 @@ export default {
       list:[],
       pagination:{}
     },
-    roleLoading:false,
+    roleloading:false,
   },
   effects:{
     //赛事类型列表
@@ -45,10 +46,26 @@ export default {
       const result = yield call(addEventtype,payload);
       if(callback) callback(result);
     },
-    // *rolefetch({payload, callback},{call, put}){
-    //   const result = yield call(queryQuiztypelist,payload);
-    //   if(callback) callback(result);
-    // }
+    *rolefetch({payload},{call, put}){
+      yield put({
+        type:'changeRoleLoading',
+        payload:true
+      });
+      const result = yield call(queryAuthorizeRole,payload);
+      if(result.resultCode !==0) return false;
+      yield put({
+        type:'setRoleListdata',
+        payload: result,
+      })
+      yield put({
+        type:'changeRoleLoading',
+        payload: false
+      })
+    },
+    *delRole({payload, callback},{call}){
+      const result = yield call(deleteAuthorRole,payload);
+      if(callback) callback(result);
+    }
   },
   reducers:{
     changeEventLoading(state, action){
@@ -62,14 +79,14 @@ export default {
         ...state,
         eventdata:{
           list:action.payload.data,
-          pagination:action.payload.eData, pagination:false
+          pagination:action.payload.eData,
         }
       }
     },
     changeRoleLoading(state, action){
       return {
         ...state,
-        eventloading:action.payload
+        roleloading: action.payload
       }
     },
     setRoleListdata(state, action){
@@ -79,12 +96,6 @@ export default {
           list:action.payload.data,
           pagination:action.payload.eData,
         }
-      }
-    },
-    setEventtype(state,action) {
-      return {
-        ...state,
-        eventtype:action.payload
       }
     },
   }

@@ -78,7 +78,7 @@ export async function  getGamedetail(params){
 //win+ 08 上架审核 -- 比赛审核
 export async function checkedGame(params){
   const {id,pass} = params;
-  return request('/guessing/game/authorGameData',{
+  return request('/guessing/game/authorizeGameData',{
     method:'POST',
     body:`id=${id}&pass=${pass}`
   })
