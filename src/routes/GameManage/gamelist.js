@@ -10,7 +10,7 @@ import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import AddGame from '../../components/Game/AddGame';
 import GameDetail from '../../components/Game/GameDetail';
-import {timestampToDatetime, gameStatus} from '../../utils/utils';
+import {timestampToDatetime, gameStatus, handleResult} from '../../utils/utils';
 
 import styles from './game.less';
 
@@ -25,17 +25,24 @@ const { Option } = Select;
 }))
 @Form.create()
 export default class TableList extends PureComponent {
-  state = {
-    formValues: {
-      pageSize:10,
-      currentPage:1,
-    },
-    record:'',
-    modalVisible:false,
-    modaltype:'',
-    btnloading:false,
-    selectMenu:[]
-  };
+  constructor(props){
+    super(props);
+    this.state = {
+        formValues: {
+          pageSize:10,
+          currentPage:1,
+          id:props.eventlist.activateEvent.hasOwnProperty('id')?props.eventlist.activateEvent.id:''
+        },
+        record:'',
+        modalVisible:false,
+        modaltype:'',
+        btnloading:false,
+        selectMenu:[]
+      };
+
+  }
+
+  c
 
   componentDidMount() {
     const { dispatch } = this.props;
@@ -72,6 +79,7 @@ export default class TableList extends PureComponent {
 
   handleConfirm = (record, type)=>{
       const {dispatch} = this.props;
+      const {formValues} = this.state;
       const obj = ((type)=>type==='release'?{
         title:'您确定要提交当前的比赛吗？',
         content:'提示：比赛一旦提交，其下的所有竞猜也会被审核。',
@@ -97,7 +105,12 @@ export default class TableList extends PureComponent {
             payload:record.id,
             callback:(result)=>{
               if(result.resultCode ==0){
-                this.handleResult(result,params.msg);
+                handleResult(result,params.msg,()=>{
+                  dispatch({
+                    type: 'gamelist/fetch',
+                    payload: formValues
+                  })
+                });
               }
             }
           })
@@ -138,58 +151,30 @@ export default class TableList extends PureComponent {
     }
   }
 
-  /* TODO:条件查询 - 清空查询条件  - 内部状态管理：初始化表单数据[ formValues ] */
-  handleFormReset = () => {
-    const { form } = this.props;
-    form.resetFields();
-    this.setState({
-      formValues: {
-        page:1,
-        size:10,
-        kgName:'',
-        applyName:'',
-        applyPhone:'',
-        applyStartTime:'',
-        applyEndTime:'',
-        state:'',
-      }
-    });
-  }
-
   /* TODO:条件查询 - 条件查询事件  - 内部状态管理：表单数据[ formValues ] */
   handleSearch = (e) => {
     e.preventDefault();
     const { dispatch, form } = this.props;
+    const { formValues } = this.state;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       const values = {
         ...fieldsValue
       };
-      var jsonParams = {
-        kgName:values.kgName||"",
-        applyName:values.applyName||"",
-        applyPhone:values.applyPhone||"",
-        state:values.state||'',
-        applyStartTime: '',
-        applyEndTime:''
-    };
-      if(values.createTime && values.createTime.length != 0 ){
-        jsonParams.applyStartTime = values.createTime[0].format('YYYY-MM-DD').toString();
-        jsonParams.applyEndTime = values.createTime[1].format('YYYY-MM-DD').toString()
-      }
+
       this.setState({
         formValues:{
-          page: 1,
-          size: 10,
-          ...jsonParams
+          ...formValues,
+          id:'',
+          ...values
         },
       });
       dispatch({
         type: 'gamelist/fetch',
         payload: {
-          page: 1,
-          size: 10,
-          ...jsonParams
+          ...formValues,
+          id:'',
+          ...values
         },
       });
     });
@@ -212,28 +197,13 @@ export default class TableList extends PureComponent {
             btnloading:false,
             modalVisible:false,
           },()=>{
-            this.handleResult(result);
+            handleResult(result,'添加成功',()=>{this.sendList()});
           });
         }
       });
 
     } else {
 
-    }
-  }
-
-  handleResult = (result,msg='操作成功')=>{
-   if(result.resultCode === 0){
-       Modal.success({
-       title: '结果反馈',
-        content: msg,
-        onOk:()=>{this.sendList()}
-      });
-   }else{
-      Modal.error({
-      title: '结果反馈',
-      content: result.resultmsg,
-    })
     }
   }
 
@@ -251,7 +221,8 @@ export default class TableList extends PureComponent {
     const { gamelist: { data, loading, eventtype } , eventlist:{ activateEvent }, dispatch } = this.props;
     const { modalVisible, modaltype, record, btnloading, selectMenu} = this.state;
 
-    console.log(gameStatus);
+
+    console.log(eventtype);
 
     const columns = [{
       title: '赛事',
@@ -324,20 +295,21 @@ export default class TableList extends PureComponent {
                 </FormItem>
                 <FormItem style={{float:'right',display:'inline', marginRight:10,width:'120px'}}>
                   {
-                    getFieldDecorator('gameName')(<Select  style={{ width: '120px' }}>
-                      {
-                        selectMenu.length?selectMenu.map((item)=>{
-                          <Option value={item.id}>{item.name}</Option>
-                        }):[]
-                      }
-                    </Select>)
+                    getFieldDecorator('gameName')(<Input  placeholder='请输入比赛名称'/>)
                   }
                 </FormItem>
                 <FormItem style={{float:'right',display:'inline', marginRight:10}}>
                   {
-                    getFieldDecorator('name',{
-                      initialValue:activateEvent.name
-                    })(<Input placeholder='请输入赛事名称'/>)
+                    getFieldDecorator('gameId',{
+                      initialValue:activateEvent.id
+                    })(<Select  style={{ width: '120px' }}>
+                      <Option value='' disabled={true}>请选择...</Option>
+                      {
+                        eventtype.length!=0?eventtype.map((item)=>{
+                          <Option value={item.id}>{item.name}</Option>
+                        }):[]
+                      }
+                    </Select>)
                   }
                 </FormItem>
               </Form>
@@ -367,7 +339,7 @@ export default class TableList extends PureComponent {
                    dispatch =  {dispatch}
                    activeObj={activateEvent}
                    menu={eventtype}
-                   btnloading={btnloading}/>: <GameDetail isBtn={false} data={record} dispatch={dispatch}/>
+                   btnloading={btnloading}/>: <GameDetail isBtn={false}  handleVisible={() => this.handleModalVisible()} data={record} dispatch={dispatch}/>
           }
         </Modal>
 

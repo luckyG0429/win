@@ -3,7 +3,7 @@
  */
 import {
   queryGamelist, queryEventlist, addGame, enumTeam, putGame, delGame,
-  setGamedstarttime
+  setGamedstarttime, queryGameQuizlist
 } from '../services/win_game';
 import { addQuiz
 } from '../services/win_quiz';
@@ -18,6 +18,7 @@ export default {
     },
     loading:false,
     eventtype:[],
+    gamequiz:[]
   },
   effects:{
     *eventTypelist({payload},{call,put}){
@@ -68,6 +69,10 @@ export default {
       const result = yield call(addQuiz,payload);
       if(callback) callback(result);
     },
+    *gameQuizlist({payload,callback},{call}){
+      const result = yield call(queryGameQuizlist,payload);
+      if(callback) callback(result);
+    }
   },
   reducers:{
     changeLoading(state, action){

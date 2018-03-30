@@ -4,10 +4,10 @@
  *  修改
  * **/
 
-import React, {PureComponent, Purecomponent} from 'react';
+import React, {Component } from 'react';
 import { Table, Button, Icon } from 'antd'
 
-export default class RoleTab extends PureComponent {
+export default class RoleTab extends Component {
   state={
     formValues:{
       currentPage:1,
@@ -19,11 +19,14 @@ export default class RoleTab extends PureComponent {
      this.sendFetch();
   }
 
-  // componentWillReceiveProps(nextProps){
-  //   if(nextProps.shouldUp !== this.props.shouldUp){
-  //     this.sendFetch();
-  //   }
-  // }
+  shouldComponentUpdate(nextProps){
+    if (this.props.shouldup !== nextProps.shouldup) {
+      this.sendFetch();
+      return true;
+    }else {
+      return true;
+    }
+  }
 
   sendFetch(params){
     const {dispatch,typeUrl} = this.props;
@@ -56,7 +59,6 @@ export default class RoleTab extends PureComponent {
 
   render () {
     const {data:{list, pagination} ,loading, columns, styles, handleVisible, btnText, keynum} = this.props;
-    console.log(loading);
     return (<div>
       <Button type='primary' ghost icon="plus" onClick={()=>handleVisible(true,keynum)}>{btnText}</Button>
       <p className={styles.tips}><Icon type="smile-o" /> 您好，以下是当前已配置好的职位列表</p>

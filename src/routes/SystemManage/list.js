@@ -11,7 +11,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import EventTypeForm from '../../components/System/EventTypeForm';
 import RoleTab from '../../components/System/RoleTab';
 import AuthorRoleForm from '../../components/System/AuthorRoleForm';
-import styles from './Servicelist.less';
+import styles from './system.less';
 import {handleResult} from '../../utils/utils'
 
 const TabPane = Tabs.TabPane;
@@ -29,7 +29,8 @@ export default class TableList extends PureComponent {
     btnloading:false,
 
     roleRecord:{},
-
+    eventShould:true,
+    roleShould:true,
   };
 
   /**请求参数列表**/
@@ -61,10 +62,11 @@ export default class TableList extends PureComponent {
   }
 
   //提交函数
-  handleOk = (params)=>{
-    const { modaltype,eventformValues} = this.state;
+  handleOk = (params,changeType=2)=>{
+    const { modaltype,roleShould, eventShould} = this.state;
     const { dispatch } = this.props;
     this.setState({btnloading:true});
+    console.log(params);
     /** type 1为赛事类型  2为职位**/
     if(modaltype === 1){
       dispatch({
@@ -74,11 +76,42 @@ export default class TableList extends PureComponent {
             this.setState({
               btnloading:false,
               modalVisible:false,
+              eventShould:!eventShould,
             },()=>{
               handleResult(result,'添加成功');
             });
           }
         })
+    }else{
+      if(changeType !== 2){
+        dispatch({
+          type:'systemlist/updataRole',
+          payload: params,
+          callback:(result)=>{
+            this.setState({
+              btnloading:false,
+              modalVisible:false,
+              roleShould: !roleShould
+            },()=>{
+              handleResult(result,'修改成功');
+            });
+          }
+        })
+      }else{
+        dispatch({
+          type:'systemlist/addRole',
+          payload: params,
+          callback:(result)=>{
+            this.setState({
+              btnloading:false,
+              modalVisible:false,
+              roleShould: !roleShould
+            },()=>{
+              handleResult(result,'添加成功');
+            });
+          }
+        })
+      }
     }
   }
 
@@ -86,12 +119,14 @@ export default class TableList extends PureComponent {
   renderModal=(type,obj)=>{
     switch(type){
       case 1: return <EventTypeForm {...obj}/>;
-      case 2: return <AuthorRoleForm {...obj}/>;
+      case 2: return <AuthorRoleForm modalType={type}  {...obj}/>;
+      case 21: return <AuthorRoleForm modalType={type}  {...obj}/>;
     }
   }
 
   handleConfirm=(record, type)=>{
     const {dispatch} = this.props;
+    const {roleShould} = this.state;
     const obj = ((type)=>type==='release'?{
       title:'您确定要发布当前的赛事吗？',
       content:'提示：赛事一旦发布，其下的所有比赛信息也会被同时发布上线。！',
@@ -106,11 +141,17 @@ export default class TableList extends PureComponent {
     return Modal.confirm({
       ...obj,
       width:'480px',
-      onOk(){
+      onOk:()=>{
         dispatch({
           type:'systemlist/delRole',
           payload: record.id,
-          callback:(result)=>handleResult(result)
+          callback:(result)=>{
+            this.setState({
+              roleShould: !roleShould
+            },()=>{
+              handleResult(result,'删除成功');
+            });
+          }
         })
       },
       onCancel(){
@@ -122,7 +163,7 @@ export default class TableList extends PureComponent {
   render() {
     const { getFieldDecorator } = this.props.form;
     const { systemlist: { eventdata, eventloading, roledata, roleloading } ,  dispatch } = this.props;
-    const { modaltype, modalVisible, btnloading, roleRecord} = this.state;
+    const { modaltype, modalVisible, btnloading, roleRecord, roleShould, eventShould} = this.state;
 
 
     const eventColumns = [{
@@ -152,7 +193,7 @@ export default class TableList extends PureComponent {
           case 0: return <div>
             <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
             <Divider type='vertical'/>
-            <a onClick={() => this.handleModalVisible(true,record,1)}>修改</a>
+            <a onClick={() => this.handleModalVisible(true,11,record)}>修改</a>
           </div>;
           default: return '-'
         }
@@ -167,7 +208,11 @@ export default class TableList extends PureComponent {
       dataIndex: 'name',
     },{
       title: '描述',
-      dataIndex: 'desc',
+      dataIndex: 'description',
+    },{
+      title: '状态',
+      dataIndex: 'available',
+      render:text=><span>{text?'启用中':'未启用'}</span>
     },{
       title: '操作',
       dataIndex: '',
@@ -175,7 +220,7 @@ export default class TableList extends PureComponent {
         return <div>
           <a disabled="true" onClick={() => this.handleConfirm(record,'delete')}>权限设置</a>
           <Divider type='vertical'/>
-          <a onClick={() => this.handleModalVisible(true,2,record)}>修改</a>
+          <a onClick={() => this.handleModalVisible(true,21,record)}>修改</a>
           <Divider type='vertical'/>
           <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
         </div>;
@@ -191,6 +236,7 @@ export default class TableList extends PureComponent {
                 <RoleTab  styles={styles}
                           typeUrl={'eventtypefetch'}
                           key={1}
+                          shouldup = {eventShould}
                           btnText={'添加赛事类型'}
                           dispatch={dispatch}
                           handleVisible={()=>this.handleModalVisible(true,1)}
@@ -203,6 +249,7 @@ export default class TableList extends PureComponent {
                           typeUrl={'rolefetch'}
                           btnText={'添加职位'}
                           key={2}
+                          shouldup = {roleShould}
                           dispatch={dispatch}
                           handleVisible={()=>this.handleModalVisible(true,2)}
                           data={roledata}
@@ -217,7 +264,7 @@ export default class TableList extends PureComponent {
                  onCancel={()=>this.handleModalVisible()}>
 
             { modalVisible && this.renderModal(modaltype,{
-              handleOk: (params)=>this.handleOk(params),
+              handleOk: (params,changeType)=>this.handleOk(params,changeType),
               handlCancel:()=>this.handleModalVisible(),
               data:roleRecord,
               btnloading

@@ -7,7 +7,7 @@
 import React,{ Component }from 'react';
 import {Input, DatePicker, Select, Table, Popconfirm, Button} from 'antd';
 import moment from 'moment';
-import {datetimeToTimestamp, quizStatus,handleResult} from '../../utils/utils';
+import {datetimeToTimestamp, quizStatus,handleResult, timestampToDatetime} from '../../utils/utils';
 
 const Option = Select.Option;
 
@@ -28,6 +28,14 @@ const InputCell = ({editable, value, onChange})=>(<div>
   }
 </div>);
 
+const SpanCell = ({value})=>(<div>
+  <span>
+    {
+      quizStatus.filter((item)=>value==item.key).length!=0?quizStatus.filter((item)=>value==item.key)[0].name:'-'
+    }
+  </span>
+</div>);
+
 
 const TimeCell = ({editable, value, onChange})=>{
   const onChangeTime = (value, dateString)=>{
@@ -43,11 +51,12 @@ const TimeCell = ({editable, value, onChange})=>{
 
 
 const EditableCell = ({num,editable, value, onChange})=>{
+  const me = this;
   switch(num) {
     case 'name': return <InputCell editable={editable} value={value}  onChange={onChange}/>;
     case 'type': return <SelectCell  editable={editable} value={value}  onChange={onChange}/>;
     case 'endTime': return <TimeCell  editable={editable} value={value}  onChange={onChange}/>;
-    default: return <span>-</span>
+    default: return <SpanCell  editable={editable} value={value}/>;
   }
 }
 
@@ -68,7 +77,7 @@ class EditQuizTable extends Component {
     },{
       title:'竞猜结果',
       dataIndex:'status',
-      render:(text,record)=>this.renderColumns(text,record,'-'),
+      render:(text,record)=>this.renderColumns(text,record,'status'),
     },{
       title:'操作',
       dataIndex:'',
@@ -106,11 +115,19 @@ class EditQuizTable extends Component {
       <EditableCell
         num={column}
         editable={record.editable}
-        value={column==='-'?( quizStatus.filter((item)=>text===item.key).length!=0?quizStatus.filter((item)=>text===item.key)[0].name:'-'):text}
+        value={this.handleText(column,text)}
         onChange={value => this.handleChange(value, record.key, column)}
       />
     );
   }
+
+  handleText(type,value){
+    switch(type){
+      case 'endTime':return timestampToDatetime(value);
+      default: return value;
+    }
+  }
+
 
   handleStatus(record){
     switch(record.status){
@@ -118,12 +135,11 @@ class EditQuizTable extends Component {
         <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>延期封盘</a>
         <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>立即封盘</a>
       </span>;
-      case 2: return <span style={{textAlign: 'justify'}}>
-        <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>录入比赛结果</a>
-      </span>;
+      case 2: return '-';
       case 3: return <span style={{textAlign: 'justify'}}>
         <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>延期封盘</a>
         <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>立即封盘</a>
+          <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>录入比赛结果</a>
       </span>;
       case 4: return '-';
       case 5: return '-';
@@ -202,7 +218,9 @@ class EditQuizTable extends Component {
 
   render(){
     return <div>
-      <Table dataSource={this.state.data} bordered columns={this.columns} size='small' pagination={false}/>
+      <Table dataSource={this.state.data}
+             rowKey = {record=>record.id}
+             bordered columns={this.columns} size='small' pagination={false}/>
       <Button onClick={this.handleAdd} type='primary' size='small' ghost style={{marginTop:10,float:'right',marginBottom:'5px'}}>添加竞猜</Button>
     </div>
   }

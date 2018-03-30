@@ -11,7 +11,7 @@ const FormItem = Form.Item;
 const Texrarea = Input.TextArea;
 const Option = Select.Option;
 
-class AuthorRoleForm extends PureComponent {
+class ResourceForm extends PureComponent {
 
   handleOk=(e)=>{
     e.preventDefault();
@@ -62,10 +62,10 @@ class AuthorRoleForm extends PureComponent {
         {
           getFieldDecorator('name',{
             rules:[
-              { required: true, message: '请输入职位名称' }
+              { required: true, message: '请输入资源名称' }
             ],
             initialValue:name
-          })(<Input placeholder='请输入职位名称'/>)
+          })(<Input placeholder='请输入资源名称'/>)
         }
       </FormItem>
       <FormItem label='类型' {...formItemLayout}>
@@ -75,7 +75,7 @@ class AuthorRoleForm extends PureComponent {
               { required: true, message: '请输入类型，' }
             ],
             initialValue:type
-          })(<Input placeholder='请输入一个表示职位唯一的数字，如10'/>)
+          })(<Input placeholder='请输入一个表示资源唯一的数字，如10'/>)
         }
       </FormItem>
       <FormItem label='职位描述' {...formItemLayout}>
@@ -85,7 +85,7 @@ class AuthorRoleForm extends PureComponent {
               require:true
             }],
             initialValue:description
-          })(<Texrarea placeholder='简单描述一下该职位' rows={4}/>)
+          })(<Texrarea placeholder='简单描述一下该资源' rows={4}/>)
         }
       </FormItem>
       <FormItem label='状态值' {...formItemLayout}>
@@ -95,7 +95,7 @@ class AuthorRoleForm extends PureComponent {
               { required: true, message: '请输入' }
             ],
             initialValue:available?1:0
-          })( <Select placeholder='请给新建职位添加状态'>
+          })( <Select placeholder='请给资源添加有效性'>
             <Option key='1' value={0}>未启用</Option>
             <Option key='2' value={1}>启用</Option>
           </Select>)
@@ -109,4 +109,4 @@ class AuthorRoleForm extends PureComponent {
   }
 }
 
-export default Form.create()(AuthorRoleForm);
+export default Form.create()(ResourceForm);

@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import {Tabs, Table,Form, Input, Button,Modal,Divider } from 'antd';
 import QuziTable from './GameDetailA';
 import GameForm from './GameForm'
-import { datetimeToTimestamp ,gameStatus} from '../../utils/utils';
+import { datetimeToTimestamp ,gameStatus, handleResult} from '../../utils/utils';
 
 const TabPane = Tabs.TabPane;
 const FormItem= Form.Item;
@@ -19,7 +19,23 @@ const FormItem= Form.Item;
 export default class GameDetail extends PureComponent {
 
   state = {
-    canEdit:true
+    canEdit:true,
+    list:[],
+  }
+
+  componentDidMount(){
+    const {dispatch,data} = this.props;
+    dispatch({
+      type:'gamelist/gameQuizlist',
+      payload: data.id,
+      callback:(result)=>{
+        if(result.resultCode === 0){
+        this.setState({
+          list:result.data
+        })
+        }
+      }
+    })
   }
 
   handleEdit=(flag)=>{
@@ -46,7 +62,6 @@ export default class GameDetail extends PureComponent {
       const values = {
         ...fieldsValue
       };
-      console.log(values);
       this.sendData(values);
     });
   }
@@ -57,28 +72,14 @@ export default class GameDetail extends PureComponent {
       type:"gameauditlist/sendGameScore",
       payload:params,
       callback:(result)=>{
-        this.handleResult(result);
+        handleResult(result,'操作成功');
       }
     })
   }
 
-  handleResult = (result,msg='操作成功')=>{
-    if(result.resultCode === 0){
-      Modal.success({
-        title: '结果反馈',
-        content: msg,
-        onOk:()=>{this.sendList()}
-      });
-    }else{
-      Modal.error({
-        title: '结果反馈',
-        content: result.resultmsg,
-      })
-    }
-  }
 
   handleCheckedGame=(pass)=>{
-    const {dispatch, data} = this.props;
+    const {dispatch, data, handleVisible} = this.props;
     dispatch({
       type:"gameauditlist/sendGamePass",
       payload:{
@@ -86,23 +87,25 @@ export default class GameDetail extends PureComponent {
         pass
       },
       callback:(result)=>{
-        this.handleResult(result);
+        handleResult(result,'操作成功', handleVisible);
       }
     })
   }
 
 
+
+
   render(){
     const { getFieldDecorator } = this.props.form;
     const { data, isBtn, dispatch } = this.props;
-    const { canEdit } =this.state;
+    const { canEdit, list } =this.state;
     return <div>
       <Tabs style={{height:'320px'}}>
         <TabPane tab="比赛详情" key="1">
           <GameForm  dispatch={dispatch} data={data} modalType={1} />
         </TabPane>
         <TabPane tab="比赛竞猜列表" key="2">
-          <QuziTable dispatch={dispatch}  record={data} data={[{name:'1',status:0},{name:'1',status:1}]}/>
+          <QuziTable dispatch={dispatch}  record={data} data={list}/>
         </TabPane>
       </Tabs>
 
@@ -144,7 +147,7 @@ export default class GameDetail extends PureComponent {
             }
           </FormItem>
           <FormItem>
-            <Button type='primary' onClick={()=>this.handleEdit()} size='small'>
+            <Button type='primary' disabled={data.status!=3} onClick={()=>this.handleEdit()} size='small'>
               {
                 canEdit?'编辑比分':'提交'
               }</Button>

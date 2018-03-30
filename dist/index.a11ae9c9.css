@@ -17137,57 +17137,50 @@ textarea.ant-time-picker-input {
 /* stylelint-disable no-duplicate-selectors */
 /* stylelint-disable declaration-bang-space-before,no-duplicate-selectors */
 /* stylelint-disable declaration-bang-space-before,no-duplicate-selectors */
-.tableList___2DmMi .tableListOperator___sc3n8 {
+.tableList___1gk-_ .tableListOperator___QZkhO {
   margin-bottom: 16px;
 }
-.tableList___2DmMi .tableListOperator___sc3n8 button {
+.tableList___1gk-_ .tableListOperator___QZkhO button {
   margin-right: 8px;
 }
-.tableTab___34Yuj {
+.tableTab___HZGsH {
   padding: 8px 0;
 }
-.tableTab___34Yuj .ant-spin-container {
+.tableTab___HZGsH .ant-spin-container {
   margin-top: 0px;
 }
-.tips___2ovPl {
+.tips___177xY {
   font-size: 12px;
   line-height: 20px;
   margin-top: 20px;
   word-spacing: 4px;
 }
-.tableListForm___2Xp7W {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 20px 16px;
-}
-.tableListForm___2Xp7W .ant-form-item {
-  margin-bottom: 24px;
-  margin-right: 0;
+.tableListForm___1qcoP .ant-form-item {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
-.tableListForm___2Xp7W .ant-form-item > .ant-form-item-label {
+.tableListForm___1qcoP .ant-form-item > .ant-form-item-label {
   width: auto;
   line-height: 32px;
   padding-right: 8px;
 }
-.tableListForm___2Xp7W .ant-form-item-control-wrapper {
+.tableListForm___1qcoP .ant-form-item-control-wrapper {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
 }
-.tableListForm___2Xp7W .submitButtons___mi_GG {
+.tableListForm___1qcoP .submitButtons___3z7kR {
   white-space: nowrap;
   margin-bottom: 24px;
 }
 @media screen and (max-width: 992px) {
-  .tableListForm___2Xp7W .ant-form-item {
+  .tableListForm___1qcoP .ant-form-item {
     margin-right: 24px;
   }
 }
 @media screen and (max-width: 768px) {
-  .tableListForm___2Xp7W .ant-form-item {
+  .tableListForm___1qcoP .ant-form-item {
     margin-right: 8px;
   }
 }

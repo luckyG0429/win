@@ -60,7 +60,11 @@ export const getNavData = app => [
             name: '参数配置',
             path: 'param',
             component: dynamicWrapper(app, ['systemlist'], () => import('../routes/SystemManage/list')),
-          },
+          },{
+            name: '资源配置',
+            path: 'resource',
+            component: dynamicWrapper(app, ['systemresource'], () => import('../routes/SystemManage/resourceList')),
+          }
         ],
       },
     ],

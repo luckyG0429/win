@@ -7,29 +7,29 @@ import { connect } from 'dva';
 import {Form, Input,Select,Button,Modal,message,Card} from 'antd';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import AddTeam from '../../components/Team/AddTeam';
+import ResourceForm from '../../components/System/ResourceForm';
 
-import styles from './team.less';
+import styles from './system.less';
 
 const FormItem = Form.Item;
 
 @connect(state => ({
-  teamlist: state.teamlist,
+  systemresource: state.systemresource,
 }))
 
 @Form.create()
 
-export default class TeamList extends PureComponent{
+export default class ResourceList extends PureComponent{
   state = {
-     formValues:{
-       pageSize:10,
-       currentPage:1,
-       type:''
-     },
+    formValues:{
+      pageSize:10,
+      currentPage:1,
+      type:''
+    },
 
-     modalVisible:false,
-     _record:{},
-     modaltype:0,
+    modalVisible:false,
+    _record:{},
+    modaltype:0,
 
     btnloading:false,
 
@@ -39,7 +39,7 @@ export default class TeamList extends PureComponent{
     //请求一个赛事分类类型的枚举数据
     const {dispatch} = this.props;
     dispatch({
-      type:'teamlist/typefetch'
+      type:'systemresource/typefetch'
     })
   }
 
@@ -80,10 +80,9 @@ export default class TeamList extends PureComponent{
     const {dispatch} = this.props;
     this.setState({
       btnloading:true,
-
     })
     dispatch({
-      type:'teamlist/addTeam',
+      type:'systemresource/addResourceParams',
       payload:params,
       callback:(result)=>{
         this.setState({
@@ -120,14 +119,14 @@ export default class TeamList extends PureComponent{
       params = formValues;
     }
     dispatch({
-      type:'teamlist/fetch',
+      type:'systemresource/fetch',
       payload:params
     })
   }
 
   render(){
     //1.你的全局状态的引入
-    const {teamlist:{data, loading, eventType}} = this.props;
+    const {systemresource:{data, loading}} = this.props;
     const { getFieldDecorator } = this.props.form;
 
     //2.组件的状态变量的引入
@@ -135,30 +134,28 @@ export default class TeamList extends PureComponent{
     const modaltitle =modaltype ===0?'添加战队':(modaltype ===1?'修改战队':'战队查看');
 
     const columns=[{
-      title:'战队名称',
+      title:'资源名称',
       dataIndex:'name'
     },{
-      title:'所属分类',
+      title:'唯一值',
       dataIndex:'type',
-      render:(text)=><span>{
-        eventType.filter(item=>item.type===text).length!=0? eventType.filter(item=>{
-          return item.type===text
-        })[0].name:text
-      }</span>
     },{
-      title:'图标',
-      dataIndex:'icon',
-      render:(text)=><span><img src={text}/></span>
+      title:'资源说明',
+      dataIndex: 'description'
+    },{
+      title: '状态',
+      dataIndex: 'available',
+      render:text=><span>{text?'有效':'无效'}</span>
     }];
 
     //3.渲染
-    return (<PageHeaderLayout title="战队列表">
+    return (<PageHeaderLayout title="资源列表">
         <Card>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
               <Form layout="inline" style={{width:'100%',display:'block',overflow:'auto'}}  onSubmit={this.handleSearch}>
                 <FormItem  style={{float:'left',display:'inline'}}>
-                  <Button type='primary'  ghost onClick={() => this.handleModalVisible(true,'',0)}>添加战队</Button>
+                  <Button type='primary'  ghost onClick={() => this.handleModalVisible(true,'',0)}>添加资源</Button>
                 </FormItem>
                 <FormItem  style={{float:'right',display:'inline'}}>
                   <Button type="primary" htmlType="submit">搜索</Button>
@@ -185,12 +182,11 @@ export default class TeamList extends PureComponent{
                onCancel={() => this.handleModalVisible()}
                footer={modaltype===2?[<Button type='primary' onClick={() => this.handleModalVisible()}>返回</Button>]:[]} >
           {
-            modalVisible&&<AddTeam modalType={modaltype}
-                   data={_record}
-                   menu={eventType}
-                   btnloading={btnloading}
-                   handleCancel={()=>this.handleModalVisible()}
-                   handleOk={(type,params)=>this.handlFormOk(type,params)}/>
+            modalVisible&&<ResourceForm modalType={modaltype}
+                                   data={_record}
+                                   btnloading={btnloading}
+                                   handleCancel={()=>this.handleModalVisible()}
+                                   handleOk={(type,params)=>this.handlFormOk(type,params)}/>
           }
         </Modal>
       </PageHeaderLayout>

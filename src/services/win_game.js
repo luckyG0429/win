@@ -17,8 +17,8 @@ export async function enumTeam(params){
 
 // win+  02.比赛列表
 export async function queryGamelist(params) {
-  let { pageSize, currentPage, name,type} = params;
-  let paramsStr = `page=${currentPage}&pageSize=${pageSize}&status=`;
+  let { pageSize, currentPage, name,type,id} = params;
+  let paramsStr = `page=${currentPage}&pageSize=${pageSize}&gameId=${id}&status=`;
   return request(`/guessing/game/listGameData?${paramsStr}`);
 }
 
@@ -41,6 +41,15 @@ export async function updateGame(params) {
 }
 
 //win+  05 查看比赛
+
+
+
+//win+ 055 查看比赛的竞猜列表
+export async function queryGameQuizlist(params) {
+  let paramsStr = `page=${1}&pageSize=${10}&gameDataId=${params}`;
+  return request(`/guessing/guess/list?${paramsStr}`);
+}
+
 
 
 //win+  055 提交比赛

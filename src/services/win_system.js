@@ -3,6 +3,7 @@
  * * */
 import request from '../utils/request';
 
+////////////////////////////赛事分类的接口/////////////////////////////////////
 
 //win+ 0 赛事分类枚举
 export async function queryEventtypelist(params) {
@@ -19,6 +20,8 @@ export async function addEventtype(params) {
     body: params,
   });
 }
+
+////////////////////////////职位管理的接口/////////////////////////////////////
 
 //win+ 职位列表 -- authorize/listRoles
 export async function queryAuthorizeRole(params) {
@@ -48,3 +51,13 @@ export async function deleteAuthorRole(params){
   return request('/guessing/authorize/removeRole?id='+params)
 }
 
+
+////////////////////////////资源管理的接口/////////////////////////////////////
+
+//win+ 07 创建资源 /authorize/createResource
+export async function addResource(params){
+  return request('/guessing/authorize/createRole',{
+    method:'POST',
+    body:JSON.stringify(params)
+  })
+}

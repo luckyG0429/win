@@ -65,7 +65,15 @@ export default {
     *delRole({payload, callback},{call}){
       const result = yield call(deleteAuthorRole,payload);
       if(callback) callback(result);
-    }
+    },
+    *addRole({payload, callback}, {call}){
+      const result = yield call(addAuthorizeRole,payload);
+      if(callback) callback(result);
+    },
+    *updataRole({payload, callback}, {call}){
+      const result = yield call(updataAuthorRole,payload);
+      if(callback) callback(result);
+    },
   },
   reducers:{
     changeEventLoading(state, action){

@@ -6,7 +6,7 @@ import request from '../utils/request';
 
 //win+ 01 比赛的竞猜列表
 export async function queryQuizlist(params) {
-  let { pageSize, currentPage, status,type} = params;
+  let { pageSize, currentPage, status,type, gameDataId} = params;
   let paramsStr = `page=${currentPage}&pageSize=${pageSize}&status=`;
   return request(`/guessing/guess/list?${paramsStr}`);
 }
