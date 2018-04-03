@@ -24,8 +24,5 @@ export async function setRegister(params) {
 }
 
 export async function setLoginOut() {
-  return request('/guessing/index/logout', {
-    method: 'POST',
-    body: {},
-  });
+  return request('/guessing/index/logout');
 }

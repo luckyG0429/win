@@ -3,7 +3,7 @@
  */
 import {
   queryGamelist, queryEventlist, addGame, enumTeam, putGame, delGame,
-  setGamedstarttime, queryGameQuizlist
+  setGamedstarttime, queryGameQuizlist, updateGame
 } from '../services/win_game';
 import { addQuiz
 } from '../services/win_quiz';
@@ -14,7 +14,7 @@ export default {
   state:{
     data:{
       list:[],
-      pagination:false
+      pagination:{}
     },
     loading:false,
     eventtype:[],
@@ -39,7 +39,6 @@ export default {
         payload: true,
       });
       const result = yield call(queryGamelist,payload);
-      console.log(result);
       yield put({
         type: 'setListdata',
         payload: result
@@ -51,6 +50,10 @@ export default {
     },
     *addGamedata({payload, callback},{ call, put}){
       const result = yield call(addGame,payload);
+      if(callback) callback(result);
+    },
+    *updateGamedata({payload, callback}, {call, put}){
+      const result = yield call(updateGame,payload);
       if(callback) callback(result);
     },
     *submitGamedata({payload,callback},{call}){
@@ -87,7 +90,7 @@ export default {
         ...state,
         data:{
           list:action.payload.data,
-          pagination:action.payload.eData,
+          pagination:action.payload.edata,
         }
       }
     },

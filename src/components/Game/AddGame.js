@@ -26,7 +26,7 @@ export default class Gamedetail extends PureComponent{
 
   handleSubmit = (e) => {
   e.preventDefault();
-  const {form,handleOk,modalType} = this.props;
+  const {form,handleOk,modalType,data} = this.props;
   const {gameGuesses} = this.state;
 
   form.validateFields((err, fieldsValue) => {
@@ -34,7 +34,6 @@ export default class Gamedetail extends PureComponent{
     const values = {
       ...fieldsValue
     };
-    console.log(values);
 
     var jsonParams = {
       name:values.name||'',
@@ -44,14 +43,19 @@ export default class Gamedetail extends PureComponent{
       startTime:datetimeToTimestamp(values.startTime.format('YYYY-MM-DD  HH:mm:ss').toString())|| undefined,
     };
 
-    console.log(jsonParams);
-    if(modalType === 'change'){
+
+    if(modalType === 1){
       jsonParams.id = data.id;
     }
+    console.log(jsonParams);
+
     var json = {
       gameData: {...jsonParams},
       gameGuesses
     };
+
+    console.log(json);
+
     handleOk(modalType,json);
   });
 }

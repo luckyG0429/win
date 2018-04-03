@@ -10,7 +10,7 @@ import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import AddGame from '../../components/Game/AddGame';
 import GameDetail from '../../components/Game/GameDetail';
-import {timestampToDatetime, gameStatus, handleResult} from '../../utils/utils';
+import {timestampToDatetime, gameStatus, handleResult, datetimeToTimestamp} from '../../utils/utils';
 
 import styles from './game.less';
 
@@ -31,7 +31,9 @@ export default class TableList extends PureComponent {
         formValues: {
           pageSize:10,
           currentPage:1,
-          id:props.eventlist.activateEvent.hasOwnProperty('id')?props.eventlist.activateEvent.id:''
+          gameId:props.eventlist.activateEvent.hasOwnProperty('id')?props.eventlist.activateEvent.id:'',
+          startTime: '',
+          name: ''
         },
         record:'',
         modalVisible:false,
@@ -62,8 +64,8 @@ export default class TableList extends PureComponent {
     const { formValues } = this.state;
     const params = {
       ...formValues,
-      page: pagination.current,
-      size: pagination.pageSize,
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
     };
     this.setState({
       formValues:{
@@ -162,19 +164,25 @@ export default class TableList extends PureComponent {
         ...fieldsValue
       };
 
+      const jsonPrams = {
+        ...values,
+        name: values.name?values.name.trim():'',
+        startTime:values.startTime?datetimeToTimestamp(values.startTime.format('YYYY-MM-DD  HH:mm:ss').toString()):'',
+      }
+
+      console.log(jsonPrams);
+
       this.setState({
         formValues:{
           ...formValues,
-          id:'',
-          ...values
+          ...jsonPrams,
         },
       });
       dispatch({
         type: 'gamelist/fetch',
         payload: {
           ...formValues,
-          id:'',
-          ...values
+          ...jsonPrams
         },
       });
     });
@@ -187,8 +195,6 @@ export default class TableList extends PureComponent {
       btnloading: true,
     });
     if (type !== 1) {
-      console.log('xinzheng');
-      console.log(params);
       dispatch({
         type:'gamelist/addGamedata',
         payload:params,
@@ -201,9 +207,19 @@ export default class TableList extends PureComponent {
           });
         }
       });
-
     } else {
-
+      dispatch({
+        type:'gamelist/updateGamedata',
+        payload:params,
+        callback:(result)=>{
+          this.setState({
+            btnloading:false,
+            modalVisible:false,
+          },()=>{
+            handleResult(result,'修改成功',()=>{this.sendList()});
+          });
+        }
+      });
     }
   }
 
@@ -221,8 +237,7 @@ export default class TableList extends PureComponent {
     const { gamelist: { data, loading, eventtype } , eventlist:{ activateEvent }, dispatch } = this.props;
     const { modalVisible, modaltype, record, btnloading, selectMenu} = this.state;
 
-
-    console.log(eventtype);
+    console.log(data);
 
     const columns = [{
       title: '赛事',
@@ -253,21 +268,21 @@ export default class TableList extends PureComponent {
       render:(text,record)=>{
         switch(record.status){
           case 2: return <div>
-            <a onClick={() => this.handleModalVisible(true,record,2)}>查看</a>
+            <Button  style={{color:'#FF9900',borderColor:'#FF9900'}}  size='small'  onClick={() => this.handleModalVisible(true,record,2)}>查看</Button>
           </div>;
           case 3: return <div>
-            <a onClick={() => this.handleModalVisible(true,record,2)}>查看</a>
+            <Button  style={{color:'#FF9900',borderColor:'#FF9900'}}  size='small'  onClick={() => this.handleModalVisible(true,record,2)}>查看</Button>
             <Divider type='vertical'/>
-            <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
+            <Button  type="danger"  style={{color:'#fff',borderColor:'#FF6666',background:'#FF6666'}}  size='small' onClick={() => this.handleConfirm(record,'delete')}>删除</Button>
           </div>;
           case 1:return <div>
-            <a onClick={() => this.handleConfirm(record,'release')}>提交</a>
+            <Button style={{color:'#6666CC',borderColor:'#6666CC'}}  size='small'  onClick={() => this.handleModalVisible(true,record,1)}>编辑</Button>
             <Divider type='vertical'/>
-            <a onClick={() => this.handleModalVisible(true,record,1)}>编辑</a>
+            <Button  style={{color:'#FF9900',borderColor:'#FF9900'}}  size='small'  onClick={() => this.handleModalVisible(true,record,2)}>查看</Button>
             <Divider type='vertical'/>
-            <a onClick={() => this.handleModalVisible(true,record,2)}>查看</a>
+            <Button  style={{background:'#99CC00',borderColor:'#99CC00',color:'#fff'}} type="primary" size='small'  onClick={() => this.handleConfirm(record,'release')}>提交</Button>
             <Divider type='vertical'/>
-            <a onClick={() => this.handleConfirm(record,'delete')}>删除</a>
+            <Button  type="danger"  style={{color:'#fff',borderColor:'#FF6666',background:'#FF6666'}}  size='small' onClick={() => this.handleConfirm(record,'delete')}>删除</Button>
           </div>;
           default: return '-';
         }
@@ -295,7 +310,7 @@ export default class TableList extends PureComponent {
                 </FormItem>
                 <FormItem style={{float:'right',display:'inline', marginRight:10,width:'120px'}}>
                   {
-                    getFieldDecorator('gameName')(<Input  placeholder='请输入比赛名称'/>)
+                    getFieldDecorator('name')(<Input  placeholder='请输入比赛名称'/>)
                   }
                 </FormItem>
                 <FormItem style={{float:'right',display:'inline', marginRight:10}}>
@@ -303,11 +318,11 @@ export default class TableList extends PureComponent {
                     getFieldDecorator('gameId',{
                       initialValue:activateEvent.id
                     })(<Select  style={{ width: '120px' }}>
-                      <Option value='' disabled={true}>请选择...</Option>
+                      <Option key={'disabled'} disabled={true}>请选择...</Option>
+                      <Option value='' key={'listall-1'}>全部</Option>
                       {
-                        eventtype.length!=0?eventtype.map((item)=>{
-                          <Option value={item.id}>{item.name}</Option>
-                        }):[]
+                        eventtype.length!=0?eventtype.map((item)=><Option key={item.id} value={item.id}>{item.name}</Option>
+                        ):[]
                       }
                     </Select>)
                   }

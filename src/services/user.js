@@ -6,6 +6,5 @@ export async function query() {
 }
 
 export async function queryCurrent(params) {
-  console.log(params);
   return request(`/guessing/index/watchUserInfo?username=${params}`);
 }

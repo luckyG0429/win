@@ -17,15 +17,13 @@ export async function enumTeam(params){
 
 // win+  02.比赛列表
 export async function queryGamelist(params) {
-  let { pageSize, currentPage, name,type,id} = params;
-  let paramsStr = `page=${currentPage}&pageSize=${pageSize}&gameId=${id}&status=`;
+  let { pageSize, currentPage, startTime, gameId, name} = params;
+  let paramsStr = `page=${currentPage}&pageSize=${pageSize}&gameId=${gameId}&name=${name}&startTime=${startTime}&status=`;
   return request(`/guessing/game/listGameData?${paramsStr}`);
 }
 
 // win+  03 新增比赛
 export async function addGame(params) {
-  console.log(params);
-  const {gameData,gameGuesses} = params
   return request('/guessing/game/createGameData', {
     method:'POST',
     body:JSON.stringify(params)
@@ -34,9 +32,10 @@ export async function addGame(params) {
 
 //win+  04 修改比赛
 export async function updateGame(params) {
+  const {gameData} = params;
   return request('/guessing/game/alterGameData', {
     method:'POST',
-    body:JSON.stringify(params)
+    body:JSON.stringify(gameData)
   });
 }
 
@@ -54,12 +53,18 @@ export async function queryGameQuizlist(params) {
 
 //win+  055 提交比赛
 export async function putGame(params){
-  return request('/guessing/game/postGameData?id='+params);
+  return request('/guessing/game/postGameData',{
+    method:'POST',
+    body: `id=${params}`
+  });
 }
 
 //win+ 056 移除比赛
 export async function delGame(params){
-  return request('/guessing/game/removeGameData?id='+params);
+  return request('/guessing/game/removeGameData',{
+    method:'POST',
+    body: `id=${params}`
+  });
 }
 
 //win+  06 延迟比赛开赛时间
@@ -95,12 +100,19 @@ export async function checkedGame(params){
 
 //win 10 上架审核 -- 单个竞猜上架
 export async function checkedGameguess(params){
-  return request(`/guessing/game/gameguessover?id=${params}`)
+  return request('/guessing/game/gameguessover',{
+    method: 'POST',
+    body:`id=${params}`
+  });
 }
 
 //win 11 上架审核 -- 单个竞猜驳回
 export async function overGameguess(params){
-  return request(`/guessing/game/gameguessover?id=${params}`)
+  return request(`/guessing/game/gameguessover`,{
+    method: 'POST',
+    body:`id=${params}`
+  });
+
 }
 
 //win 12 编辑比赛的比分game/alterGameDataScore

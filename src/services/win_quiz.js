@@ -13,6 +13,7 @@ export async function queryQuizlist(params) {
 
 //win+ 02 新增比赛竞猜
 export async function addQuiz(params){
+  console.log(params);
   return request('/guessing/guess/create',{
     method:'POST',
     body: JSON.stringify(params)
@@ -31,6 +32,23 @@ export async function delQuiz(params){
 export async function submitQuiz(params){
   return request(`/guessing/guess/post?id=${params}`)
 }
+
+//win+ 04 延迟封盘
+export async function delayQuizTime(params){
+ return request('',{
+   method: 'POST',
+   body: params
+ })
+}
+
+//win+ 05 立即封盘 - 接口和参数
+export async function stopQuiz(params){
+  return request('post /guess/authorize',{
+    method: 'POST',
+    body: params
+  })
+}
+
 
 //win+ 041 录入竞猜结果
 export async function updataQuizResult(params){

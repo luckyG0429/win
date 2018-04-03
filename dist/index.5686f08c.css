@@ -16378,6 +16378,18 @@ textarea.ant-time-picker-input {
   display: -ms-flexbox;
   display: flex;
 }
+.modalform___lDBEZ {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 10px;
+}
+.modalform___lDBEZ .ant-form-item {
+  margin-bottom: 1px;
+  margin-right: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
 /* stylelint-disable at-rule-empty-line-before,at-rule-name-space-after,at-rule-no-unknown */
 /* stylelint-disable no-duplicate-selectors */
 /* stylelint-disable declaration-bang-space-before,no-duplicate-selectors */

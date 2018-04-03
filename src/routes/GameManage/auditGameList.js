@@ -192,11 +192,11 @@ export default class AuditList extends PureComponent {
       render:(text)=> gameStatus.filter((item)=>text===item.key).length !=0? gameStatus.filter((item)=>text===item.key)[0].name:`状态码${text}`
     },{
       title: '创建人',
-      dataIndex: 'person',
+      dataIndex: 'creator',
     },{
       title: '操作',
       dataIndex: '',
-      render:(text,record)=> <a onClick={() => this.handleModalVisible(true,record,1)}>查看</a>
+      render:(text,record)=><Button  style={{color:'#FF9900',borderColor:'#FF9900'}}  size='small' onClick={() => this.handleModalVisible(true,record,1)}>查看</Button>
     }];
 
     return (

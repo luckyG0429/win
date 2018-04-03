@@ -21,13 +21,13 @@ function CheckResponse(data){
   } else{
    var errorText = (data)=>{switch(data.resultCode){
       case 1: return '请求参数引起的错误';
-      case 2: return '系统内部错误';
-      case 3: return '已存在的数据引起的错误';
-      case 4: return '不存在的数据引起的错误';
+      case 2: return '系统内部发生错误';
+      case 3: return '添加的数据已存在';
+      case 4: return '数据不存在';
       case 5: return '数据不完整引起的错误';
       case 6: return '不能有效验证引起的错误';
-      case 7: return '身份验证引起的错误';
-      case 8: return '没有授权引起的错误';
+      case 7: return '您的身份验证';
+      case 8: return '您没有相关授权操作权限';
       case 9: return '未登录引起的错误';
       case 'A': return '某种原因导致的强制下线';
       case 'B': return '钱不够引起的错误';

@@ -84,9 +84,9 @@ export default class AuditLisr extends Component {
       dataIndex:'',
       render:(text,record)=>{
         return <span>
-          <a onClick={()=>this.showMsg(0,record)}>驳回</a>
-           <Divider type='vertical'/>
-          <a onClick={()=>this.showMsg(1,record)}>结算</a>
+          <Button  style={{background:'#99CC00',borderColor:'#99CC00',color:'#fff'}} type="primary" size='small' onClick={()=>this.showMsg(1,record)}>结算</Button>
+          <Divider type='vertical'/>
+          <Button  type="danger"  style={{color:'#fff',borderColor:'#FF6666',background:'#FF6666'}}  size='small' onClick={()=>this.showMsg(0,record)}>驳回</Button>
         </span>
       }
     }]

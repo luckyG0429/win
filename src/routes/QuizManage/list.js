@@ -325,12 +325,13 @@ export default class TableList extends PureComponent {
       dataIndex: 'endTime',
       render:(text)=><p>{this.timestampToTime(text)}</p>
     },{
-      title: '战队双方',
+      title: '战队双方A-B',
       dataIndex: 'gameTeamAName',
-      render:(text,record)=>`${text} VS ${record.gameTeamBName}`
+      render:(text,record)=><span>{text}<b style={{color:'#FF9900'}}> VS </b>{record.gameTeamBName}</span>
     },{
       title: '总下注金额(金币体验币)',
-      dataIndex: 'gameTimeEnd',
+      dataIndex: 'edata',
+      render:(text,record)=><span>{text.betTBalance||0}<b>/</b>{text.betTMoney||0}</span>
     },{
       title: '竞猜状态',
       dataIndex: 'status',
@@ -338,12 +339,13 @@ export default class TableList extends PureComponent {
     },{
       title: '操作',
       dataIndex: '',
+      width: 160,
       render:(text,record)=>{
         switch(record.gamestatus){
           default:return <div>
-            <a onClick={() => this.handleModalVisible(true,record,1)}>查看</a>
+            <Button  style={{color:'#FF9900',borderColor:'#FF9900'}}  size='small'  onClick={() => this.handleModalVisible(true,record,1)}>查看</Button>
             <Divider type='vertical'/>
-            <a onClick={() => this.handleModalVisible(true,record,4)}>下注流水</a>
+            <a style={{color:'#6666CC'}} onClick={() => this.handleModalVisible(true,record,4)}>下注流水</a>
           </div>;
        //   default: return '-'
         }
@@ -398,8 +400,6 @@ export default class TableList extends PureComponent {
           {
             modaltype === 1 ? <AddQuiz data={record}
                                       modaltype={modaltype}
-                                      gameName="中国VS韩国"
-                                      gameId="1"
                                       btnloading={btnloading}
                                       handleOk={(type, params) => this.handleOk(type, params)}
                                       handleCancel={() => this.handleModalVisible()}/> : <QuizList data={record}/>

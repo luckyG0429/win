@@ -108,13 +108,6 @@ class EventDetail extends PureComponent {
         initialValue:eventName
       })(<Input/>)}
     </FormItem>
-    {/*<FormItem label='图标' {...formItemLayout}>*/}
-      {/*<Upload {...iconprops}>*/}
-        {/*<Button>*/}
-          {/*<Icon type="upload" /> 上传图标*/}
-        {/*</Button>*/}
-      {/*</Upload>*/}
-    {/*</FormItem>*/}
     <FormItem label="比赛开始时间"  {...formItemLayout}
               validateStatus="warning"
               help="请注意比赛时间的选择，必须大于当前时间">
@@ -147,14 +140,6 @@ class EventDetail extends PureComponent {
         style={{width:'80%'}}/>
       )}
     </FormItem>
-    {/*<FormItem label="赛事描述" {...formItemLayout}>*/}
-      {/*{getFieldDecorator('description',{*/}
-        {/*rules: [{*/}
-          {/*required: true , message: '赛事简介！',*/}
-        {/*}],*/}
-        {/*initialValue:eventName*/}
-      {/*})(<TextArea  rows={4}/>)}*/}
-    {/*</FormItem>*/}
     <FormItem style={{textAlign:'center'}}>
       <Button type="primary"  loading={ btnloading } style={{ marginRight: 16 }} onClick={this.handleSubmit}>确定</Button>
       <Button onClick={this.handleReset} style={{marginLeft:'15px'}}>取消</Button>

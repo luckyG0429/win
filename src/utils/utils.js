@@ -180,3 +180,27 @@ export function handleResult(result,msg='操作成功',OKfn,Errorfn){
     })
   }
 }
+
+export function CountDown ( str ) {
+  console.log(str);
+  if(!str || str.length ===0 ) return ;
+  if(str.length === 10) str = str*1000;
+  let _leftTime = parseFloat ((str-Date.now()) / 1000);
+  console.log(_leftTime);
+  if(_leftTime<0) return '竞猜已结束';
+  let days = parseFloat (_leftTime/60*60*24);
+  let hours = parseFloat (_leftTime/60*60 - days*24);
+  let minutes = parseFloat (_leftTime/60 - days*24*60 - hours*60);
+  let secondes = parseFloat (_leftTime/60 - days*24*60 - hours*60 - minutes*60);
+
+  hours  = setSingletoDouble (hours);
+  minutes  = setSingletoDouble (minutes);
+  secondes  = setSingletoDouble (secondes);
+
+  return `${days}天 ${hours}:${minutes}:${secondes}`
+}
+
+function setSingletoDouble (n) {
+  if(n<10) return '0'+n
+  return n
+}
