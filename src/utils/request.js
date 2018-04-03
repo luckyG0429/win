@@ -61,6 +61,12 @@ export default function request(url, options) {
         Accept: 'application/json',
         ...newOptions.headers,
       };
+    }else if(newOptions.contentType === 'json'){
+      newOptions.headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        ...newOptions.headers,
+      };
     }else{
       newOptions.headers = {
         Accept: 'application/json',

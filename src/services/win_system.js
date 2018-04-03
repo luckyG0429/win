@@ -34,6 +34,7 @@ export async function queryAuthorizeRole(params) {
 export async function addAuthorizeRole(params){
   return request('/guessing/authorize/createRole',{
     method:'POST',
+    contentType: 'json',
     body:JSON.stringify(params)
   })
 }
@@ -42,6 +43,7 @@ export async function addAuthorizeRole(params){
 export async function updataAuthorRole(params){
   return request('/guessing/authorize/alterRole',{
     method:'POST',
+    contentType: 'json',
     body:JSON.stringify(params)
   })
 }
@@ -58,6 +60,7 @@ export async function deleteAuthorRole(params){
 export async function addResource(params){
   return request('/guessing/authorize/createRole',{
     method:'POST',
+    contentType: 'json',
     body:JSON.stringify(params)
   })
 }

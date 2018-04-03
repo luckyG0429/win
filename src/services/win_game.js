@@ -26,6 +26,7 @@ export async function queryGamelist(params) {
 export async function addGame(params) {
   return request('/guessing/game/createGameData', {
     method:'POST',
+    contentType: 'json',
     body:JSON.stringify(params)
   });
 }
@@ -35,6 +36,7 @@ export async function updateGame(params) {
   const {gameData} = params;
   return request('/guessing/game/alterGameData', {
     method:'POST',
+    contentType: 'json',
     body:JSON.stringify(gameData)
   });
 }

@@ -13,9 +13,9 @@ export async function queryQuizlist(params) {
 
 //win+ 02 新增比赛竞猜
 export async function addQuiz(params){
-  console.log(params);
   return request('/guessing/guess/create',{
     method:'POST',
+    contentType: 'json',
     body: JSON.stringify(params)
   })
 }
