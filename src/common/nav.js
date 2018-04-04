@@ -43,7 +43,7 @@ export const getNavData = app => [
         name: '竞猜结果审核',
         path: 'audit_quizlist',
         icon: 'check-square-o',
-        component: dynamicWrapper(app, ['userlist'], () => import('../routes/QuizManage/auditList')),
+        component: dynamicWrapper(app, ['quizauditlist'], () => import('../routes/QuizManage/auditList')),
       },
       {
         name: '战队管理',

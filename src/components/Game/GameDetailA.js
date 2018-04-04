@@ -121,7 +121,8 @@ class EditQuizTable extends Component {
 
     this.state = {
       count: 2018,
-      data: props.data
+      data: props.data,
+      modalVisible: false,
     };
     this.cacheData = props.data.map(item => ({ ...item }));
   }
@@ -217,7 +218,6 @@ class EditQuizTable extends Component {
     console.log('submit');
     console.log(obj);
     const {endTime,name}=obj;
-    // console.log('');
     const {dispatch, record} = this.props;
     dispatch({
       type:'gamelist/addGameQuiz',

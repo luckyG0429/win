@@ -38,15 +38,10 @@ class PermissForm extends PureComponent {
 
       }
       const params = {
-
-        role:{
-          id: values.roleId
-        },
-        resource:{
-          id(): values.resourceId
-        },
-        permission:values.permission.join(','),
-        available:values.available ===1?true:false
+        roleId: values.roleId,
+        resourceId: values.resourceId,
+        permission: values.permission.join(','),
+        available: values.available ===1?true:false
       }
       if(modalType !== 2){
         params.id = data.id;
@@ -60,8 +55,8 @@ class PermissForm extends PureComponent {
   render(){
     const { getFieldDecorator } = this.props.form;
     const {data, modalType, roleList, resourceList} = this.props;
-    const rolelistOption = roleList.length != 0?roleList.map(item=><Option key={item.id} value={item.type}>{item.name}</Option>):[]
-    const resourcelistOption = resourceList.length != 0?resourceList.map(item=><Option key={item.id} value={item.type}>{item.name}</Option>):[]
+    const rolelistOption = roleList.length != 0?roleList.map(item=><Option key={item.id} value={item.id}>{item.name}</Option>):[]
+    const resourcelistOption = resourceList.length != 0?resourceList.map(item=><Option key={item.id} value={item.id}>{item.name}</Option>):[]
 
     const { listOperate } = this.state;
     const operatelistOption = listOperate.map((item,index)=><Option key={index} value={item.value}>{item.name}</Option>)

@@ -59,10 +59,10 @@ export async function updataQuizResult(params){
   })
 }
 
-//win+ 042 竞猜审核
+//win+ 042 竞猜审核  guess/authorize
 export async function auditQuiz(params){
   const {id,pass} = params;
-  return request('/guessing/guess/stop',{
+  return request('/guessing/guess/authorize',{
     method:'POST',
     body: `id=${id}&pass=${pass}`
   })
@@ -76,7 +76,8 @@ export async function queryAuditList(params){
   return request(`/guessing/guess/list?${paramsStr}`);
 }
 
-//win+ 05 竞猜结果审核---驳回
 
-//win+ 06 竞猜结果审核---结算
+
+
+
 

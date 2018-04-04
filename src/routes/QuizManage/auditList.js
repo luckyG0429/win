@@ -2,17 +2,18 @@
  * 竞猜审核列表
  * **/
 import React, { Component } from 'react';
-import {Table, Col, Row, Form, Input, Button, message, Card, Divider } from 'antd';
+import {Table, Col, Row, Form, Input, Button, Modal, Card, Divider } from 'antd';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import {connect} from "dva";
 
 import styles from './quiz.less'
+import {handleResult} from "../../utils/utils";
 
 const FormItem = Form.Item;
 
 @connect(state => ({
-  auditlist: state.quizauditlist,
+  quizauditlist: state.quizauditlist,
 }))
 @Form.create()
 
@@ -21,7 +22,7 @@ export default class AuditLisr extends Component {
   state = {
     formValues :{
       pageSize:10,
-      pageSequence:1,
+      currentPage:1,
     },
 
   };
@@ -30,37 +31,82 @@ export default class AuditLisr extends Component {
     const { dispatch } = this.props;
     const { formValues } = this.state;
     dispatch({
-      type:'auditlist/fetch',
+      type:'quizauditlist/fetch',
       payload:formValues
     })
   }
 
-  showMsg(){
+  showMsg =(type, record)=>{
 
+    const {dispatch} = this.props;
+    const obj = ((type)=>{
+      if(type === 1) {
+        return {
+          title:'结算当前竞猜？',
+          okText: '结算',
+        }
+      }else{
+        return {
+          title:'您确定要驳回当前竞猜的结果',
+          okText: '驳回',
+          okType: 'danger',
+          cancelText: '取消',
+        }
+      }
+    })(type);
+
+    const params = {
+      url: 'quizauditlist/auditQuizResult',
+      msg: type===1?'提交成功！系统进行结算中...':'操作成功',
+      data: {
+        id: record.id,
+        pass: type === 1? true : false
+      }
+    }
+
+    return Modal.confirm({
+      ...obj,
+      width:'480px',
+      onOk:()=>{
+        dispatch({
+          type: params.url,
+          payload: params.data,
+          callback:(result)=>{
+            if(result.resultCode ==0){
+              handleResult(result,params.msg,this.setFetch());
+            }
+          }
+        })
+      },
+      onCancel(){
+
+      }
+    })
   }
 
-  renderAdvanceForm(){
-    const { getFieldDecorator } = this.props.form;
-    return <Form layout='inline'  onSubmit={this.handleSubmit}>
-      <FormItem>
-        {getFieldDecorator('name')(
-          <Input placeholder='请输入赛事名称'/>
-        )}
-      </FormItem>
-      <FormItem>
-        {getFieldDecorator('gamename')(
-          <Input placeholder='请输入比赛名称'/>
-        )}
-      </FormItem>
-      <FormItem>
-        <Button htmlType='submit' type='primary'>搜索</Button>
-      </FormItem>
-    </Form>
+
+  handleStandardTableChange = (pagination) => {
+    const { dispatch } = this.props;
+    const { formValues } = this.state;
+    const params = {
+      ...formValues,
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    this.setState({
+      formValues:{
+        ...params
+      }
+    });
+    dispatch({
+      type: 'quizauditlist/fetch',
+      payload: params
+    });
   }
 
   render(){
     const { getFieldDecorator } = this.props.form;
-
+    const {quizauditlist: {data, loading }, dispatch} = this.props;
     const columns = [{
       title:'赛事',
       dataIndex:'eventname'
@@ -90,6 +136,7 @@ export default class AuditLisr extends Component {
         </span>
       }
     }]
+
     return <PageHeaderLayout title="竞猜结果审核">
       <Card bordered={false}>
         <div className={styles.tableList}>
@@ -110,7 +157,11 @@ export default class AuditLisr extends Component {
           </FormItem>
         </Form>
       </div>
-        <Table dataSource={[{'status':'结算中'},{'status':'竞猜中'}]} columns={columns} pagination={false} bordered size='middle'/>
+          <StandardTable
+            columns = { columns }
+            loading={loading}
+            data={ data }
+            onChange={this.handleStandardTableChange}/>
         </div>
       </Card>
     </PageHeaderLayout>

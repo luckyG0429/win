@@ -41,9 +41,14 @@ export default class TableList extends PureComponent {
         btnloading:false,
         selectMenu:[]
       };
-
   }
 
+  componentWillMount () {
+    const { dispatch } = this.props;
+    dispatch({
+      type:'gamelist/eventTypelist'
+    })
+  }
 
   componentDidMount() {
     const { dispatch } = this.props;
@@ -52,9 +57,6 @@ export default class TableList extends PureComponent {
       type: 'gamelist/fetch',
       payload: formValues
     });
-    dispatch({
-      type:'gamelist/eventTypelist'
-    })
   }
 
   /* TODO: 表格的分页处理 - 以及内部状态管理：表单数据[ formValues ] */

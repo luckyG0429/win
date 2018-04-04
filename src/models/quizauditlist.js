@@ -1,7 +1,7 @@
 /**
  * model  竞猜结果审核状态管理
  */
-import { queryAuditList ,sendReject, sendAccout} from '../services/win_quiz';
+import { queryAuditList ,auditQuiz } from '../services/win_quiz';
 
 export default {
   namespace:'quizauditlist',
@@ -16,24 +16,20 @@ export default {
     *fetch({payload},{call, put}){
       yield put({
         type:'changeLoading',
-        payload:true
+        payload: true
       })
       const result = yield call(queryAuditList, payload);
       yield put({
         type:'setList',
-        payload:result
+        payload: result
       })
       yield put({
         type:'changeLoading',
-        payload:true
+        payload: false
       })
     },
-    *checkReject({payload, callback},{ call }){
-      const result = yield call(sendReject, payload);
-      if(callback) callback(result);
-    },
-    *checkAccout({payload, callback},{ call }){
-      const result = yield call(sendAccout, payload);
+    *auditQuizResult({payload, callback},{ call }){
+      const result = yield call(auditQuiz, payload);
       if(callback) callback(result);
     }
   },
@@ -49,9 +45,7 @@ export default {
         ...state,
         data:{
           list:action.payload.data,
-          pagination:{
-
-          }
+          pagination:action.payload.data,
         }
       }
     }
