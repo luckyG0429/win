@@ -64,6 +64,10 @@ export const getNavData = app => [
             name: '资源配置',
             path: 'resource',
             component: dynamicWrapper(app, ['systemresource'], () => import('../routes/SystemManage/resourceList')),
+          },{
+            name: '权限设置',
+            path: 'permission',
+            component: dynamicWrapper(app, ['systempermiss'], () => import('../routes/SystemManage/permissList')),
           }
         ],
       },

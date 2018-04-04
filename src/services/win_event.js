@@ -29,9 +29,9 @@ export async function addEvent(params) {
   });
 }
 
-// win+  04 修改比赛
+// win+  04 修改赛事
 
-// win+  05 删除比赛
+// win+  05 删除赛事
 
-// win+  06 发布比赛
+// win+  06 发布赛事
 

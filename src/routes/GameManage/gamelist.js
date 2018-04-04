@@ -44,7 +44,6 @@ export default class TableList extends PureComponent {
 
   }
 
-  c
 
   componentDidMount() {
     const { dispatch } = this.props;

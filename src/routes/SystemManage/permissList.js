@@ -7,7 +7,7 @@ import { connect } from 'dva';
 import {Form, Input,Select,Button,Modal,Divider,Card} from 'antd';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import ResourceForm from '../../components/System/ResourceForm';
+import PermissForm from '../../components/System/PermissForm';
 
 import styles from './system.less';
 import {handleResult} from "../../utils/utils";
@@ -15,12 +15,12 @@ import {handleResult} from "../../utils/utils";
 const FormItem = Form.Item;
 
 @connect(state => ({
-  systemresource: state.systemresource,
+  systempermiss: state.systempermiss,
 }))
 
 @Form.create()
 
-export default class ResourceList extends PureComponent{
+export default class PermissionList extends PureComponent{
   state = {
     formValues:{
       pageSize:10,
@@ -36,6 +36,15 @@ export default class ResourceList extends PureComponent{
 
   }
 
+  componentWillMount(){
+    const {dispatch} = this.props;
+    dispatch({
+      type:'systempermiss/roleListfetch'
+    })
+    dispatch({
+      type:'systempermiss/resourceListfetch'
+    })
+  }
 
   componentDidMount(){
     //请求目前已有的全部战队列表
@@ -73,7 +82,7 @@ export default class ResourceList extends PureComponent{
     });
     if(type === 0){
       dispatch({
-        type:'systemresource/addResourceParams',
+        type:'systempermiss/addResourceParams',
         payload:params,
         callback:(result)=>{
           this.setState({
@@ -87,7 +96,7 @@ export default class ResourceList extends PureComponent{
       })
     }else{
       dispatch({
-        type:'systemresource/alertResourceParams',
+        type:'systempermiss/alertResourceParams',
         payload:params,
         callback:(result)=>{
           this.setState({
@@ -128,7 +137,7 @@ export default class ResourceList extends PureComponent{
       }
 
       const params = {
-        url: 'systemresource/deleteResourceParams',
+        url: 'systempermiss/deleteResourceParams',
         msg: '已删除成功！'
       }
 
@@ -159,14 +168,14 @@ export default class ResourceList extends PureComponent{
       params = formValues;
     }
     dispatch({
-      type:'systemresource/fetch',
+      type:'systempermiss/fetch',
       payload:params
     })
   }
 
   render(){
     //1.你的全局状态的引入
-    const {systemresource:{data, loading}} = this.props;
+    const {systempermiss:{data, loading, roleList, resourceList}} = this.props;
     const { getFieldDecorator } = this.props.form;
 
     //2.组件的状态变量的引入
@@ -174,14 +183,14 @@ export default class ResourceList extends PureComponent{
     const modaltitle =modaltype ===0?'添加资源':(modaltype ===1?'修改资源':'资源查看');
 
     const columns=[{
-      title:'资源名称',
-      dataIndex:'name'
+      title:'职位',
+      dataIndex:'roleDescription'
     },{
-      title:'唯一值',
-      dataIndex:'type',
+      title:'对应资源',
+      dataIndex:'resourceDescription',
     },{
-      title:'资源说明',
-      dataIndex: 'description'
+      title:'操作权限',
+      dataIndex: 'permission'
     },{
       title: '状态',
       dataIndex: 'available',
@@ -199,20 +208,20 @@ export default class ResourceList extends PureComponent{
     }];
 
     //3.渲染
-    return (<PageHeaderLayout title="资源列表">
+    return (<PageHeaderLayout title="权限配置">
         <Card>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
               <Form layout="inline" style={{width:'100%',display:'block',overflow:'auto'}}  onSubmit={this.handleSearch}>
                 <FormItem  style={{float:'left',display:'inline'}}>
-                  <Button type='primary'  ghost onClick={() => this.handleModalVisible(true,'',0)}>添加资源</Button>
+                  <Button type='primary'  ghost onClick={() => this.handleModalVisible(true,'',0)}>创建权限</Button>
                 </FormItem>
                 <FormItem  style={{float:'right',display:'inline'}}>
                   <Button type="primary" htmlType="submit">搜索</Button>
                 </FormItem>
                 <FormItem style={{float:'right',display:'inline', marginRight:10}}>
                   {
-                    getFieldDecorator('name')(<Input placeholder='请输入资源名称'/>)
+                    getFieldDecorator('name')(<Input placeholder='请输入职位名称'/>)
                   }
                 </FormItem>
               </Form>
@@ -232,8 +241,10 @@ export default class ResourceList extends PureComponent{
                onCancel={() => this.handleModalVisible()}
                footer={modaltype===2?[<Button type='primary' onClick={() => this.handleModalVisible()}>返回</Button>]:[]} >
           {
-            modalVisible&&<ResourceForm modalType={modaltype}
+            modalVisible&&<PermissForm modalType={modaltype}
                                    data={_record}
+                                       roleList={roleList}
+                                       resourceList={resourceList}
                                    btnloading={btnloading}
                                    handleCancel={()=>this.handleModalVisible()}
                                    handleOk={(type,params)=>this.handlFormOk(type,params)}/>

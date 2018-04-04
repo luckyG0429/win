@@ -1,6 +1,5 @@
 
-import {addResource } from '../services/win_system';
-import {enumEventtype, queryEventlist} from '../services/win_event';
+import {addResource, alertResource, queryResourceslist, deleteResource } from '../services/win_system';
 
 export default {
   namespace:'systemresource',
@@ -18,12 +17,12 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      // const result = yield call(queryTeamlist,payload);
-      // if(result.resultCode !== 0) return false;
-      // yield put({
-      //   type: 'setListdata',
-      //   payload: result
-      // });
+      const result = yield call(queryResourceslist,payload);
+      if(result.resultCode !== 0) return false;
+      yield put({
+        type: 'setListdata',
+        payload: result
+      });
       yield  put({
         type:'changeLoading',
         payload: false
@@ -31,6 +30,14 @@ export default {
     },
     *addResourceParams({payload,callback},{call}){
       const result =yield call(addResource,payload);
+      if(callback) callback(result);
+    },
+    *alertResourceParams({payload,callback},{call}){
+      const result =yield call(alertResource,payload);
+      if(callback) callback(result);
+    },
+    *deleteResourceParams({payload,callback},{call}){
+      const result =yield call(deleteResource,payload);
       if(callback) callback(result);
     },
     *typefetch({},{call,put}){

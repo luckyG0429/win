@@ -18,7 +18,7 @@ class ResourceForm extends PureComponent {
     const { handleOk, modalType, data } = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+
       }
       const params = {
         ...values,
@@ -27,7 +27,7 @@ class ResourceForm extends PureComponent {
       if(modalType !== 2){
         params.id = data.id;
       }
-      handleOk(params,modalType);
+      handleOk(modalType,params);
     });
   }
 
@@ -78,7 +78,7 @@ class ResourceForm extends PureComponent {
           })(<Input placeholder='请输入一个表示资源唯一的数字，如10'/>)
         }
       </FormItem>
-      <FormItem label='职位描述' {...formItemLayout}>
+      <FormItem label='资源描述' {...formItemLayout}>
         {
           getFieldDecorator('description',{
             rules: [{

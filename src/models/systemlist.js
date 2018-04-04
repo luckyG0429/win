@@ -2,8 +2,8 @@
  * model  系统参数列表
  * 这里包含的有：竞猜规则的列表，添加竞猜规则，添加赛事分类，赛事分类列表
  */
-import { queryEventtypelist, addEventtype,
-  queryAuthorizeRole, addAuthorizeRole, updataAuthorRole, deleteAuthorRole} from '../services/win_system';
+import { queryEventtypelist, createEventtype,
+  queryAuthorizeRole, createAuthorizeRole, alertAuthorRole, deleteAuthorRole} from '../services/win_system';
 
 export default {
   namespace:'systemlist',
@@ -43,7 +43,7 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      const result = yield call(addEventtype,payload);
+      const result = yield call(createEventtype,payload);
       if(callback) callback(result);
     },
     *rolefetch({payload},{call, put}){
@@ -67,11 +67,11 @@ export default {
       if(callback) callback(result);
     },
     *addRole({payload, callback}, {call}){
-      const result = yield call(addAuthorizeRole,payload);
+      const result = yield call(createAuthorizeRole,payload);
       if(callback) callback(result);
     },
     *updataRole({payload, callback}, {call}){
-      const result = yield call(updataAuthorRole,payload);
+      const result = yield call(alertAuthorRole,payload);
       if(callback) callback(result);
     },
   },

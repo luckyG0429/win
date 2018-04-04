@@ -134,6 +134,8 @@ export default class TableList extends PureComponent {
         ...fieldsValue
       };
 
+
+
       this.setState(function(prevState,props){
         return {formValues: {
             ...values,
