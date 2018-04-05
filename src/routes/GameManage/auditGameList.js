@@ -7,7 +7,7 @@ import { Row, Col, Card, Form, Input, Select, Button, DatePicker, Modal, Divider
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import GameDetail from '../../components/Game/GameDetail';
-import {gameStatus, timestampToDatetime} from '../../utils/utils';
+import {datetimeToTimestamp, gameStatus, timestampToDatetime} from '../../utils/utils';
 
 import styles from './game.less';
 
@@ -30,16 +30,17 @@ export default class AuditList extends PureComponent {
     modalVisible:false,
     modaltype:'',
     btnloading:false,
-    selectMenu:[]
   };
 
-  componentDidMount() {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
+  componentWillMount() {
+    const {dispatch} = this.props;
     dispatch({
-      type: 'gameauditlist/fetch',
-      payload: formValues
-    });
+      type: 'gameauditlist/eventListfetch'
+    })
+  }
+
+  componentDidMount() {
+    this.sendList()
   }
 
   /* TODO: 表格的分页处理 - 以及内部状态管理：表单数据[ formValues ] */
@@ -48,24 +49,31 @@ export default class AuditList extends PureComponent {
     const { formValues } = this.state;
     const params = {
       ...formValues,
-      page: pagination.current,
-      size: pagination.pageSize,
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
     };
     this.setState({
       formValues:{
         ...params
       }
     });
+    this.sendList(params);
+  }
+
+
+  sendList= (params) => {
+    const { dispatch } = this.props;
+    const { formValues } = this.state;
+    if(!params) params=formValues;
     dispatch({
-      type: 'gamelist/fetch',
+      type: 'gameauditlist/fetch',
       payload: params
-    });
+    })
   }
 
 
 
-
-  /*TODO: 弹框的显示与隐藏 - 查看用户详情 - 传递数据[userId]*/
+  /*弹框的显示与隐藏 - 查看用户详情 - 传递数据[userId]*/
   handleModalVisible = (flag = false,record={}, type) => {
     const { dispatch } = this.props;
     this.setState({
@@ -94,25 +102,8 @@ export default class AuditList extends PureComponent {
     }
   }
 
-  /* TODO:条件查询 - 清空查询条件  - 内部状态管理：初始化表单数据[ formValues ] */
-  handleFormReset = () => {
-    const { form } = this.props;
-    form.resetFields();
-    this.setState({
-      formValues: {
-        page:1,
-        size:10,
-        kgName:'',
-        applyName:'',
-        applyPhone:'',
-        applyStartTime:'',
-        applyEndTime:'',
-        state:'',
-      }
-    });
-  }
 
-  /* TODO:条件查询 - 条件查询事件  - 内部状态管理：表单数据[ formValues ] */
+  /* 条件查询 - 条件查询事件  - 内部状态管理：表单数据[ formValues ] */
   handleSearch = (e) => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -121,53 +112,33 @@ export default class AuditList extends PureComponent {
       const values = {
         ...fieldsValue
       };
-      var jsonParams = {
-        kgName:values.kgName||"",
-        applyName:values.applyName||"",
-        applyPhone:values.applyPhone||"",
-        state:values.state||'',
-        applyStartTime: '',
-        applyEndTime:''
-      };
-      if(values.createTime && values.createTime.length != 0 ){
-        jsonParams.applyStartTime = values.createTime[0].format('YYYY-MM-DD').toString();
-        jsonParams.applyEndTime = values.createTime[1].format('YYYY-MM-DD').toString()
+      const jsonParams = {
+        gameId: values.gameId||'',
+        name: values.name?values.name.trim():'',
+        startTime:values.startTime?datetimeToTimestamp(values.startTime.format('YYYY-MM-DD  HH:mm:ss').toString()):'',
       }
       this.setState({
         formValues:{
-          page: 1,
-          size: 10,
+          currentPage: 1,
+          pageSize: 10,
           ...jsonParams
         },
       });
-      dispatch({
-        type: 'gamelist/fetch',
-        payload: {
-          page: 1,
-          size: 10,
-          ...jsonParams
-        },
+
+
+      this.sendList({
+        currentPage: 1,
+        pageSize: 10,
+        ...jsonParams
       });
     });
   }
 
-  handleOk(type, params) {
-    //type: 0 新增 ；1 修改
-    const { dispatch } = this.props;
-    this.setState({
-      btnloading: true,
-    });
-    if (type == 1) {
-
-    } else {
-
-    }
-  }
 
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { gameauditlist: { data, loading, eventtype } ,  dispatch } = this.props;
+    const { gameauditlist: { data, loading, eventList } ,  dispatch } = this.props;
     const { modalVisible, modaltype, record, btnloading, selectMenu} = this.state;
 
     const columns = [{
@@ -215,18 +186,21 @@ export default class AuditList extends PureComponent {
                 </FormItem>
                 <FormItem style={{float:'right',display:'inline', marginRight:10,width:'120px'}}>
                   {
-                    getFieldDecorator('name')(<Select  style={{ width: '120px' }}>
-                      {
-                        selectMenu.length?selectMenu.map((item)=>{
-                          <Option value={item.id}>{item.name}</Option>
-                        }):[]
-                      }
-                    </Select>)
+                    getFieldDecorator('name')(<Input  placeholder='请输入比赛名称'/>)
                   }
                 </FormItem>
                 <FormItem style={{float:'right',display:'inline', marginRight:10}}>
                   {
-                    getFieldDecorator('name')(<Input placeholder='请输入赛事名称'/>)
+                    getFieldDecorator('gameId',{
+                      initialValue:''
+                    })(<Select  style={{ width: '120px' }}>
+                      <Option key={'disabled'} disabled={true}>请选择...</Option>
+                      <Option value='' key={'listall-1'}>全部</Option>
+                      {
+                        eventList.length!=0?eventList.map((item)=><Option key={item.id} value={item.id}>{item.name}</Option>
+                        ):[]
+                      }
+                    </Select>)
                   }
                 </FormItem>
               </Form>

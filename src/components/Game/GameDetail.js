@@ -147,7 +147,7 @@ export default class GameDetail extends PureComponent {
             }
           </FormItem>
           <FormItem>
-            <Button type='primary' disabled={data.status!=3} onClick={()=>this.handleEdit()} size='small'>
+            <Button type='primary' disabled={data.status!== 3} onClick={()=>this.handleEdit()} size='small'>
               {
                 canEdit?'编辑比分':'提交'
               }</Button>

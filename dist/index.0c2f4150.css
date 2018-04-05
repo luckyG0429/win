@@ -16390,6 +16390,41 @@ textarea.ant-time-picker-input {
   display: -ms-flexbox;
   display: flex;
 }
+.linediv___3366b {
+  width: 80%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin: 10px 10%;
+  border: 1px solid #eee;
+}
+.linediv___3366b span {
+  display: inline-block;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+}
+.linediv___3366b .right___1DfUS {
+  width: 30%;
+}
+.linediv___3366b .left___mp3Ao {
+  width: 30%;
+}
+.linediv___3366b .text___3aP45 {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0 40%;
+          flex: 1 0 40%;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
+}
+.linediv___3366b .ateam___333HL {
+  background: #ff4d4f;
+}
+.linediv___3366b .bteam___3wm20 {
+  background: #2f54eb;
+}
 /* stylelint-disable at-rule-empty-line-before,at-rule-name-space-after,at-rule-no-unknown */
 /* stylelint-disable no-duplicate-selectors */
 /* stylelint-disable declaration-bang-space-before,no-duplicate-selectors */

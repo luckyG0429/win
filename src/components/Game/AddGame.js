@@ -18,6 +18,10 @@ export default class Gamedetail extends PureComponent{
     listTeam:[],
     gameGuesses:[],
   }
+
+  componentWillMount () {
+    this.handleEvent()
+  }
   disabledDate = (current)=>{
   // Can not select days before today and today
    return current && current < moment().endOf('day');

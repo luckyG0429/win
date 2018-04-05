@@ -30,22 +30,7 @@ export default class TableList extends PureComponent {
         currentPage:1,
       }, //搜索参数
 
-    selectMenu:[{
-      id:0,
-      name:'全部'
-    },{
-      id:1,
-      name:'竞猜中'
-    },{
-      id:2,
-      name:'结果核算中'
-    },{
-      id:3,
-      name:'系统结算中'
-    },{
-      id:4,
-      name:'系统结算完毕'
-    }],
+    selectMenu:quizStatus,
 
     modalVisible: false,
     record: {},
@@ -56,33 +41,19 @@ export default class TableList extends PureComponent {
   };
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
-    dispatch({
-      type: 'quizlist/fetch',
-      payload: formValues
-    });
+    this.sendList();
   }
 
-  /* TODO: 表格的分页处理 - 以及内部状态管理：表单数据[ formValues ] */
-  handleStandardTableChange = (pagination) => {
+  sendList = (params) => {
     const { dispatch } = this.props;
     const { formValues } = this.state;
-    const params = {
-      ...formValues,
-      page: pagination.current,
-      size: pagination.pageSize,
-    };
-    this.setState({
-      formValues:{
-        ...params
-      }
-    });
+    if(!params) params = formValues
     dispatch({
       type: 'quizlist/fetch',
       payload: params
     });
   }
+
 
 
   /*TODO: 弹框的显示与隐藏 - 查看用户详情 - 传递数据[userId]*/
@@ -133,10 +104,6 @@ export default class TableList extends PureComponent {
         applyStartTime: '',
         applyEndTime:''
     };
-      if(values.createTime && values.createTime.length != 0 ){
-        jsonParams.applyStartTime = values.createTime[0].format('YYYY-MM-DD').toString();
-        jsonParams.applyEndTime = values.createTime[1].format('YYYY-MM-DD').toString()
-      }
       this.setState({
         formValues:{
           page: 1,
@@ -144,6 +111,13 @@ export default class TableList extends PureComponent {
           ...jsonParams
         },
       });
+
+      this.sendList({
+        pageSize:10,
+        currentPage:1,
+        ...jsonParams
+      });
+
       dispatch({
         type: 'quizlist/fetch',
         payload: {
@@ -246,53 +220,26 @@ export default class TableList extends PureComponent {
   }
 
 
-  /*TODO: 生成条件查询表单 ,参数是：渠道枚举数据 ,额度状态枚举，额度产品枚举 */
-  renderAdvancedForm( ) {
-    const { getFieldDecorator } = this.props.form;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={7} sm={24}>
-            <FormItem label="比赛名">
-              {getFieldDecorator('gameName')(
-                <Input placeholder="请输入"  maxLength='34' style={{ width: '80%' }} />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={7} sm={24}>
-            <FormItem label="赛事类别">
-              {getFieldDecorator('eventClass')(
-                <Select placeholder="请选择" style={{ width: '80%' }}>
-                  <Option key={1} value={1}>足球</Option>
-                  <Option key={2} value={0}>篮球</Option>
-                  <Option key={3} value=''>LOL</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={7} sm={24}>
-            <FormItem label="赛事状态">
-              {getFieldDecorator('state')(
-                <Select placeholder="请选择" style={{ width: '80%' }}>
-                  <Option key={1} value={1}>已发布</Option>
-                  <Option key={2} value={0}>未发布</Option>
-                  <Option key={3} value=''>全部</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-        </Row>
-          <Row>
-            <Col span={24} style={{ textAlign: 'right' }}>
-              <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                重置
-              </Button>
-            </Col>
-          </Row>
-      </Form>
-    );
+  /* TODO: 表格的分页处理 - 以及内部状态管理：表单数据[ formValues ] */
+  handleStandardTableChange = (pagination) => {
+    const { dispatch } = this.props;
+    const { formValues } = this.state;
+    const params = {
+      ...formValues,
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    this.setState({
+      formValues:{
+        ...params
+      }
+    });
+    dispatch({
+      type: 'gamelist/fetch',
+      payload: params
+    });
   }
+
 
   timestampToTime=(timestamp) =>{
     var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
@@ -381,11 +328,12 @@ export default class TableList extends PureComponent {
                   }
                 </FormItem>
               </Form>
-            <Table style={{marginTop:'24px'}}
-              columns={ columns }
-              loading={ loading }
-                   bordered
-              dataSource={data.list}
+            <StandardTable style={{marginTop:'24px'}}
+                           columns={ columns }
+                           loading={ loading }
+                           rowKey = {record => record.id}
+                           data = {data}
+
             />
           </div>
         </Card>
@@ -394,7 +342,7 @@ export default class TableList extends PureComponent {
           visible={ modalVisible }
           width={ 800 }
           style={{top:50}}
-          footer={[]}
+          footer={[<Button onClick={() => this.handleModalVisible()}>返回</Button>]}
           onCancel={() => this.handleModalVisible()}
         >
           {

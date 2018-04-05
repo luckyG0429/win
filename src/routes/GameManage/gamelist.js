@@ -167,6 +167,7 @@ export default class TableList extends PureComponent {
 
       const jsonPrams = {
         ...values,
+        gameId: values.gameId||'',
         name: values.name?values.name.trim():'',
         startTime:values.startTime?datetimeToTimestamp(values.startTime.format('YYYY-MM-DD  HH:mm:ss').toString()):'',
       }

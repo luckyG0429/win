@@ -150,7 +150,7 @@ export default class Gamedetail extends PureComponent{
         )}
         <span>
           {
-            timeEdit?<Button size='small' type='primary' onClick={this.setTimeEdit} >推迟开赛时间</Button>:
+            timeEdit?<Button size='small' disabled={data.status !== 3} type='primary' onClick={this.setTimeEdit} >推迟开赛时间</Button>:
               <Button size='small' type='primary' onClick={this.handleStartTime}>确定并提交</Button>
           }
         </span>

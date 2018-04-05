@@ -11,12 +11,21 @@ const Option = Select.Option;
 
 
 const  SpanList = ({ascore, name, bscore})=>{
-  return <div>
-    <span>{ ascore }</span>
-    <span>{ name }</span>
-    <span>{ bscore}</span>
+  console.log(ascore, name, bscore);
+  return <div className={styles.linediv}>
+    <span className={styles.left}>{ ascore }</span>
+    <span className={styles.text}>{ name }</span>
+    <span className={styles.right}>{ bscore}</span>
   </div>
 }
+
+const  LineList = ({anum, bnum})=>{
+  return <div className={styles.linediv}>
+    <span className={styles.ateam} style={{width:anum+'%'}}> </span>
+    <span className={styles.bteam} style={{width:bnum+'%'}}> </span>
+  </div>
+}
+
 
 
 
@@ -111,6 +120,56 @@ var Quizdetail =(props) =>{
     form.resetFields();
     handleCancel();
   }
+
+
+  const obj = ((data) => {
+    let _arrpush = [];
+    for(var k in data) {
+      let _temp;
+      if(k === 'betBA' || k === 'betBB'){
+         _temp = {
+          ascore:data.betBA || 0,
+          name:'赔偿比',
+          bscore:data.betBB || 0,
+        }
+      }else if(k === 'betTA' || k === 'betTB'){
+         _temp = {
+          ascore: data.betTA || 0,
+          name:'下注总金额',
+          bscore:data.betTB || 0
+        }
+      }else if(k === 'betBA' || k === 'betBB'){
+        _temp = {
+          ascore: data.betBA || 0,
+          name:'下注人数',
+          bscore: data.betTA || 0,
+        }
+      }
+      _arrpush.push(_temp);
+    }
+
+    return _arrpush;
+  })(data.edata);
+
+
+  const unique  = (arr) => {
+    const seen = new Map()
+    return arr.filter((a) => !seen.has(a) && seen.set(a, 1))
+  }
+
+  const objArr = [{
+    ascore: 0,
+    name:'下注总金额',
+    bscore: 0
+  },{
+    ascore:  0,
+    name:'下注人数',
+    bscore: 0
+
+  }];
+
+  console.log(objArr);
+
   return <Form layout="horizontal" className={styles.modalform}>
     <FormItem
       {...formItemLayout}
@@ -158,8 +217,9 @@ var Quizdetail =(props) =>{
         initialValue:gameTeamBName
       })(<Input  disabled={canEdit}/>)}
     </FormItem>
+    <LineList anum={50} bnum={50}/>
     {
-      status?<span>s</span>:'-'
+      status?objArr.map((item,index)=><SpanList key={index} {...obj}/>):'-'
     }
 
     {/*<FormItem style={{textAlign:'right'}}>*/}

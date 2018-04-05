@@ -2,7 +2,10 @@
  * 上架审核状态管理
  一**/
 
-import {queryCheckGamelist, setGamedstarttime,getGamedetail,sendGamescore, checkedGame, checkedGameguess, overGameguess} from '../services/win_game';
+import {
+  queryCheckGamelist, setGamedstarttime, getGamedetail, sendGamescore, checkedGame, checkedGameguess,
+  queryEventlist, enumTeam
+} from '../services/win_game';
 
 export default {
   namespace:'gameauditlist',
@@ -11,10 +14,19 @@ export default {
       list:[{name:'1'}],
       pagination:{}
     },
+    eventList:[],
     loading:false,
     activekey:''
   },
   effects:{
+    *eventListfetch({},{call, put}){
+      const result = yield call(queryEventlist);
+      if(result.resultCode !== 0) return false;
+      yield put({
+        type: 'setEventlist',
+        payload: result.data
+      })
+    },
     *fetch({payload},{call,put}){
       yield put({
         type:'changeLoading',
@@ -74,6 +86,12 @@ export default {
         ...state,
         activerecord:action.payload
       }
-    }
+    },
+    setEventlist (state, action){
+      return {
+        ...state,
+        eventList: action.payload
+      }
+    },
   }
 }
