@@ -212,7 +212,7 @@ export default class TableList extends PureComponent {
     const columns = [{
       title: '开赛时间',
       dataIndex: 'startTime',
-      render:(text)=><p>{timestampToDatetime(text)}</p>
+      render:(text)=><span>{timestampToDatetime(text)}</span>
     },{
       title: '赛事',
       dataIndex: 'name',
@@ -222,7 +222,7 @@ export default class TableList extends PureComponent {
     },{
       title: '结束时间',
       dataIndex: 'endTime',
-      render:(text)=><p>{timestampToDatetime(text)}</p>
+      render:(text)=><span>{timestampToDatetime(text)}</span>
     },{
        title: '比赛日程',
       dataIndex: '',

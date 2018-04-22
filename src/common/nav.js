@@ -58,7 +58,7 @@ export const getNavData = app => [
         children: [
           {
             name: '参数配置',
-            path: 'param',
+            path: 'params',
             component: dynamicWrapper(app, ['systemlist'], () => import('../routes/SystemManage/list')),
           },{
             name: '资源配置',

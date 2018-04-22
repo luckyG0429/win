@@ -31,6 +31,11 @@ class ResourceForm extends PureComponent {
     });
   }
 
+  handleCancel=()=>{
+    this.props.form.resetFields();
+    this.props.handleCancel();
+  }
+
   render(){
     const { getFieldDecorator } = this.props.form;
     const {data, modalType} = this.props;

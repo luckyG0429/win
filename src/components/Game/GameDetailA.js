@@ -45,7 +45,7 @@ const TimeCell = ({editable, value, onChange})=>{
   }
   return (<div>
     {
-      editable && editable!=undefined?<DatePicker showTime format="YYYY-MM-DD HH:mm:ss"  value={moment(value)} onChange={onChangeTime}/>:value
+      editable && editable!=undefined?<DatePicker showTime format="YYYY-MM-DD HH:mm:ss"  defaultValue={moment('2018/01/01 00:00:00')}  value={moment(value)} onChange={onChangeTime}/>:value
     }
   </div>)}
 
@@ -53,8 +53,7 @@ function handleQuizStatus (value,{ endTime }) {
   console.log('status',endTime);
 
   if(value !== 3)  return quizStatus.filter((item)=>value==item.key).length!=0?quizStatus.filter((item)=>value==item.key)[0].name:'-';
-   console.log(CountDown(endTime));
-  return CountDown(endTime)
+  // return CountDown(endTime)
   var d = setInterval(()=>this.CountDown(value), 1000);
   clearInterval(d);
 

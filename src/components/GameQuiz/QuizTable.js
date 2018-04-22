@@ -29,13 +29,14 @@ const InputCell = ({editable, value, onChange})=>(<div>
 
 const TimeCell = ({editable, value, onChange})=>{
   const onChangeTime = (value, dateString)=>{
+    if(!value)  dateString="2018-01-01 00:00:00";
     console.log('Formatted Selected Time: ', dateString);
     onChange(dateString);
   }
   return (<div>
-  {
-    editable && editable!=undefined?<DatePicker showTime format="YYYY-MM-DD HH:mm:ss"  value={moment(value)} onChange={onChangeTime}/>:value
-  }
+    {
+      editable && editable!=undefined?<DatePicker showTime format="YYYY-MM-DD HH:mm:ss"  value={moment(value)} onChange={onChangeTime}/>:value
+    }
   </div>)}
 
 
@@ -108,11 +109,7 @@ class EditQuizTable extends Component {
     const newData = [...this.state.data];
     const target = newData.filter(item => key === item.key)[0];
     if (target) {
-      if(column === 'endTime'){
-        target[column] = this.DateChangeNumber(value)
-      }else{
-        target[column] = value;
-      }
+      target[column] = value;
       this.setState({ data: newData });
     }
   }

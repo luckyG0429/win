@@ -18,12 +18,18 @@ export default {
   },
 
   effects: {
-    *accountSubmit({ payload }, { call, put }) {
+    *accountSubmit({ payload, callback }, { call, put }) {
       yield put({
         type: 'changeSubmitting',
         payload: true,
       });
       const response = yield call(setLoginIn, payload);
+
+      yield put({
+        type: 'changeSubmitting',
+        payload: false,
+      })
+      if(callback) callback(response);
       yield put({
         type: 'changeLoginStatus',
         payload:{
@@ -32,10 +38,7 @@ export default {
           ...response,
         }
       });
-      yield put({
-        type: 'changeSubmitting',
-        payload: false,
-      })
+
     },
     *logout(_, { call, put }) {
       yield put({

@@ -10,7 +10,7 @@ import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import AddQuiz from '../../components/GameQuiz/AddQuiz';
 import QuizList from '../../components/GameQuiz/QuizList'
-import { quizStatus } from '../../utils/utils'
+import {quizStatus, timestampToDatetime, } from '../../utils/utils'
 
 import styles from './quiz.less';
 
@@ -241,17 +241,6 @@ export default class TableList extends PureComponent {
   }
 
 
-  timestampToTime=(timestamp) =>{
-    var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-    let Y = date.getFullYear() + '-';
-    let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-    let D = date.getDate()<10? ('0'+date.getDate()+ ' '):(date.getDate()+ ' ');
-    let h = date.getHours()<10? ('0'+date.getHours()+ ':'): (date.getHours()+ ':');
-    let m = date.getMinutes()<10? ('0'+date.getMinutes()+ ':'): (date.getMinutes()+ ':');
-    let s = date.getSeconds()<10?('0'+date.getMinutes()): date.getMinutes();
-    return Y+M+D+h+m+s;
-  }
-
   render() {
     const { getFieldDecorator } = this.props.form;
     const { quizlist: { data, loading } ,  dispatch } = this.props;
@@ -270,7 +259,7 @@ export default class TableList extends PureComponent {
     },{
       title: '竞猜结束时间',
       dataIndex: 'endTime',
-      render:(text)=><p>{this.timestampToTime(text)}</p>
+      render:(text)=><span>{timestampToDatetime(text)}</span>
     },{
       title: '战队双方A-B',
       dataIndex: 'gameTeamAName',
@@ -312,7 +301,7 @@ export default class TableList extends PureComponent {
                   {
                     getFieldDecorator('status')(<Select  style={{ width: '140px' }} placeholder='竞猜状态选择'>
                       {
-                        selectMenu.length != 0?selectMenu.map((item)=><Option key={item.id} value={item.id}>{item.name}</Option>):[]
+                        selectMenu.length != 0?selectMenu.map((item)=><Option key={item.key} value={item.key}>{item.name}</Option>):[]
                       }
                     </Select>)
                   }

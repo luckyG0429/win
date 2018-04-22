@@ -161,7 +161,7 @@ export default class PermissionList extends PureComponent{
       })
    }
 
-  setFetch(params){
+  setFetch = (params) => {
     const {dispatch} = this.props;
     const { formValues } = this.state;
     if(!params){
@@ -190,7 +190,30 @@ export default class PermissionList extends PureComponent{
       dataIndex:'resourceDescription',
     },{
       title:'操作权限',
-      dataIndex: 'permission'
+      dataIndex: 'permission',
+      render:(val)=>{
+        const _DescStr= [{
+          value: 'read',
+          name: '查看'
+        },{
+          value: 'alert',
+          name: '编辑'
+        },{
+          value: 'create',
+          name: '新增'
+        },{
+          value: 'delete',
+          name: '删除'
+        }];
+        let _permission = val.length?val.split(","):[];
+        let _newArr = [];
+        _DescStr.forEach(item=>{
+          for(let i=0;i<_permission.length;i++){
+            if(_permission[i] === item.value) return _newArr.push(item.name);
+          }
+        });
+        return _newArr.join(",")
+      }
     },{
       title: '状态',
       dataIndex: 'available',

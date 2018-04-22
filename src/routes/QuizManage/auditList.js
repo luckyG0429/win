@@ -8,7 +8,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import {connect} from "dva";
 
 import styles from './quiz.less'
-import {handleResult} from "../../utils/utils";
+import {handleResult, timestampToDatetime} from "../../utils/utils";
 
 const FormItem = Form.Item;
 
@@ -118,7 +118,8 @@ export default class AuditLisr extends Component {
       dataIndex:'quizname'
     },{
       title:'竞猜结束时间',
-      dataIndex:'quizEndtime'
+      dataIndex:'quizEndtime',
+      render:(text)=><span>{timestampToDatetime(text)}</span>
     },{
       title:'对赛',
       dataIndex:'teams'

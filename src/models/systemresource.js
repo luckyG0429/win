@@ -1,5 +1,5 @@
 
-import {addResource, alertResource, queryResourceslist, deleteResource } from '../services/win_system';
+import {createResource, alertResource, queryResourceslist, deleteResource } from '../services/win_system';
 
 export default {
   namespace:'systemresource',
@@ -29,7 +29,7 @@ export default {
       })
     },
     *addResourceParams({payload,callback},{call}){
-      const result =yield call(addResource,payload);
+      const result =yield call(createResource,payload);
       if(callback) callback(result);
     },
     *alertResourceParams({payload,callback},{call}){

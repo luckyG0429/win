@@ -18,7 +18,7 @@ export async function enumTeam(params){
 // win+  02.比赛列表
 export async function queryGamelist(params) {
   let { pageSize, currentPage, startTime, gameId, name} = params;
-  let paramsStr = `page=${currentPage}&pageSize=${pageSize}&gameId=${gameId}&name=${name}&startTime=${startTime}&status=`;
+  let paramsStr = `page=${currentPage}&pageSize=${pageSize}`;
   return request(`/guessing/game/listGameData?${paramsStr}`);
 }
 

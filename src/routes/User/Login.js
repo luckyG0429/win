@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { routerRedux, Link } from 'dva/router';
-import { Form, Input, Tabs, Button, Icon, Checkbox, Row, Col, Alert } from 'antd';
+import { Form, Input, Tabs, Button, Icon, Checkbox, Row, Modal, Alert } from 'antd';
 import styles from './Login.less';
+import {handleResult} from "../../utils/utils";
 
 const FormItem = Form.Item;
 const { TabPane } = Tabs;
@@ -24,14 +25,6 @@ export default class Login extends Component {
   }
 
   componentWillUnmount() {
-    console.log(this.interval)
-    clearInterval(this.interval);
-  }
-
-  onChangeImg = () => {
-    const imgSrc = this.refs.imgCode;
-    const times = (new Date()).getTime();
-    imgSrc.setAttribute('src', `/system/user/imgCode/generate.htm?timestamp=${times}`);
   }
 
   handleSubmit = (e) => {
@@ -42,6 +35,14 @@ export default class Login extends Component {
           this.props.dispatch({
             type: 'login/accountSubmit',
             payload: values,
+            callback:(result)=>{
+              if(result.resultCode !== 0 ){
+                Modal.error({
+                  title: '登陆失败',
+                  content: "请检查您的用户名/密码是否正确",
+                })
+              }
+            }
           });
         }
       }
@@ -94,40 +95,11 @@ export default class Login extends Component {
                   />
                 )}
           </FormItem>
-           {/*<FormItem>*/}
-           {/*<Row gutter={8}>*/}
-           {/*<Col span={16}>*/}
-           {/*{getFieldDecorator('imgcode', {*/}
-           {/*rules: [{*/}
-           {/*required: true, message: '请输入验证码！',*/}
-           {/*}],*/}
-           {/*})(*/}
-           {/*<Input*/}
-           {/*size="large"*/}
-           {/*type="text"*/}
-           {/*prefix={<Icon type="mail" className={styles.prefixIcon} />}*/}
-           {/*placeholder="验证码"*/}
-           {/*/>*/}
-           {/*)}*/}
-           {/*</Col>*/}
-           {/*<Col span={8}>*/}
-           {/*<img onClick={this.onChangeImg}*/}
-           {/*className={styles.getCaptcha}*/}
-           {/*ref={'imgCode'}*/}
-           {/*src="/system/user/imgCode/generate.htm"*/}
-           {/*alt="图片验证码"*/}
-           {/*/>*/}
-           {/*</Col>*/}
-           {/*</Row>*/}
-           {/*</FormItem>*/}
           <FormItem className={styles.additional}>
             <Button size="large" loading={login.submitting} className={styles.submit} type="primary" htmlType="submit">
               登录
             </Button>
           </FormItem>
-          {/*<FormItem>*/}
-            {/*<a href='/user/register'>注册</a>*/}
-          {/*</FormItem>*/}
         </Form>
       </div>
     );

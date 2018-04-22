@@ -72,6 +72,7 @@ export default class ResourceList extends PureComponent{
       btnloading:true,
     });
     if(type === 0){
+      console.log(0);
       dispatch({
         type:'systemresource/addResourceParams',
         payload:params,
@@ -80,7 +81,7 @@ export default class ResourceList extends PureComponent{
             btnloading:false,
             modalVisible:false,
           },()=>{
-            this.handleResult(result);
+            handleResult(result,params.msg, this.setFetch);
           });
 
         }
@@ -94,31 +95,14 @@ export default class ResourceList extends PureComponent{
             btnloading:false,
             modalVisible:false,
           },()=>{
-            this.handleResult(result);
+            handleResult(result,params.msg, this.setFetch);
           });
         }
       })
     }
   }
 
-
-  handleResult = (result)=>{
-    if(result.resultCode === 0){
-      Modal.success({
-        title: '结果反馈',
-        content: '操作成功',
-        onOk:()=>{this.setFetch()}
-      });
-    }else{
-      Modal.error({
-        title: '结果反馈',
-        content: result.resultmsg,
-      })
-    }
-  }
-
   showMsg =(record)=>{
-
       const {dispatch} = this.props;
       const obj = {
         title:'您确定要删除当前资源吗？',
@@ -140,9 +124,7 @@ export default class ResourceList extends PureComponent{
             type: params.url,
             payload: record.id,
             callback:(result)=>{
-              if(result.resultCode ==0){
-                handleResult(result,params.msg,this.setFetch());
-              }
+              handleResult(result,params.msg, this.setFetch);
             }
           })
         },
@@ -152,7 +134,7 @@ export default class ResourceList extends PureComponent{
       })
    }
 
-  setFetch(params){
+  setFetch=(params)=>{
     const {dispatch} = this.props;
     const { formValues } = this.state;
     if(!params){

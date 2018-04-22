@@ -34,9 +34,6 @@ function CheckResponse(data){
       default: return '发生未知错误,请联系管理员';
     }};
    const msg = errorText(data);
-   //  Modal.error({
-   //    title:msg
-   //  })
     return {...data,resultmsg:msg};
   }
 }

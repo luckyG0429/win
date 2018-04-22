@@ -50,7 +50,6 @@ class PermissForm extends PureComponent {
     });
   }
 
-  handleChange(){}
 
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -80,9 +79,12 @@ class PermissForm extends PureComponent {
     }else{
       var roleId='',
         resourceId='',
-        permission='',
+        permission="",
         available='';
     }
+
+
+    let _permissionArr = permission.length?permission.split(","):[]
 
     return <Form layout='horizontal'  onSubmit={this.handleOk}>
       <FormItem label='职位' {...formItemLayout}>
@@ -115,12 +117,10 @@ class PermissForm extends PureComponent {
             rules: [{
               require:true
             }],
-            initialValue:permission
+            initialValue:_permissionArr
           })(
             <Select
               mode="tags"
-              placeholder="Please select"
-              onChange={this.handleChange}
             >
               {operatelistOption}
           </Select>)
