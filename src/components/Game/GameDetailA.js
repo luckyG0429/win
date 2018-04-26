@@ -5,7 +5,7 @@
 
 
 import React,{ Component }from 'react';
-import {Input, DatePicker, Select, Table, Popconfirm, Button} from 'antd';
+import {Input, DatePicker, Select, Table, Popconfirm, Button, Modal} from 'antd';
 import moment from 'moment';
 import {datetimeToTimestamp, quizStatus,handleResult, timestampToDatetime, CountDown} from '../../utils/utils';
 
@@ -53,7 +53,7 @@ function handleQuizStatus (value,{ endTime }) {
   console.log('status',endTime);
 
   if(value !== 3)  return quizStatus.filter((item)=>value==item.key).length!=0?quizStatus.filter((item)=>value==item.key)[0].name:'-';
-  // return CountDown(endTime)
+  return CountDown(endTime)
   var d = setInterval(()=>this.CountDown(value), 1000);
   clearInterval(d);
 
@@ -67,7 +67,7 @@ const EditableCell = ({num,editable, record,value, onChange})=>{
     case 'type': return <SelectCell  editable={editable} value={value}  onChange={onChange}/>;
     case 'endTime': return <TimeCell  editable={editable} value={value}  onChange={onChange}/>;
     case 'status': return <SpanCell record={record}  editable={editable} value={value}/>;
-    default: return <span>{value === 0 ? '未出结果' : value === 1? 'A队赢' : 'B队赢'}</span>
+    default: return <span>{value === 0 ? '未出结果' : value === 1? 'A队赢' :value === 2? 'B队赢':'-'}</span>
   }
 }
 
@@ -147,31 +147,18 @@ class EditQuizTable extends Component {
 
 
   handleStatus(record){
-    switch(record.status){
-      case 1: return <span style={{textAlign: 'justify'}}>
-        <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>延期封盘</a>
-        <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>立即封盘</a>
+    console.log(record);
+    const _dataLong = Date.now();
+    if(record.status !=3) return '-';
+    if(_dataLong >record.endTime) {
+      return <a style={{paddingRight: 15}} onClick={() => this.onGuessresult(record.key)}>录入比赛结果</a>;
+    }else if(_dataLong <= record.endTime) {
+      return <span style={{textAlign: 'justify'}}>
+        <a style={{paddingRight: 15}} onClick={() => this.delayStop(record.key)}>延期封盘</a>
+        <a style={{paddingRight: 15}} onClick={() => this.inimitableStop(record.key)}>立即封盘</a>
       </span>;
-      case 2: return '-';
-      case 3: return <span style={{textAlign: 'justify'}}>
-        <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>延期封盘</a>
-        <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>立即封盘</a>
-          <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>录入比赛结果</a>
-      </span>;
-      case 4: return '-';
-      case 5: return '-';
-      case 6: return '-';
-      case 7: return '-';
-      default: return  <span style={{textAlign: 'justify'}}>
-        <a style={{paddingRight: 15}} onClick={() => this.onSubmit(record)}>提交</a>
-        <Popconfirm title="您确定要删除吗?" onConfirm={() => this.onDelete(record.key)}>
-          <a>删除</a>
-        </Popconfirm>
-      </span>
     }
   }
-
-
 
 
   handleChange(value, key, column) {
@@ -201,6 +188,26 @@ class EditQuizTable extends Component {
   onDelete = (key) => {
     const dataSource = [...this.state.data];
     this.setState({ data: dataSource.filter(item => item.key !== key) });
+  }
+
+  inimitableStop = (key) =>{}
+
+  delayStop = (key)=>{
+    Modal.confirm({
+      title: 'Do you want to delete these items?',
+      content: 'When clicked the OK button, this dialog will be closed after 1 second',
+      onOk() {
+        return new Promise((resolve, reject) => {
+          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+        }).catch(() => console.log('Oops errors!'));
+      },
+      onCancel() {},
+    });
+  }
+
+  onGuessresult = ()=>{
+    alert('result is no work')
+    console.log(1);
   }
 
   save(key) {

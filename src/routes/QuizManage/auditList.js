@@ -8,7 +8,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import {connect} from "dva";
 
 import styles from './quiz.less'
-import {handleResult, timestampToDatetime} from "../../utils/utils";
+import {handleResult, timestampToDatetime, quizStatus} from "../../utils/utils";
 
 const FormItem = Form.Item;
 
@@ -28,12 +28,7 @@ export default class AuditLisr extends Component {
   };
 
   componentDidMount(){
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
-    dispatch({
-      type:'quizauditlist/fetch',
-      payload:formValues
-    })
+    this.setFetch()
   }
 
   showMsg =(type, record)=>{
@@ -72,16 +67,21 @@ export default class AuditLisr extends Component {
           type: params.url,
           payload: params.data,
           callback:(result)=>{
-            if(result.resultCode ==0){
-              handleResult(result,params.msg,this.setFetch());
-            }
+            console.log(result);
+            handleResult(result,params.msg,this.setFetch());
           }
         })
       },
-      onCancel(){
-
-      }
     })
+  }
+
+  setFetch=()=>{
+    const { dispatch } = this.props;
+    const { formValues } = this.state;
+    dispatch({
+      type: 'quizauditlist/fetch',
+      payload: formValues
+    });
   }
 
 
@@ -109,23 +109,25 @@ export default class AuditLisr extends Component {
     const {quizauditlist: {data, loading }, dispatch} = this.props;
     const columns = [{
       title:'赛事',
-      dataIndex:'eventname'
+      dataIndex:'gameName'
     },{
       title:'比赛名称',
-      dataIndex:'gamename'
+      dataIndex:'gameDataName'
     },{
       title:'竞猜名称',
-      dataIndex:'quizname'
+      dataIndex:'name'
     },{
       title:'竞猜结束时间',
-      dataIndex:'quizEndtime',
+      dataIndex:'endTime',
       render:(text)=><span>{timestampToDatetime(text)}</span>
     },{
-      title:'对赛',
-      dataIndex:'teams'
+      title:'对赛双方',
+      dataIndex: 'gameTeamAName',
+      render:(text,record)=><span>{text}<b style={{color:'#FF9900'}}> VS </b>{record.gameTeamBName}</span>
     },{
       title:'竞猜状态',
-      dataIndex:'status'
+      dataIndex:'status',
+      render:(text)=>quizStatus.filter((item)=>text===item.key).length?quizStatus.filter((item)=>text===item.key)[0].name:`状态码${text}`
     },{
       title:'操作',
       dataIndex:'',

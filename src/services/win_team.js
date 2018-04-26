@@ -13,7 +13,7 @@ export async function createTeam(params) {
 //win+ 01 战队列表team/list
 export async function queryTeamlist(params) {
   let { pageSize, currentPage,type} = params;
-  let paramsStr = `page=${currentPage}&pageSize=${pageSize}&type=${type}`;
+  let paramsStr = `page=${currentPage}&pageSize=${pageSize}`;
   return request(`/guessing/team/list?${paramsStr}`);
 }
 

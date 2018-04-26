@@ -21,7 +21,7 @@ function CheckResponse(data){
   } else{
    var errorText = (data)=>{switch(data.resultCode){
       case 1: return '请求参数引起的错误';
-      case 2: return '系统内部发生错误';
+      case 2: return '系统忙,请稍后再试';
       case 3: return '添加的数据已存在';
       case 4: return '数据不存在';
       case 5: return '数据不完整引起的错误';

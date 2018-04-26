@@ -12,6 +12,10 @@ const TextArea = Input.TextArea;
 
 
 class EventDetail extends PureComponent {
+  state = {
+    startT: new Date()
+  }
+
   handleReset = ()=>{
     this.props.form.resetFields();
     this.props.handleCancel();
@@ -42,17 +46,19 @@ class EventDetail extends PureComponent {
     });
   };
 
-   disabledDate = (current)=>{
-    // Can not select days before today and today
-    return current && current < moment().endOf('day');
-  }
+   disabledDate = (current,params)=> {
+     console.log(params);
+     // Can not select days before today and today
+     // if(params)  return current && current >this.state.startT;
+     // else
+       return current < new Date();
+   }
 
-  disabledDateTime = ()=>{
-    return {
-      disabledHours: () => range(0, 24).splice(4, 20),
-      disabledMinutes: () => range(30, 60),
-      disabledSeconds: () => [55, 56],
-    };
+  onDateChange = (date, dateString)=> {
+     console.log(dateString);
+     this.setState({
+       startT:dateString
+     })
   }
 
   render(){
@@ -74,8 +80,8 @@ class EventDetail extends PureComponent {
   }else{
     var eventName='',
       eventclass='',
-      eventTimeStart='2018-01-01',
-      eventTimeEnd='2018-01-01';
+      eventTimeStart= new Date(),
+      eventTimeEnd= new Date();
   }
 
   const formItemLayout = {
@@ -110,7 +116,7 @@ class EventDetail extends PureComponent {
     </FormItem>
     <FormItem label="比赛开始时间"  {...formItemLayout}
               validateStatus="warning"
-              help="请注意比赛时间的选择，必须大于当前时间">
+              help="！要求：大于当前时间">
       {getFieldDecorator('startTime',{
         rules: [{
           required: true , message: '请输入比赛开始时间！',
@@ -118,14 +124,16 @@ class EventDetail extends PureComponent {
         initialValue:moment(eventTimeStart)
       })(<DatePicker
         showTime
-        format="YYYY-MM-DD HH:mm:ss"
+        format= "YYYY-MM-DD HH:mm:ss"
         placeholder="Select Time"
+        disabledDate = {this.disabledDate}
+        onChange={this.onDateChange}
         style={{width:'80%'}}/>
       )}
     </FormItem>
     <FormItem label="比赛结束时间"  {...formItemLayout}
               validateStatus="warning"
-              help="比赛结束时间必须大于比赛的开始时间">
+              help="！要求：大于开始时间">
       {getFieldDecorator('endTime',{
         rules: [{
           required: false , message: '请输入比赛结束时间！',
@@ -133,7 +141,7 @@ class EventDetail extends PureComponent {
         initialValue:moment(eventTimeEnd)
       })(<DatePicker
         showTime
-        disabledDate={this.disabledDate}
+        disabledDate={(currentDate)=>this.disabledDate(currentDate,moment(eventTimeStart))}
        // disabledTime={disabledDateTime}
         format="YYYY-MM-DD HH:mm:ss"
         placeholder="Select Time"

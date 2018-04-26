@@ -183,7 +183,6 @@ export function handleResult(result,msg='操作成功',OKfn,Errorfn){
 }
 
 export function CountDown ( str ) {
-  console.log(str);
   if(!str || str.length ===0 ) return ;
   if(str.length === 10) str = str*1000;
   let _leftTime = parseFloat ((str-Date.now()) / 1000);

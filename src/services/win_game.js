@@ -5,7 +5,7 @@ import request from '../utils/request';
 
 //win+ 0 所有赛事枚举
 export async function queryEventlist(params) {
-  let paramsStr = `page=1&pageSize=100&name=&type=`;
+  let paramsStr = `page=1&pageSize=100`;
   return request(`/guessing/game/recentlyGames?${paramsStr}`);
 }
 
