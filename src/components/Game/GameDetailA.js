@@ -9,19 +9,6 @@ import {Input, DatePicker, Select, Table, Popconfirm, Button, Modal} from 'antd'
 import moment from 'moment';
 import {datetimeToTimestamp, quizStatus,handleResult, timestampToDatetime, CountDown} from '../../utils/utils';
 
-const Option = Select.Option;
-
-const SelectCell= ({editable, value, onChange, optionlist=[]})=>(<div>
-  {
-    editable? <Select>
-      {
-        optionlist.length != 0?
-          optionlist.map((item)=><Option key={item.type} valye={item.type}>item.name</Option>):[]
-      }
-    </Select>:value
-  }
-</div>);
-
 const InputCell = ({editable, value, onChange})=>(<div>
   {
     editable?<Input value={value}  onChange={e => onChange(e.target.value)}/>:value
@@ -64,7 +51,6 @@ const EditableCell = ({num,editable, record,value, onChange})=>{
   const me = this;
   switch(num) {
     case 'name': return <InputCell editable={editable} value={value}  onChange={onChange}/>;
-    case 'type': return <SelectCell  editable={editable} value={value}  onChange={onChange}/>;
     case 'endTime': return <TimeCell  editable={editable} value={value}  onChange={onChange}/>;
     case 'status': return <SpanCell record={record}  editable={editable} value={value}/>;
     default: return <span>{value === 0 ? '未出结果' : value === 1? 'A队赢' :value === 2? 'B队赢':'-'}</span>
@@ -76,7 +62,7 @@ const EditableCell = ({num,editable, record,value, onChange})=>{
 class EditQuizTable extends Component {
   constructor(props){
     super(props);
-
+   console.log(props.list)
     this.columns = [{
       title:"竞猜名称",
       dataIndex:'name',
@@ -104,7 +90,7 @@ class EditQuizTable extends Component {
         return (<div>
           {
             editable ? <span style={{textAlign: 'justify'}}>
-                  <a style={{paddingRight: 15}} onClick={() => this.save(record.key)}>保存</a>
+                  <a style={{paddingRight: 15}} onClick={() => this.onSave(record.key)}>保存</a>
                   <Popconfirm title="您确定要删除吗?" onConfirm={() => this.onDelete(record.key)}>
                     <a>删除</a>
                   </Popconfirm>
@@ -145,10 +131,14 @@ class EditQuizTable extends Component {
     }
   }
 
-
   handleStatus(record){
-    console.log(record);
     const _dataLong = Date.now();
+    if(!record.hasOwnProperty('status')) {
+      return <span style={{textAlign: 'justify'}}>
+        <a style={{paddingRight: 15}} onClick={() => this.onSubmit(record)}>提交</a>
+        <a style={{paddingRight: 15}} onClick={() => this.onDelete(record.key)}>删除</a>
+      </span>;
+    }
     if(record.status !=3) return '-';
     if(_dataLong >record.endTime) {
       return <a style={{paddingRight: 15}} onClick={() => this.onGuessresult(record.key)}>录入比赛结果</a>;
@@ -159,7 +149,6 @@ class EditQuizTable extends Component {
       </span>;
     }
   }
-
 
   handleChange(value, key, column) {
     const newData = [...this.state.data];
@@ -185,13 +174,48 @@ class EditQuizTable extends Component {
     });
   }
 
+  //新增单个竞猜的删除操作
   onDelete = (key) => {
     const dataSource = [...this.state.data];
     this.setState({ data: dataSource.filter(item => item.key !== key) });
   }
 
+  //新增单个竞猜的保存操作
+  onSave(key) {
+    const newData = [...this.state.data];
+    const target = newData.filter(item => key === item.key)[0];
+    if (target) {
+      delete target.editable;
+      this.setState({ data: newData });
+      this.cacheData = newData.map(item => ({ ...item }));
+    }
+  }
+
+  //新增单个竞猜的提交操作
+  onSubmit =(obj) => {
+    console.log('submit');
+    console.log(obj);
+    const {endTime,name}=obj;
+    const {dispatch, record, handlelist} = this.props;
+    alert("yao ti jiao")
+    dispatch({
+      type:'gamelist/addGameQuiz',
+      payload:{
+        gameDataId:record.id,
+        name,
+        endTime:datetimeToTimestamp(endTime)
+      },
+      callback:(result)=>{
+        handleResult(result,"添加成功",handlelist);
+      }
+    })
+
+  }
+
+  //单个竞猜的立即封盘操作
   inimitableStop = (key) =>{}
 
+  //单个竞猜的延期封盘操作
   delayStop = (key)=>{
     Modal.confirm({
       title: 'Do you want to delete these items?',
@@ -205,44 +229,17 @@ class EditQuizTable extends Component {
     });
   }
 
+  //单个竞猜的结果录入
   onGuessresult = ()=>{
     alert('result is no work')
     console.log(1);
-  }
-
-  save(key) {
-    const newData = [...this.state.data];
-    const target = newData.filter(item => key === item.key)[0];
-    if (target) {
-      delete target.editable;
-      this.setState({ data: newData });
-      this.cacheData = newData.map(item => ({ ...item }));
-    }
-  }
-
-  onSubmit =(obj) => {
-    console.log('submit');
-    console.log(obj);
-    const {endTime,name}=obj;
-    const {dispatch, record} = this.props;
-    dispatch({
-      type:'gamelist/addGameQuiz',
-      payload:{
-        gameDataId:record.id,
-        name,
-        endTime:datetimeToTimestamp(endTime)
-      },
-      callback:(result)=>{
-        handleResult(result);
-      }
-    })
-
   }
 
 
 
 
   render(){
+    console.log("渲染")
     return <div>
       <Table dataSource={this.state.data}
              rowKey = {record=>record.id}

@@ -24,15 +24,19 @@ export default class GameDetail extends PureComponent {
   }
 
   componentDidMount(){
+    this.getGamequizlist()
+  }
+
+  getGamequizlist () {
     const {dispatch,data} = this.props;
     dispatch({
       type:'gamelist/gameQuizlist',
       payload: data.id,
       callback:(result)=>{
         if(result.resultCode === 0){
-        this.setState({
-          list:result.data
-        })
+          this.setState({
+            list:result.data
+          })
         }
       }
     })
@@ -105,12 +109,9 @@ export default class GameDetail extends PureComponent {
           <GameForm  dispatch={dispatch} data={data} modalType={1} />
         </TabPane>
         <TabPane tab="比赛竞猜列表" key="2">
-          <QuziTable dispatch={dispatch}  record={data} data={list}/>
+          <QuziTable dispatch={dispatch} handlelist={()=>this.getGamequizlist()}  record={data} data={list}/>
         </TabPane>
       </Tabs>
-
-
-
       <Divider/>
       <div style={{display:'block',textAlign:'center'}}>
         <p style={{display:'block',textAlign:'center'}}>当前的比赛状态：

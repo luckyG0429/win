@@ -7,19 +7,6 @@ import React,{ Component }from 'react';
 import {Input, DatePicker, Select, Table, Popconfirm, Button} from 'antd';
 import moment from 'moment';
 
-const Option = Select.Option;
-
-const SelectCell= ({editable, value, onChange, optionlist=[]})=>(<div>
-    {
-      editable? <Select>
-        {
-          optionlist.length != 0?
-          optionlist.map((item)=><Option key={item.type} valye={item.type}>item.name</Option>):[]
-        }
-      </Select>:value
-    }
-  </div>);
-
 const InputCell = ({editable, value, onChange})=>(<div>
   {
     editable?<Input value={value}  onChange={e => onChange(e.target.value)}/>:value
@@ -44,7 +31,6 @@ const TimeCell = ({editable, value, onChange})=>{
 const EditableCell = ({num,editable, value, onChange})=>{
   switch(num) {
     case 'name': return <InputCell editable={editable} value={value}  onChange={onChange}/>;
-    case 'type': return <SelectCell  editable={editable} value={value}  onChange={onChange}/>;
     case 'endTime': return <TimeCell  editable={editable} value={value}  onChange={onChange}/>;
   }
 }

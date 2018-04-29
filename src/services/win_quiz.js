@@ -20,38 +20,29 @@ export async function addQuiz(params){
   })
 }
 
-//win+ 03 修改竞猜
-
-
-//win+ 04 删除单个竞猜
-export async function delQuiz(params){
-  return request(`/guessing/guess/remove?id=${params}`)
-}
-
-//win+ 042 竞猜提交
-export async function submitQuiz(params){
-  return request(`/guessing/guess/post?id=${params}`)
-}
+//win+ 03 修改竞猜（暂无）
 
 //win+ 04 延迟封盘
 export async function delayQuizTime(params){
- return request('',{
-   method: 'POST',
-   body: params
- })
+  const {id,endTime} = params;
+  return request('/guessing/guess/alterEndTime',{
+    method: 'POST',
+    body: `id=${id}&endTime=${endTime}`
+  })
 }
 
 //win+ 05 立即封盘 - 接口和参数
 export async function stopQuiz(params){
-  return request('post /guess/authorize',{
+  const {id} = params;
+  return request('/guessing/guess/alterEndTime',{
     method: 'POST',
-    body: params
+    body: `id=${id}&endTime=`
   })
 }
 
 
 //win+ 041 录入竞猜结果
-export async function updataQuizResult(params){
+export async function addQuizResult(params){
   const {id,isWinner} = params;
   return request('/guessing/guess/stop',{
     method:'POST',
