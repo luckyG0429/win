@@ -17,6 +17,8 @@ export default class Gamedetail extends PureComponent{
   state = {
     listTeam:[],
     gameGuesses:[],
+    eventStartstr: '-',
+    eventEndstr:'-'
   }
 
   componentWillMount () {
@@ -71,7 +73,18 @@ export default class Gamedetail extends PureComponent{
 
 
   handleEvent=(key)=>{
-    const { dispatch } = this.props;
+    const { dispatch, menu } = this.props;
+
+    if(!key){
+       return false;
+    }
+    let _startStr = timestampToDatetime(menu.filter(item=>item.id===key)[0].startTime);
+    let _endStr =timestampToDatetime(menu.filter(item=>item.id===key)[0].endTime);
+    this.setState({
+      eventStartstr: _startStr,
+      eventEndstr: _endStr,
+    })
+
     dispatch({
       type:'gamelist/teamfetch',
       payload:key,
@@ -86,17 +99,13 @@ export default class Gamedetail extends PureComponent{
   setGussingArray(obj){
     console.log('setGussingArray');
     console.log(obj);
-    //
-    // var oldGuesses = this.state.gameGuesses;
-    // if(obj.length ===0){
-    //
-    // }else{
-    //   for(let i=0;i<obj.length;i++){
-    //
-    //   }
-    //
-    // }
-    const newGuess = [...obj];
+    let newGuess = obj.map((item)=>{
+      let endtimeStr = datetimeToTimestamp(item.endTime)
+      return {
+        ...item,
+        endTime: endtimeStr
+      }
+    });
     this.setState({
         gameGuesses:newGuess
     })
@@ -107,7 +116,7 @@ export default class Gamedetail extends PureComponent{
   const { getFieldDecorator } = this.props.form
 
   const { modalType, form, handleOk, handleCancel, data, activeObj, menu, btnloading} = this.props;
-  const {listTeam} = this.state;
+  const {listTeam, eventStartstr, eventEndstr} = this.state;
   //赛事列表
   const optionListEvent = menu.length ==0 ?[]:menu.map((item)=><Option key={item.id} value={item.id}>{item.name}</Option>);
   const canEdit = modalType === 1;
@@ -146,21 +155,28 @@ export default class Gamedetail extends PureComponent{
 
 
   return  (<Form layout="horizontal"  className={styles.modalform} style={{width:'80%',marginLeft:'10%',marginTop:'5px'}}>
-    <FormItem label="比赛名称" {...formItemLayout}>
-      {getFieldDecorator('name',{
-        initialValue:name
-      })(<Input/>)
-      }
-    </FormItem>
+
     <FormItem label="赛事名" {...formItemLayout} >
       {getFieldDecorator('gameId', {
         rules: [{
           required: true, message: '请输入赛事名！',
         }],
         initialValue: gameId,
-      })(<Select onBlur={this.handleEvent}>
+      })(<Select onChange={this.handleEvent}>
         { optionListEvent }
       </Select>)}
+    </FormItem>
+    <FormItem label="赛事开始时间" {...formItemLayout} >
+      <span>{eventStartstr}</span>
+    </FormItem>
+    <FormItem label="赛事开始时间" {...formItemLayout} >
+      <span>{eventEndstr}</span>
+    </FormItem>
+    <FormItem label="比赛名称" {...formItemLayout}>
+      {getFieldDecorator('name',{
+        initialValue:name
+      })(<Input/>)
+      }
     </FormItem>
     <FormItem label="战队-A队" {...formItemLayout}>
       {getFieldDecorator('gameTeamAId',{
