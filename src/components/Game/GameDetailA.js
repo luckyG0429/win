@@ -139,6 +139,12 @@ class EditQuizTable extends Component {
         <a style={{paddingRight: 15}} onClick={() => this.onDelete(record.key)}>删除</a>
       </span>;
     }
+    if(record.status == 1) {
+      return <span style={{textAlign: 'justify'}}>
+        <a style={{paddingRight: 15}} onClick={() => this.onSubmit(record)}>提交</a>
+        <a style={{paddingRight: 15}} onClick={() => this.onDelete(record.key)}>删除</a>
+      </span>;
+    }
     if(record.status !=3) return '-';
     if(_dataLong >record.endTime) {
       return <a style={{paddingRight: 15}} onClick={() => this.onGuessresult(record.key)}>录入比赛结果</a>;
@@ -182,31 +188,39 @@ class EditQuizTable extends Component {
 
   //新增单个竞猜的保存操作
   onSave(key) {
+
+    const {dispatch, record, handlelist} = this.props;
     const newData = [...this.state.data];
     const target = newData.filter(item => key === item.key)[0];
     if (target) {
       delete target.editable;
       this.setState({ data: newData });
       this.cacheData = newData.map(item => ({ ...item }));
+      const {endTime,name}= target;
+      console.log('保存');
+      dispatch({
+        type:'gamelist/addGameQuiz',
+        payload:{
+          gameDataId:record.id,
+          name,
+          endTime:datetimeToTimestamp(endTime)
+        },
+        callback:(result)=>{
+          handleResult(result,"添加成功",handlelist);
+        }
+      })
     }
   }
 
   //新增单个竞猜的提交操作
   onSubmit =(obj) => {
-    console.log('submit');
-    console.log(obj);
-    const {endTime,name}=obj;
-    const {dispatch, record, handlelist} = this.props;
+    const {dispatch, handlelist} = this.props;
     alert("yao ti jiao")
     dispatch({
-      type:'gamelist/addGameQuiz',
-      payload:{
-        gameDataId:record.id,
-        name,
-        endTime:datetimeToTimestamp(endTime)
-      },
+      type:'gamelist/sendGameQuiz',
+      payload:obj.id,
       callback:(result)=>{
-        handleResult(result,"添加成功",handlelist);
+        handleResult(result,"提交申请成功",handlelist);
       }
     })
 
@@ -235,11 +249,17 @@ class EditQuizTable extends Component {
     console.log(1);
   }
 
-
+  componentWillReceiveProps(nextProps){
+    console.log("componentWillReceiveProps");
+    this.setState({
+      data:nextProps.data
+    })
+  }
 
 
   render(){
-    console.log("渲染")
+    console.log("渲染");
+    console.log(this.props.data)
     return <div>
       <Table dataSource={this.state.data}
              rowKey = {record=>record.id}

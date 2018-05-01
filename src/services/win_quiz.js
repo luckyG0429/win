@@ -20,6 +20,14 @@ export async function addQuiz(params){
   })
 }
 
+// 提交竞猜
+export async function sendQuiz(params){
+  return request('/guessing/guess/post',{
+    method: 'POST',
+    body: `id=${params}`
+  })
+}
+
 //win+ 03 修改竞猜（暂无）
 
 //win+ 04 延迟封盘
