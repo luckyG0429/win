@@ -97,8 +97,9 @@ export default class AuditList extends PureComponent {
       })
     }else if(type === 2 && record){
 
-    }else{
-
+    }else if(type === 3){
+      //弹框有操作时
+      this.sendList()
     }
   }
 
@@ -223,7 +224,7 @@ export default class AuditList extends PureComponent {
           footer={[]}
           onCancel={() => this.handleModalVisible()}
         >
-          <GameDetail data={record} dispatch={dispatch} isBtn={true}/>
+          <GameDetail data={record} dispatch={dispatch} isBtn={true}  handleVisible={() => this.handleModalVisible(false,{},3)}/>
         </Modal>
 
       </PageHeaderLayout>

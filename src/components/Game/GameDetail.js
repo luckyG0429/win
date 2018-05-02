@@ -19,8 +19,9 @@ const FormItem= Form.Item;
 export default class GameDetail extends PureComponent {
 
   state = {
-    canEdit:true,
+    canEdit: true,
     list:[],
+    btnloading: false
   }
 
   componentDidMount(){
@@ -84,6 +85,9 @@ export default class GameDetail extends PureComponent {
 
   handleCheckedGame=(pass)=>{
     const {dispatch, data, handleVisible} = this.props;
+    this.setState({
+      btnloading: true
+    })
     dispatch({
       type:"gameauditlist/sendGamePass",
       payload:{
@@ -102,7 +106,7 @@ export default class GameDetail extends PureComponent {
   render(){
     const { getFieldDecorator } = this.props.form;
     const { data, isBtn, dispatch } = this.props;
-    const { canEdit, list } =this.state;
+    const { canEdit, list, btnloading } =this.state;
     return <div>
       <Tabs style={{height:'320px'}}>
         <TabPane tab="比赛详情" key="1">
@@ -158,8 +162,8 @@ export default class GameDetail extends PureComponent {
             isBtn?<span>
                <Divider/>
           <FormItem>
-            <Button type='primary' onClick={()=>this.handleCheckedGame(true)}>集体上架</Button>
-            <Button style={{marginLeft:'24px'}} onClick={()=>this.handleCheckedGame(false)}>全部驳回</Button>
+            <Button type='primary' onClick={()=>this.handleCheckedGame(true)} loading={btnloading}>集体上架</Button>
+            <Button style={{marginLeft:'24px'}}  loading={btnloading} onClick={()=>this.handleCheckedGame(false)}>全部驳回</Button>
           </FormItem>
             </span>:''
           }

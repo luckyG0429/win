@@ -141,8 +141,15 @@ class EditQuizTable extends Component {
     }
     if(record.status == 1) {
       return <span style={{textAlign: 'justify'}}>
-        <a style={{paddingRight: 15}} onClick={() => this.onSubmit(record)}>提交</a>
+               <a style={{paddingRight: 15}} onClick={() => this.onSubmit(record)}>提交</a>
         <a style={{paddingRight: 15}} onClick={() => this.onDelete(record.key)}>删除</a>
+      </span>;
+    }
+    if(record.status == 2) {
+      return <span style={{textAlign: 'justify'}}>
+          <a style={{paddingRight: 15}} onClick={() => this.onApply(record.id,true)}>上架</a>
+        <a style={{paddingRight: 15}} onClick={() => this.onApply(record.id,false)}>驳回</a>
+
       </span>;
     }
     if(record.status !=3) return '-';
@@ -179,6 +186,22 @@ class EditQuizTable extends Component {
       count: count + 1,
     });
   }
+
+  onApply = (id, params) => {
+    const {dispatch, record, handlelist} = this.props;
+    const msg = params?"竞猜已审核通过":"竞猜已被驳回"
+    dispatch({
+      type:'gamelist/applyQuiz',
+      payload:{
+        id:record.id,
+        pass:params
+      },
+      callback:(result)=>{
+        handleResult(result,msg,handlelist);
+      }
+    })
+  }
+
 
   //新增单个竞猜的删除操作
   onDelete = (key) => {
@@ -258,8 +281,6 @@ class EditQuizTable extends Component {
 
 
   render(){
-    console.log("渲染");
-    console.log(this.props.data)
     return <div>
       <Table dataSource={this.state.data}
              rowKey = {record=>record.id}

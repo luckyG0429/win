@@ -82,7 +82,9 @@ export async function  setGamedstarttime(params){
 // win+  0.上架比赛列表
 export async function queryCheckGamelist(params) {
   let { pageSize, currentPage, name, gameId, startTime} = params;
-  let paramsStr = `page=${currentPage}&pageSize=${pageSize}&status=2&name=${name}&gameId=${gameId}&startTime=${startTime}`;
+ // let paramsStr = `page=${currentPage}&pageSize=${pageSize}&status=2&name=${name}&gameId=${gameId}&startTime=${startTime}`;
+  let paramsStr = `page=${currentPage}&pageSize=${pageSize}&status=2`;
+
   return request(`/guessing/game/listGameData?${paramsStr}`);
 }
 

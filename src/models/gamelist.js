@@ -5,7 +5,7 @@ import {
   queryGamelist, queryEventlist, addGame, enumTeam, putGame, delGame,
   setGamedstarttime, queryGameQuizlist, updateGame
 } from '../services/win_game';
-import { addQuiz, addQuizResult, delayQuizTime, stopQuiz, sendQuiz
+import { addQuiz, addQuizResult, delayQuizTime, stopQuiz, sendQuiz, auditQuiz
 } from '../services/win_quiz';
 
 
@@ -78,6 +78,10 @@ export default {
     },
     *gameQuizlist({payload,callback},{call}){
       const result = yield call(queryGameQuizlist,payload);
+      if(callback) callback(result);
+    },
+    *applyQuiz({payload, callback},{ call }){
+      const result = yield call(auditQuiz, payload);
       if(callback) callback(result);
     },
     *quizResult({payload, callback}, {call}){
