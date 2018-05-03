@@ -8,9 +8,9 @@ import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Select, Button, DatePicker, Modal, Divider, Tabs, Table } from 'antd';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import AddQuiz from '../../components/GameQuiz/AddQuiz';
+import QuizDetail from '../../components/GameQuiz/AddQuiz';
 import QuizList from '../../components/GameQuiz/QuizList'
-import {quizStatus, timestampToDatetime, } from '../../utils/utils'
+import {handleResult, quizStatus, timestampToDatetime,} from '../../utils/utils'
 
 import styles from './quiz.less';
 
@@ -59,32 +59,11 @@ export default class TableList extends PureComponent {
   /*TODO: 弹框的显示与隐藏 - 查看用户详情 - 传递数据[userId]*/
   handleModalVisible = (flag = false,record={}, type) => {
     /** type 0为新增  1为修改**/
-    const { dispatch } = this.props;
     this.setState({
       modalVisible: flag,
       record: record,
       modaltype:type,
     });
-    if(type===1 && flag){
-      dispatch({
-        type:'quizlist/detailorder',
-        payload:record,
-        callback:(result)=>{
-          console.log(result);
-          if(result.code == 200){
-            this.setState({
-              resultlist:result.data.ordergamelist,
-              tabloading:false,
-            })
-          }
-        }
-      })
-    }else if(type === 0){
-
-
-    }else{
-
-    }
   }
 
   /* TODO:条件查询 - 条件查询事件  - 内部状态管理：表单数据[ formValues ] */
@@ -97,13 +76,8 @@ export default class TableList extends PureComponent {
         ...fieldsValue
       };
       var jsonParams = {
-        kgName:values.kgName||"",
-        applyName:values.applyName||"",
-        applyPhone:values.applyPhone||"",
-        state:values.state||'',
-        applyStartTime: '',
-        applyEndTime:''
-    };
+        ...values
+      };
       this.setState({
         formValues:{
           page: 1,
@@ -129,96 +103,6 @@ export default class TableList extends PureComponent {
     });
   }
 
-  handleOk(type, params) {
-    const { dispatch } = this.props;
-    this.setState({
-      btnloading: true,
-    });
-    if (type == 1) {
-      dispatch({
-        type: 'quizlist/changeorderstate',
-        payload: params,
-        callback: (result) => {
-          if (result.code === 200) {
-            this.setState({
-              btnloading: false,
-              modalVisible:false,
-            });
-            Modal.success({
-              title: '受理成功！',
-              onOk() {
-                dispatch({
-                  type: 'quizlist/fetch',
-                  payload: {
-                    page:1,
-                    size:10,
-                    kgName:'',
-                    applyName:'',
-                    applyPhone:'',
-                    applyStartTime:'',
-                    applyEndTime:'',
-                    state:'',
-                  },
-                });
-              },
-            });
-          }else{
-            this.setState({
-              btnloading: false,
-              modalVisible:false,
-            });
-          }
-
-        },
-      });
-    } else if(type == 2) {
-      dispatch({
-        type: 'quizlist/senddeliveryinfo',
-        payload: params,
-        callback: (result) => {
-          if (result.code === 200) {
-            Modal.success({
-              title: '添加成功！',
-              onOk() {
-                dispatch({
-                  type: 'quizlist/fetch',
-                  payload: {
-                    page:1,
-                    size:10,
-                    kgName:'',
-                    applyName:'',
-                    applyPhone:'',
-                    applyStartTime:'',
-                    applyEndTime:'',
-                    state:'',
-                  },
-                });
-              },
-            });
-          }
-          this.setState({
-            btnloading: false,
-            modalVisible:false,
-          });
-        },
-      });
-    } else {
-      dispatch({
-        type: 'childuser/changechild',
-        payload: params,
-        callback: (result) => {
-          if (result.code === 200) {
-
-          }
-          this.setState({
-            btnloading: false,
-            modalVisible:false,
-          });
-        },
-      });
-    }
-  }
-
 
   /* TODO: 表格的分页处理 - 以及内部状态管理：表单数据[ formValues ] */
   handleStandardTableChange = (pagination) => {
@@ -235,11 +119,26 @@ export default class TableList extends PureComponent {
       }
     });
     dispatch({
-      type: 'gamelist/fetch',
+      type: 'quizlist/fetch',
       payload: params
     });
   }
 
+
+  onApply = (id, params) => {
+    const {dispatch} = this.props;
+    const msg = params?"竞猜已审核通过":"竞猜已被驳回"
+    dispatch({
+      type:'quizlist/applyQuiz',
+      payload:{
+        id:id,
+        pass:params
+      },
+      callback:(result)=>{
+        handleResult(result,msg,this.sendList);
+      }
+    })
+  }
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -277,7 +176,11 @@ export default class TableList extends PureComponent {
       dataIndex: '',
       width: 160,
       render:(text,record)=>{
-        switch(record.gamestatus){
+        switch(record.status){
+          case 2: return  <span style={{textAlign: 'justify'}}>
+           <a style={{paddingRight: 15}} onClick={() => this.onApply(record.id,true)}>上架</a>
+           <a style={{paddingRight: 15}} onClick={() => this.onApply(record.id,false)}>驳回</a>
+          </span>;
           default:return <div>
             <Button  style={{color:'#FF9900',borderColor:'#FF9900'}}  size='small'  onClick={() => this.handleModalVisible(true,record,1)}>查看</Button>
             <Divider type='vertical'/>
@@ -335,10 +238,9 @@ export default class TableList extends PureComponent {
           onCancel={() => this.handleModalVisible()}
         >
           {
-            modaltype === 1 ? <AddQuiz data={record}
+            modaltype === 1 ? <QuizDetail data={record}
                                       modaltype={modaltype}
                                       btnloading={btnloading}
-                                      handleOk={(type, params) => this.handleOk(type, params)}
                                       handleCancel={() => this.handleModalVisible()}/> : <QuizList data={record}/>
 
           }

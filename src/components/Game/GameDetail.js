@@ -101,8 +101,6 @@ export default class GameDetail extends PureComponent {
   }
 
 
-
-
   render(){
     const { getFieldDecorator } = this.props.form;
     const { data, isBtn, dispatch } = this.props;

@@ -1,5 +1,5 @@
 /**
- * 比赛 -- 添加竞猜
+ * 比赛 -- 竞猜详情
  */
 import React from 'react';
 import moment from 'moment';

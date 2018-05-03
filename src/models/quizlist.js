@@ -1,7 +1,7 @@
 /**
  * model  竞猜管理
  */
-import { queryQuizlist, queryQuiztype} from '../services/win_quiz';
+import {auditQuiz, queryQuizlist } from '../services/win_quiz';
 
 export default {
   namespace:'quizlist',
@@ -30,6 +30,10 @@ export default {
         type:'changeLoading',
         payload: false
       })
+    },
+    *applyQuiz({payload, callback},{ call }){
+      const result = yield call(auditQuiz, payload);
+      if(callback) callback(result);
     },
 
   },

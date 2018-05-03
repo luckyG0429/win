@@ -175,12 +175,7 @@ export default class TableList extends PureComponent {
     },{
       title: '图标',
       dataIndex: 'icon',
-      render:(text,record)=>{
-        let href= `http://www.nannan.kim/guessing/${text}`;
-        // console.log(href);
-        return <a href={href}>图片连接
-        </a>
-      }
+      render:(text)=><span><img src={`${location.host}/resources/${text}`}/></span>
     },{
       title: '状态',
       dataIndex: 'available',
