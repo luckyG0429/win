@@ -66,18 +66,22 @@ class EditQuizTable extends Component {
     this.columns = [{
       title:"竞猜名称",
       dataIndex:'name',
+      width:80,
       render:(text,record)=>this.renderColumns(text,record,'name'),
     },{
       title:'竞猜结束时间',
       dataIndex:'endTime',
+      width:120,
       render:(text,record)=>this.renderColumns(text,record,'endTime'),
     },{
       title:'状态',
       dataIndex:'status',
+      width:100,
       render:(text,record)=>this.renderColumns(text,record,'status'),
     },{
       title:'竞猜结果',
       dataIndex:'isWinner',
+      width:80,
       render:(text,record)=>this.renderColumns(text,record,'isWinner'),
     },{
       title:'操作',
@@ -180,7 +184,7 @@ class EditQuizTable extends Component {
     });
   }
 
-  
+
 
 
   //新增单个竞猜的删除操作
@@ -191,7 +195,6 @@ class EditQuizTable extends Component {
 
   //新增单个竞猜的保存操作
   onSave(key) {
-
     const {dispatch, record, handlelist} = this.props;
     const newData = [...this.state.data];
     const target = newData.filter(item => key === item.key)[0];
@@ -200,7 +203,7 @@ class EditQuizTable extends Component {
       this.setState({ data: newData });
       this.cacheData = newData.map(item => ({ ...item }));
       const {endTime,name}= target;
-      console.log('保存');
+      // console.log('保存');
       dispatch({
         type:'gamelist/addGameQuiz',
         payload:{
@@ -264,6 +267,7 @@ class EditQuizTable extends Component {
     return <div>
       <Table dataSource={this.state.data}
              rowKey = {record=>record.id}
+             scroll={{ x: false, y: 150 }}
              bordered columns={this.columns} size='small' pagination={false}/>
       <Button onClick={this.handleAdd} type='primary' size='small' ghost style={{marginTop:10,float:'right',marginBottom:'5px'}}>添加竞猜</Button>
     </div>
