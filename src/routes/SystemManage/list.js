@@ -175,7 +175,7 @@ export default class TableList extends PureComponent {
     },{
       title: '图标',
       dataIndex: 'icon',
-      render:(text)=><span><img width='40' src={`${location.protocol}//${location.host}/resources/${text}`}/></span>
+      render:(text)=><span><img height='88' src={`${location.protocol}//${location.host}/resources/${text}`}/></span>
     },{
       title: '状态',
       dataIndex: 'available',
