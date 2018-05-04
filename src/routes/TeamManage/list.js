@@ -148,7 +148,7 @@ export default class TeamList extends PureComponent{
     },{
       title:'图标',
       dataIndex:'icon',
-      render:(text)=><span><img src={`${location.protocol}//${location.host}/resources/${text}`}/></span>
+      render:(text)=><span><img  width='40px' src={`${location.protocol}//${location.host}/resources/${text}`}/></span>
     }];
 
     //3.渲染

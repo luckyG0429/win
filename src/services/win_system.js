@@ -136,3 +136,18 @@ export async function queryPermissionslist(params) {
   let paramsStr=`page=${currentPage}&pageSize=${pageSize}`;
   return request(`/guessing/authorize/listPermissions?${paramsStr}`);
 }
+
+//////////////  角色配置 ///////////////
+
+//win+  角色配置列表
+
+//win+  角色配置添加
+
+
+////////////  资讯分类配置  //////////
+
+//win+ 资讯分类列表
+
+
+//win+ 资讯分类添加
+
