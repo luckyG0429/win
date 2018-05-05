@@ -165,9 +165,9 @@ export async function userUnAuthorizedRoles(params){
 
 //win+ 给用户授权  /authorize/authorizeRoles
 export async function setAauthorizeRoles(params){
-  let {username,roleIds} = params
   return request('/guessing/authorize/authorizeRoles',{
     method:'POST',
-    body: `username=${username}&roleIds=${roleIds}`
+    contentType: 'json',
+    body: JSON.stringify(params)
   })
 }

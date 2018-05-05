@@ -52,6 +52,21 @@ export const getNavData = app => [
         component: dynamicWrapper(app, ['teamlist'], () => import('../routes/TeamManage/list')),
       },
       {
+        name: '资讯管理',
+        path: 'info',
+        icon: 'calculator',
+        children: [
+          {
+            name: '资讯列表',
+            path: 'list',
+            component: dynamicWrapper(app, ['infomation'], () => import('../routes/Information/list')),
+          },{
+            name: '资讯编辑',
+            path: 'edit',
+            component: dynamicWrapper(app, ['infomation'], () => import('../routes/Information/infoEdit')),
+          }]
+      },
+      {
         name: '系统管理',
         path: 'system',
         icon: 'setting',
