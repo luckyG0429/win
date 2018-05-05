@@ -53,10 +53,7 @@ export async function deleteAuthorRole(params){
   return request('/guessing/authorize/removeRole?id='+params)
 }
 
-//win+ 一个用户对应的职位 /authorize/authorizedRoles?username
-export async function userAuthorizedRoles(params){
-  return request('/guessing//authorize/authorizedRoles?username='+params)
-}
+
 
 
 ////////////////////////////资源管理的接口/////////////////////////////////////
@@ -125,10 +122,6 @@ export async function deletePermission(params){
   })
 }
 
-//win+  一个账户的权限 /authorize/authorizedRoles?username
-export async function  userPermission(params) {
-  return request('/guessing/authorize/authorizedRoles?username='+params);
-}
 
 //win+  权限列表  /authorize/listPermissions
 export async function queryPermissionslist(params) {
@@ -151,3 +144,30 @@ export async function queryPermissionslist(params) {
 
 //win+ 资讯分类添加
 
+
+////系统的用户列表 //////
+//win+ 用户列表
+export async function queryUserlist(params) {
+  let { pageSize, currentPage } = params;
+  let paramsStr=`page=${currentPage}&pageSize=${pageSize}`;
+  return request(`/guessing/user/listUsers?${paramsStr}`);
+}
+
+//win+ 一个用户已授权职位 /authorize/authorizedRoles?username
+export async function userAuthorizedRoles(params){
+  return request('/guessing/authorize/authorizedRoles?username='+params)
+}
+
+//win+ 一个用户未被授权的职位 /authorize/unauthorizedRoles?username
+export async function userUnAuthorizedRoles(params){
+  return request('/guessing/authorize/unauthorizedRoles?username='+params)
+}
+
+//win+ 给用户授权  /authorize/authorizeRoles
+export async function setAauthorizeRoles(params){
+  let {username,roleIds} = params
+  return request('/guessing/authorize/authorizeRoles',{
+    method:'POST',
+    body: `username=${username}&roleIds=${roleIds}`
+  })
+}

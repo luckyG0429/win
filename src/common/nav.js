@@ -61,9 +61,17 @@ export const getNavData = app => [
             path: 'params',
             component: dynamicWrapper(app, ['systemlist'], () => import('../routes/SystemManage/list')),
           },{
+            name: '职位配置',
+            path: 'role',
+            component: dynamicWrapper(app, ['systemrole'], () => import('../routes/SystemManage/role')),
+          },{
             name: '资源配置',
             path: 'resource',
             component: dynamicWrapper(app, ['systemresource'], () => import('../routes/SystemManage/resourceList')),
+          },{
+            name: '用户授权配置',
+            path: 'userlist',
+            component: dynamicWrapper(app, ['systemuserlist'], () => import('../routes/SystemManage/userList')),
           },{
             name: '权限设置',
             path: 'permission',
