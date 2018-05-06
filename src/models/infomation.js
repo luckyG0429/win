@@ -1,5 +1,6 @@
 
 import {Querylist, addInfo, deleteInfo} from '../services/win_info';
+import {routerRedux} from "dva/router";
 
 export default {
   namespace:'infolist',
@@ -35,6 +36,13 @@ export default {
     *deleteInformation({payload,callback},{call}){
       const result = yield call(deleteInfo,payload)
       if(callback) callback(result);
+    },
+    *changeRouter({payload},{put}){
+      yield put({
+        type:'setActivateEvent',
+        payload:payload
+      });
+      yield put(routerRedux.push('/info/edit'));
     }
   },
   reducers:{
@@ -53,11 +61,11 @@ export default {
         }
       }
     },
-    setGamelist(state, action){
+    setActivateEvent(state, action){
       return {
         ...state,
         eventType:action.payload
       }
-    }
+    },
   }
 }

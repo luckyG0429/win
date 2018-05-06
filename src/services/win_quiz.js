@@ -8,12 +8,12 @@ import request from '../utils/request';
 export async function queryQuizlist(params) {
   let { pageSize, currentPage, status,type, gameDataId} = params;
   let paramsStr = `page=${currentPage}&pageSize=${pageSize}&status=`;
-  return request(`/guessing/guess/list?${paramsStr}`);
+  return request(`/guessing/web/guess/list?${paramsStr}`);
 }
 
 //win+ 02 新增比赛竞猜
 export async function addQuiz(params){
-  return request('/guessing/guess/create',{
+  return request('/guessing/web/guess/create',{
     method:'POST',
     contentType: 'json',
     body: JSON.stringify(params)
@@ -22,7 +22,7 @@ export async function addQuiz(params){
 
 // 提交竞猜
 export async function sendQuiz(params){
-  return request('/guessing/guess/post',{
+  return request('/guessing/web/guess/post',{
     method: 'POST',
     body: `id=${params}`
   })
@@ -33,7 +33,7 @@ export async function sendQuiz(params){
 //win+ 04 延迟封盘
 export async function delayQuizTime(params){
   const {id,endTime} = params;
-  return request('/guessing/guess/alterEndTime',{
+  return request('/guessing/web/guess/alterEndTime',{
     method: 'POST',
     body: `id=${id}&endTime=${endTime}`
   })
@@ -42,7 +42,7 @@ export async function delayQuizTime(params){
 //win+ 05 立即封盘 - 接口和参数
 export async function stopQuiz(params){
   const {id} = params;
-  return request('/guessing/guess/alterEndTime',{
+  return request('/guessing/web/guess/alterEndTime',{
     method: 'POST',
     body: `id=${id}&endTime=`
   })
@@ -52,7 +52,7 @@ export async function stopQuiz(params){
 //win+ 041 录入竞猜结果
 export async function addQuizResult(params){
   const {id,isWinner} = params;
-  return request('/guessing/guess/stop',{
+  return request('/guessing/web/guess/stop',{
     method:'POST',
     body: `id=${id}&isWinner=${isWinner}`
   })
@@ -61,7 +61,7 @@ export async function addQuizResult(params){
 //win+ 042 竞猜审核  guess/authorize
 export async function auditQuiz(params){
   const {id,pass} = params;
-  return request('/guessing/guess/authorize',{
+  return request('/guessing/web/guess/authorize',{
     method:'POST',
     body: `id=${id}&pass=${pass}`
   })
@@ -72,7 +72,7 @@ export async function auditQuiz(params){
 export async function queryAuditList(params){
   let { pageSize, currentPage, name,type} = params;
   let paramsStr = `page=${currentPage}&pageSize=${pageSize}&status=4`;
-  return request(`/guessing/guess/list?${paramsStr}`);
+  return request(`/guessing/web/guess/list?${paramsStr}`);
 }
 
 

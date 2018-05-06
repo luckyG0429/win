@@ -3,12 +3,14 @@
 
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import {Form, Input,Select,Button,Modal,message,Card} from 'antd';
+import {Form, Input,Select,Button,Modal,Divider,Card} from 'antd';
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import AddTeam from '../../components/Team/AddTeam';
+import {timestampToDatetime} from "../../utils/utils";
 
 import styles from './info.less';
+import {routerRedux} from "dva/router";
 
 const FormItem = Form.Item;
 
@@ -124,6 +126,15 @@ export default class InfoList extends PureComponent{
     })
   }
 
+  hangleChangeRouter=(record)=>{
+    console.log(record);
+    const { dispatch } = this.props;
+    dispatch({
+      type:'infolist/changeRouter',
+      payload:record
+    })
+  }
+
   render(){
     //1.你的全局状态的引入
     const {infolist:{data, loading, eventType}} = this.props;
@@ -134,19 +145,25 @@ export default class InfoList extends PureComponent{
     const modaltitle =modaltype ===0?'添加战队':(modaltype ===1?'修改战队':'战队查看');
 
     const columns=[{
-      title:'赛事名',
-      dataIndex:'name'
+      title:'标题',
+      dataIndex:'title'
     },{
       title:'发文时间',
-      dataIndex:'time'
+      dataIndex:'timeDesc'
+    },{
+      title:'发布时间',
+      dataIndex:'createTime',
+      render:(text)=><span>{timestampToDatetime(text)}</span>
     },{
       title:'图文缩图',
-      dataIndex:'type',
-      render:(text)=><span>{
-        eventType.filter(item=>item.type===text).length!=0? eventType.filter(item=>{
-          return item.type===text
-        })[0].name:text
-      }</span>
+      dataIndex:'images',
+      render:(text)=>{
+        return <div>
+          {
+           text.map((item, index)=> <img  width='40px' src={`${location.protocol}//${location.host}/resources/${text}`}/>)
+          }
+        </div>
+      }
     },{
       title:'操作',
       dataIndex:'',
@@ -164,7 +181,7 @@ export default class InfoList extends PureComponent{
             <div className={styles.tableListForm}>
               <Form layout="inline" style={{width:'100%',display:'block',overflow:'auto'}}  onSubmit={this.handleSearch}>
                 <FormItem  style={{float:'left',display:'inline'}}>
-                  <Button type='primary'  ghost onClick={() => this.handleModalVisible(true,'',0)}>新增资讯</Button>
+                  <Button type='primary'  ghost onClick={()=>this.hangleChangeRouter()}>新增资讯</Button>
                 </FormItem>
                 <FormItem  style={{float:'right',display:'inline'}}>
                   <Button type="primary" htmlType="submit">搜索</Button>

@@ -5,7 +5,7 @@ import request from '../utils/request';
 
 //win+ 0 赛事分类枚举
 export async function enumEventtype() {
-  return request('/guessing/game/listGameTypes');
+  return request('/guessing/web/game/listGameTypes');
 }
 
 
@@ -15,7 +15,7 @@ export async function enumEventtype() {
 export async function queryEventlist(params) {
   let { pageSize, currentPage, name,type} = params;
   let paramsStr = `page=${currentPage}&pageSize=${pageSize}&name=${name||''}&type=${type}`;
-  return request(`/guessing/game/recentlyGames?${paramsStr}`);
+  return request(`/guessing/web/game/recentlyGames?${paramsStr}`);
 }
 
 // win+  03 新增赛事
@@ -23,7 +23,7 @@ export async function addEvent(params) {
   console.log(params);
   const {name, type, startTime, endTime} = params;
   const paramsStr = `name=${name}&type=${type}&startTime=${startTime}&endTime=${endTime}`;
-  return request('/guessing/game/createGame', {
+  return request('/guessing/web/game/createGame', {
     method:'POST',
     body: paramsStr
   });

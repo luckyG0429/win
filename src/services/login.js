@@ -8,7 +8,7 @@ import request from '../utils/request';
 export async function setLoginIn(params) {
   const { username, password } = params;
   const paramsStr = `username=${username}&password=${password}&loginType=0&rememberMe=true`;
-  return request('/guessing/index/login', {
+  return request('/guessing/web/index/login', {
     method: 'POST',
     body: paramsStr,
   });
@@ -17,12 +17,12 @@ export async function setLoginIn(params) {
 export async function setRegister(params) {
   const { username, password } = params;
   const paramsStr = `username=${username}&password=${password}&registerType=0`;
-  return request('/guessing/index/register', {
+  return request('/guessing/web/index/register', {
     method: 'POST',
     body: paramsStr,
   });
 }
 
 export async function setLoginOut() {
-  return request('/guessing/index/logout');
+  return request('/guessing/web/index/logout');
 }
