@@ -56,7 +56,7 @@ export default class Gamedetail extends PureComponent{
     console.log(jsonParams);
 
     var json = {
-      gameData: {...jsonParams},
+      ...jsonParams,
       gameGuesses
     };
 
