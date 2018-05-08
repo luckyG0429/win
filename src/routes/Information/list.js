@@ -149,7 +149,7 @@ export default class InfoList extends PureComponent{
       dataIndex:'title'
     },{
       title:'发文时间',
-      dataIndex:'timeDesc'
+      dataIndex:'creator'
     },{
       title:'发布时间',
       dataIndex:'createTime',

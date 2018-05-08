@@ -30,12 +30,13 @@ export default {
         payload: false,
       })
       if(callback) callback(response);
+      console.log(payload);
       yield put({
         type: 'changeLoginStatus',
         payload:{
           status: response.resultCode == 0?true:false,
           resultmsg:response.resultmsg||'',
-          ...payload,
+          username: payload.username,
         }
       });
 
@@ -61,7 +62,7 @@ export default {
         status: payload.status,
         tipMessage:payload.resultmsg,
         userdata:{
-          ...payload.data
+          username:payload.username
         }
       };
     },

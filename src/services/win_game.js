@@ -19,9 +19,9 @@ export async function enumTeam(params){
 export async function queryGamelist(params) {
   let { pageSize, currentPage, startTime, gameId, name} = params;
   let paramsStr = `page=${currentPage}&pageSize=${pageSize}`;
-  if(!!gameId)  paramsStr += `gameId=${gameId}`;
-  if(!!startTime) paramsStr += `startTime=${startTime}`;
-  if(!!name) paramsStr += `name=${name}`;
+  if(!!gameId)  paramsStr += `&gameId=${gameId}`;
+  if(!!startTime) paramsStr += `&startTime=${startTime}`;
+  if(!!name) paramsStr += `&name=${name}`;
   return request(`/guessing/web/game/listGameData?${paramsStr}`);
 }
 

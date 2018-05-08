@@ -13,6 +13,7 @@ export default {
   },
   effects: {
     *fetchCurrent({payload}, { call, put }) {
+      console.log(payload);
       yield put({
         type: 'changeLoading',
         payload: true,
@@ -33,18 +34,6 @@ export default {
       });
 
     },
-    // *fetchCurrent(_, { call, put }) {
-    //   const response = yield call(queryCurrent);
-    //   console.log('当前用户response');
-    //   console.log(JSON.parse(response.resultData))
-    //   if (response.resultCode !==  0) {
-    //     yield put(routerRedux.push('/user/login'));
-    //   }
-    //   yield put({
-    //     type: 'saveCurrentUser',
-    //     payload: JSON.parse(response.resultData),
-    //   });
-    // },
   },
   reducers: {
     save(state, action) {
