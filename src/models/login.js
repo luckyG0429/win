@@ -35,7 +35,7 @@ export default {
         payload:{
           status: response.resultCode == 0?true:false,
           resultmsg:response.resultmsg||'',
-          ...response,
+          ...payload,
         }
       });
 
@@ -56,14 +56,13 @@ export default {
   },
   reducers: {
     changeLoginStatus(state, { payload }) {
-      for(let x in payload.data){
-        localStorage.setItem(x, payload.data[x]);
-      }
       return {
         ...state,
         status: payload.status,
         tipMessage:payload.resultmsg,
-        userdata:payload.data
+        userdata:{
+          ...payload.data
+        }
       };
     },
     changeSubmitting(state, { payload }) {

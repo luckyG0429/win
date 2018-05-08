@@ -218,7 +218,7 @@ export default class TableList extends PureComponent {
       dataIndex: 'name',
     },{
       title: '赛事类别',
-      dataIndex: 'strType',
+      dataIndex: 'typeName',
     },{
       title: '结束时间',
       dataIndex: 'endTime',

@@ -18,7 +18,8 @@ export default class Gamedetail extends PureComponent{
     listTeam:[],
     gameGuesses:[],
     eventStartstr: '-',
-    eventEndstr:'-'
+    eventEndstr:'-',
+    gametype:''
   }
 
   componentWillMount () {
@@ -78,16 +79,19 @@ export default class Gamedetail extends PureComponent{
     if(!key){
        return false;
     }
+    let _gametype = menu.filter(item=>item.id===key)[0].type;
     let _startStr = timestampToDatetime(menu.filter(item=>item.id===key)[0].startTime);
     let _endStr =timestampToDatetime(menu.filter(item=>item.id===key)[0].endTime);
+    console.log(_gametype);
     this.setState({
       eventStartstr: _startStr,
       eventEndstr: _endStr,
+      gametype: _gametype
     })
 
     dispatch({
       type:'gamelist/teamfetch',
-      payload:key,
+      payload:_gametype,
       callback:(result)=>{
         if(result.resultCode ===0){
           this.setState({listTeam: result.data})

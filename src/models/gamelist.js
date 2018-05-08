@@ -30,6 +30,7 @@ export default {
       })
     },
     *teamfetch({payload,callback},{call}){
+      console.log(payload);
       const result = yield call(enumTeam,payload);
       if(callback) callback(result);
     },

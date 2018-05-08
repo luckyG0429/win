@@ -12,13 +12,16 @@ export async function queryEventlist(params) {
 
 //win+ 01 战队枚举
 export async function enumTeam(params){
-  return request('/guessing/web/team/list?page=1&pageSize=1000&type=')
+  return request('/guessing/web/team/list?page=1&pageSize=1000&type='+params)
 }
 
 // win+  02.比赛列表
 export async function queryGamelist(params) {
   let { pageSize, currentPage, startTime, gameId, name} = params;
   let paramsStr = `page=${currentPage}&pageSize=${pageSize}`;
+  if(!!gameId)  paramsStr += `gameId=${gameId}`;
+  if(!!startTime) paramsStr += `startTime=${startTime}`;
+  if(!!name) paramsStr += `name=${name}`;
   return request(`/guessing/web/game/listGameData?${paramsStr}`);
 }
 

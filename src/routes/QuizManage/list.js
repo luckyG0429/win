@@ -166,7 +166,10 @@ export default class TableList extends PureComponent {
     },{
       title: '总下注金额(金币体验币)',
       dataIndex: 'edata',
-      render:(text,record)=><span>{text.betTBalance||0}<b>/</b>{text.betTMoney||0}</span>
+      // render:(text,record)=>{
+      //   let {betTBalance,betTMoney} = text;
+      //   return <span>{betTBalance||0}<b>/</b>{betTMoney||0}</span>
+      // }
     },{
       title: '竞猜状态',
       dataIndex: 'status',
